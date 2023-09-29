@@ -7,7 +7,7 @@ import { Box, Container, Grid, Paper, Toolbar } from '@mui/material'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Home() {
+export default function Customer() {
   return (
     <AppLayout title={"TS"}>
       <Grid container spacing={3}>
@@ -21,27 +21,7 @@ export default function Home() {
               height: 240,
             }}
           >
-            {/* <Chart /> */}
-          </Paper>
-        </Grid>
-        {/* Recent Deposits */}
-        <Grid item xs={12} md={4} lg={3}>
-          <Paper
-            sx={{
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              height: 240,
-            }}
-          >
-            {/* <Deposits /> */}
-          </Paper>
-        </Grid>
-        {/* Recent Orders */}
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-            {/* <Orders /> */}
-            AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+            CUSTOMER
           </Paper>
         </Grid>
       </Grid>

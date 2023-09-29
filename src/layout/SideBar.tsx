@@ -12,6 +12,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PeopleIcon from '@mui/icons-material/People';
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { menus } from '@/utils/menu';
 
 const drawerWidth: number = 240;
 
@@ -42,9 +43,9 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 
-const SideBarComponent: React.FC = ( {opened, handleToggle, menuSelected, menuToggle, ...props} ) => {
+const SideBarComponent: React.FC = ( {opened, handleToggle, pathActive, ...props} ) => {
   const router = useRouter();
-  
+
   return (
     <Drawer variant="permanent" open={opened}>
       
@@ -63,33 +64,58 @@ const SideBarComponent: React.FC = ( {opened, handleToggle, menuSelected, menuTo
         </IconButton>
       </Toolbar>
       <Divider />
+
       <List component="nav">
-        <Link href="/" passHref>
+        {
+          menus.map(menu => {
+            const active = menu.path ? (pathActive === menu.path) : false;
+
+            return (
+              <Link 
+                key  = {menu.title}
+                href = {menu.path}
+                passHref
+              >
+                <ListItemButton
+                  selected={active}
+                >
+                  <ListItemIcon>
+                    {menu.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={menu.title} />
+                </ListItemButton>
+              </Link>
+            );
+          })
+        }
+        
+        {/* <Link href="/order" passHref> 
           <ListItemButton
-            selected={true}
+            key      = '2'
+            id       = '2'
+            selected = {menuSelected==="order"}
           >
-            <ListItemIcon>
-              <DashboardIcon />
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" />
-          </ListItemButton>
-        </Link>
-        <Link href="/order" passHref>
-          <ListItemButton>
             <ListItemIcon>
               <ShoppingCartIcon />
             </ListItemIcon>
             <ListItemText primary="Orders" />
           </ListItemButton>
         </Link>
-        <ListItemButton>
-          <ListItemIcon>
-            <PeopleIcon />
-          </ListItemIcon>
-          <ListItemText primary="Customers" />
-        </ListItemButton>
-
-        <Divider sx={{ my: 1 }} />
+        
+        <Link href="/customer" passHref>
+          <ListItemButton
+            key      = '3'
+            id       = '3'
+            selected = {menuSelected==="customer"}
+            onClick  = {() => menuToggle("customer")}
+          >
+            <ListItemIcon>
+              <PeopleIcon />
+            </ListItemIcon>
+            <ListItemText primary="Customers" />
+          </ListItemButton>
+        </Link> */}
+        {/* <Divider sx={{ my: 1 }} /> */}
         {/* {secondaryListItems} */}
       </List>
     </Drawer>

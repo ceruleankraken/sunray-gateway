@@ -28,7 +28,7 @@ export const useLogin = () => {
         // dispatch(setSidebar(data.menu)),
       ]);
 
-      router.replace('/');
+      // router.replace('/');
     },
     onError: (data) => {
       console.log('error');

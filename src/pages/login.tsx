@@ -10,16 +10,20 @@ import { LoginFormPropsRequest, useLogin } from "@/hooks/auth/use-login";
 import { useSelector } from 'react-redux';
 import { getAccessToken } from "@/stores/features/auth.slice";
 import { LoadingButton } from "@mui/lab";
+import useRedirect from "@/hooks/other/use-redirect";
+import { useTypedSelector } from "@/hooks/other/use-type-selector";
 
 const SignInPage: NextPage = () => {
-  
-  const accessToken = useSelector(getAccessToken);
-  const router = useRouter();
 
-  useEffect(() => {
-    if ((!!accessToken === true) && router.pathname !== '/')
-      router.replace('/login', undefined, { shallow: true });
-  }, [(!!accessToken === true), '/login', router]);
+  const router = useRouter();
+  const accessToken = useTypedSelector(
+    (state) => state.reducer.user.accessToken,
+  );
+
+  useRedirect({
+    toUrl: '/',
+    condition: !!accessToken === true,
+  });
 
 
   const { mutate: submitLogin, isLoading } = useLogin();
