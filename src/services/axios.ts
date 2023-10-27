@@ -3,7 +3,7 @@ import router from 'next/router';
 import dayjs from 'dayjs';
 import jwt_decode, { JwtPayload } from 'jwt-decode';
 import { API_URL, REFRESH_TOKEN_PATH } from '@/configs/constants';
-import { setAccessToken } from '@/stores/features/auth.slice'
+import { setAccessToken, setRefreshToken } from '@/stores/features/auth.slice'
 import { store, RootState } from '@/stores/store';
 
 export const http: AxiosInstance = axios.create({
@@ -16,49 +16,53 @@ export const http: AxiosInstance = axios.create({
   }
 });
 
-// http.interceptors.request.use(
-//   async (config: InternalAxiosRequestConfig) => {
-//     const state: RootState = store.getState();
-//     const accessToken = state.reducer.user.accessToken;
+http.interceptors.request.use(
+  async (config: InternalAxiosRequestConfig) => {
+    const state: RootState = store.getState();
+    const accessToken      = state.reducer.user.accessToken;
+    const refreshToken      = state.reducer.user.refreshToken;
 
-//     if (accessToken) {
-//       config.headers['Authorization'] = `Bearer ${accessToken}`;
-//       const decode: JwtPayload = jwt_decode(accessToken);
+    if (accessToken) {
+      config.headers['Authorization'] = `Bearer ${accessToken}`;
+      const decode: JwtPayload = jwt_decode(accessToken);
 
-//       if (decode?.exp) {
-//         const isExpired = dayjs.unix(decode.exp).diff(dayjs()) < 1;
-//         if (!isExpired) return config;
+      if (decode?.exp) {
+        const isExpired = dayjs.unix(decode.exp).diff(dayjs()) < 1;
+        console.log("Rest1");
+        if (!isExpired) return config;
 
-//         const { data } = await axios.get(`${API_URL}${REFRESH_TOKEN_PATH}`, {
-//           withCredentials: true,
-//         });
+        const { data } = await axios.post(`${API_URL}${REFRESH_TOKEN_PATH}`, {
+          access_token: accessToken,
+          refresh_token: refreshToken
+        }, { withCredentials: true});
+        console.log("Rest");
+        store.dispatch(setAccessToken(data.access_token));
+        store.dispatch(setRefreshToken(''));
 
-//         console.log(data.accessToken);
-//         store.dispatch(setAccessToken(data.accessToken));
+        config.headers['Authorization'] = `Bearer ${data.user_session.access_token}`;
+        return config;
+      } else return config;
+    }
 
-//         config.headers['Authorization'] = `Bearer ${data.accessToken}`;
-//         return config;
-//       } else return config;
-//     }
+    return config;
+  },
+  (error) => {
+    throw error;
+  },
+);
 
-//     return config;
-//   },
-//   (error) => {
-//     throw error;
-//   },
-// );
-
-// http.interceptors.response.use(
-//   (response) => {
-//     return response;
-//   },
-//   (error) => {
-//     if (error.response.status == 401) {
-//       //removeAccessToken();
-//       router.replace('/login');
-//     }
-//     return Promise.reject(error);
-//   },
-// );
+http.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    console.log(error)
+    // if (error.response.status == 401) {
+    //   //removeAccessToken();
+    //   router.replace('/login');
+    // }
+    return Promise.reject(error);
+  },
+);
 
 export { axios };

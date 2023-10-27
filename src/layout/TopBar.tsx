@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import Badge from '@mui/material/Badge';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const drawerWidth: number = 240;
 
@@ -33,7 +34,7 @@ const TopBar = styled(MuiAppBar, {
 }));
 
 
-const TopBarComponent = ( {opened, handleToggle, ...props}) => {
+const TopBarComponent = ( {opened, handleToggle, onLogout, ...props}: any) => {
 
   return (
     <TopBar position="absolute" open={opened}>
@@ -43,11 +44,11 @@ const TopBarComponent = ( {opened, handleToggle, ...props}) => {
         }}
       >
         <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="open drawer"
-          onClick={handleToggle}
-          sx={{
+          edge       = "start"
+          color      = "inherit"
+          aria-label = "open drawer"
+          onClick    = {handleToggle}
+          sx         = {{
             marginRight: '36px',
             ...(opened && { display: 'none' }),
           }}
@@ -63,10 +64,11 @@ const TopBarComponent = ( {opened, handleToggle, ...props}) => {
         >
           Dashboard
         </Typography>
-        <IconButton color="inherit">
-          <Badge badgeContent={4} color="secondary">
-            <NotificationsIcon />
-          </Badge>
+        <IconButton 
+          color   = "inherit"
+          onClick = {onLogout}
+        >
+          <LogoutIcon />
         </IconButton>
       </Toolbar>
     </TopBar>

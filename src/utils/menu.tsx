@@ -19,4 +19,9 @@ export const menus:({title: string, path: string, icon: any})[] = [
     path : '/customer',
     icon : <PeopleIcon />,
   },
+  {
+    title: 'User',
+    path : '/user',
+    icon : <PeopleIcon />,
+  },
 ]

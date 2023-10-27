@@ -8,6 +8,7 @@ import BottomBarComponent from './BottomBar';
 import { usePathname } from 'next/navigation';
 import useRedirect from '@/hooks/other/use-redirect';
 import { useTypedSelector } from '@/hooks/other/use-type-selector';
+import useLogout, { LogoutFormPropsRequest } from '@/hooks/auth/use-logout';
 
 interface AppProps {
   title: string,
@@ -15,20 +16,39 @@ interface AppProps {
 }
 
 const AppLayout = ({ title, children }: AppProps) => {
-  const [open, setOpen]                 = React.useState(true);
-  const handleToggle: () => void        = () => {
+  const [open, setOpen]          = React.useState(true);
+  const pathname                 = usePathname();
+  const { mutate: submitLogout, isLoading } = useLogout();
+  const handleToggle: () => void = () => {
     // e.preventDefault()
-    console.log(open);
+    // console.log(open);
     setOpen(!open);
   };
+  
   const accessToken = useTypedSelector(
     (state) => state.reducer.user.accessToken,
   );
+  
+  const refreshToken = useTypedSelector(
+    (state) => state.reducer.user.refreshToken,
+  );
 
-  const pathname = usePathname();
+
+  const handleLogout = () => {
+    
+    const data: LogoutFormPropsRequest = {
+      access_token: accessToken?.toString() || '',
+      refresh_token: refreshToken?.toString() || ''
+    }
+
+    console.log("ini ya");
+    console.log(data);
+
+    submitLogout(data);
+  };
 
   useRedirect({
-    toUrl: '/login',
+    toUrl    : '/login',
     condition: !!accessToken === false,
   });
 
@@ -50,7 +70,7 @@ const AppLayout = ({ title, children }: AppProps) => {
 
       {!!accessToken && (
         <>
-          <TopBarComponent opened={open} handleToggle={handleToggle}/>
+          <TopBarComponent opened={open} handleToggle={handleToggle} onLogout={handleLogout}/>
           <SideBarComponent
             opened       = {open}
             handleToggle = {handleToggle}

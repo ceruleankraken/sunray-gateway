@@ -6,7 +6,7 @@ import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { Box, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import { AppBarProps, Box, DrawerProps, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PeopleIcon from '@mui/icons-material/People';
@@ -16,7 +16,11 @@ import { menus } from '@/utils/menu';
 
 const drawerWidth: number = 240;
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+interface AppSideBarProps extends DrawerProps {
+  open?: boolean;
+}
+
+const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })<AppSideBarProps>(
   ({ theme, open }) => ({
     '& .MuiDrawer-paper': {
       position: 'relative',
@@ -43,7 +47,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 
-const SideBarComponent: React.FC = ( {opened, handleToggle, pathActive, ...props} ) => {
+const SideBarComponent = ( {opened, handleToggle, pathActive, ...props}: any ) => {
   const router = useRouter();
 
   return (

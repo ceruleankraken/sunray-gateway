@@ -1,6 +1,6 @@
 
 export interface User {
-  uid     : undefined,
+  uid     : string,
   username: string,
   name    : string,
   sex     : string,

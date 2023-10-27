@@ -7,32 +7,54 @@ type LoginProps = {
   payload: LoginFormPropsRequest;
 };
 
-type UserReponse = {
-  uid     ?: number | undefined;
-  username?: string;
-  name    ?: string;
-  sex     ?: string;
-  email   ?: string | undefined;
+type UserResponse = {
+  user_session: {
+    access_token: string,
+    refresh_token: string,
+    user: {
+      uid     : number;
+      username: string;
+      name    : string;
+      sex     : string;
+      email   : string;
+      // name    ?: string;
+      // sex     ?: string;
+      // email   ?: string | undefined;
+    }
+  }
 };
 
 export type GetLoginResponse = {
-  user?: UserReponse;
-  accessToken?: string;
+  status: number,
+  message: string,
+  meta: any,
+  data: UserResponse
 };
 
 
 const map = {
   getAuthFromRemote: (response?: GetLoginResponse) => {
     return {
-      user:
-        ({
-          uid     : response?.user?.uid ?? undefined,
-          username: response?.user?.username ?? '',
-          name    : response?.user?.name ?? '',
-          sex     : response?.user?.sex ?? '',
-          email   : response?.user?.email ?? undefined,
-        } as User) ?? {},
-      accessToken: response?.accessToken ?? '',
+      user_session: {
+        access_token: response?.data.user_session.access_token,
+        refresh_token: response?.data.user_session.refresh_token,
+        user: {
+          uid     : '28afa9f0-a884-4596-b5ba-04041314298d',
+          username: 'london',
+          name    : 'london',
+          sex     : 'L',
+          email   : 'london@london.com',
+        }
+      }
+      // user:
+      //   ({
+      //     uid     : response?.user?.uid ?? undefined,
+      //     username: response?.user?.username ?? '',
+      //     name    : response?.user?.name ?? '',
+      //     sex     : response?.user?.sex ?? '',
+      //     email   : response?.user?.email ?? undefined,
+      //   } as User) ?? {},
+      // accessToken: response?.accessToken ?? '',
     };
   },
 };
