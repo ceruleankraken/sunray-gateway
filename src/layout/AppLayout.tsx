@@ -9,6 +9,9 @@ import { usePathname } from 'next/navigation';
 import useRedirect from '@/hooks/other/use-redirect';
 import { useTypedSelector } from '@/hooks/other/use-type-selector';
 import useLogout, { LogoutFormPropsRequest } from '@/hooks/auth/use-logout';
+// import theme from '@/utils/theme';
+// import { setAccessToken, setRefreshToken, setUserAuth } from '@/stores/features/auth.slice';
+// import { useDispatch } from 'react-redux';
 
 interface AppProps {
   title: string,
@@ -16,15 +19,21 @@ interface AppProps {
 }
 
 const AppLayout = ({ title, children }: AppProps) => {
+  const { refetch: doLogout }    = useLogout();
   const [open, setOpen]          = React.useState(true);
   const pathname                 = usePathname();
-  const { mutate: submitLogout, isLoading } = useLogout();
   const handleToggle: () => void = () => {
     // e.preventDefault()
     // console.log(open);
     setOpen(!open);
   };
-  
+  // const dispatch = useDispatch();
+  // dispatch(setUserAuth({ username  : '',
+  // full_name : '',
+  // created_at: '',
+  // isactive  : true,}));
+  // dispatch(setAccessToken(''));
+  // dispatch(setRefreshToken(''));
   const accessToken = useTypedSelector(
     (state) => state.reducer.user.accessToken,
   );
@@ -32,21 +41,7 @@ const AppLayout = ({ title, children }: AppProps) => {
   const refreshToken = useTypedSelector(
     (state) => state.reducer.user.refreshToken,
   );
-
-
-  const handleLogout = () => {
-    
-    const data: LogoutFormPropsRequest = {
-      access_token: accessToken?.toString() || '',
-      refresh_token: refreshToken?.toString() || ''
-    }
-
-    console.log("ini ya");
-    console.log(data);
-
-    submitLogout(data);
-  };
-
+  
   useRedirect({
     toUrl    : '/login',
     condition: !!accessToken === false,
@@ -70,7 +65,7 @@ const AppLayout = ({ title, children }: AppProps) => {
 
       {!!accessToken && (
         <>
-          <TopBarComponent opened={open} handleToggle={handleToggle} onLogout={handleLogout}/>
+          <TopBarComponent opened={open} handleToggle={handleToggle} onLogout={doLogout}/>
           <SideBarComponent
             opened       = {open}
             handleToggle = {handleToggle}
@@ -103,7 +98,7 @@ const AppLayout = ({ title, children }: AppProps) => {
               }}
             >
               <Toolbar />
-              <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
                 {children}
               </Container> 
             </Box>

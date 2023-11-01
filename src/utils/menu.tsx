@@ -20,8 +20,8 @@ export const menus:({title: string, path: string, icon: any})[] = [
     icon : <PeopleIcon />,
   },
   {
-    title: 'User',
-    path : '/user',
+    title: 'Partner',
+    path : '/partner',
     icon : <PeopleIcon />,
   },
 ]

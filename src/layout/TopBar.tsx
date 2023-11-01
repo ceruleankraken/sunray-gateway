@@ -40,7 +40,9 @@ const TopBarComponent = ( {opened, handleToggle, onLogout, ...props}: any) => {
     <TopBar position="absolute" open={opened}>
       <Toolbar
         sx={{
-          pr: '24px', // keep right padding when drawer closed
+          opacity: '1',
+          bgcolor: 'secondary.main',
+          pr     : '24px',             // keep right padding when drawer closed
         }}
       >
         <IconButton

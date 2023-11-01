@@ -23,9 +23,9 @@ interface AppSideBarProps extends DrawerProps {
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })<AppSideBarProps>(
   ({ theme, open }) => ({
     '& .MuiDrawer-paper': {
-      position: 'relative',
+      position  : 'relative',
       whiteSpace: 'nowrap',
-      width: drawerWidth,
+      width     : drawerWidth,
       transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
@@ -55,10 +55,11 @@ const SideBarComponent = ( {opened, handleToggle, pathActive, ...props}: any ) =
       
       <Toolbar
         sx={{
-          display       : 'flex',
-          alignItems    : 'center',
+          display   : 'flex',
+          alignItems: 'center',
+          zIndex    : '-10',
+          px        : [1],
           // justifyContent: 'flex-end',
-          px            : [1],
         }}
       >
           <Typography variant="h4" flexGrow={1}  align={"center"} color="primary">MENU</Typography>

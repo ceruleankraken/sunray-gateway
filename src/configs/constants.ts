@@ -10,8 +10,8 @@ export const IS_PRODUCTION  = env.nodeEnv === 'production';
 export const IS_BROWSER = typeof window !== 'undefined';
 export const IS_SERVER  = typeof window === 'undefined';
 
-export const REGISTER_PATH         = '/user/register';
-export const LOGIN_PATH            = '/user/login';
-export const LOGOUT_PATH           = '/user/logout';
-export const REFRESH_TOKEN_PATH    = '/user/refresh';
-export const PRODUCT_CATEGORY_PATH = '/productCategory';
+export const REGISTER_PATH       = '/user/register';
+export const LOGIN_PATH          = '/user/login';
+export const LOGOUT_PATH         = '/user/logout';
+export const REFRESH_TOKEN_PATH  = '/user/refresh';
+export const PARTNER_CREATE_PATH = '/partner';

@@ -23,7 +23,7 @@ export const useLogin = () => {
     mutationFn: (payload: LoginFormPropsRequest) => api.getLogin({ payload }),
     onSuccess: async (data) => {
       await Promise.all([
-        dispatch(setUserAuth(data.user_session.user)),
+        dispatch(setUserAuth(data.user_information || '')),
         dispatch(setAccessToken(data.user_session.access_token || '')),
         dispatch(setRefreshToken(data.user_session.refresh_token || '')),
         // dispatch(setUserOrg(data.org)),

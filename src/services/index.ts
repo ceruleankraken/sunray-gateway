@@ -1,9 +1,11 @@
-import loginServices from '@/services/login';
-import logoutServices from '@/services/logout';
+import loginServices from '@/services/auth/login';
+import logoutServices from '@/services/auth/logout';
+import partnerCreateServices from './partner/create';
 
 const api = {
   ...loginServices,
-  ...logoutServices
+  ...logoutServices,
+  ...partnerCreateServices
 };
 
 export default api;
