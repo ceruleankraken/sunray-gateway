@@ -41,10 +41,10 @@ const ModalComponent = ({modalOpen, modalOnClose, modalId, modalBody, modalTitle
         >
           <CloseIcon />
         </IconButton>
-        <DialogContent dividers>
-          <DialogContentText id={modalBody}>
+        <DialogContent dividers id={modalBody}>
+          {/* <DialogContentText id={modalBody}> */}
             {children}
-          </DialogContentText>
+          {/* </DialogContentText> */}
         </DialogContent>
         <DialogActions>
           {/* <Button onClick={modalOnClose}>Disagree</Button>

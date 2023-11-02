@@ -1,56 +1,74 @@
 import { http } from '@/services/axios';
-import { LOGIN_PATH } from '@/configs/constants';
+import { LOGIN_PATH, PARTNER_GET_PATH } from '@/configs/constants';
 import { LoginFormPropsRequest } from '@/hooks/auth/use-login';
 import { User } from '@/types/user';
 
-type LoginProps = {
-  payload: LoginFormPropsRequest;
+
+// type LoginProps = {
+//   payload: LoginFormPropsRequest;
+// };
+
+type Pagination = {
+  current_page: string,
+  total_page  : string,
+  per_page    : string,
+  total_data  : string
+}
+
+type PartnerResponse = {
+  id        : number,
+  name      : string,
+  created_at: string,
+  created_by: string,
+  User      : User
+  dn_amount : number,
+  cn_amount : number,
+  isactive  : boolean,
+  bpcode    : string
+  invoice   : any
 };
 
-type UserResponse = {
-  user_information: User,
-  user_session: {
-    access_token : string,
-    refresh_token: string,
-  }
-};
-
-export type GetLoginResponse = {
-  status: number,
+export type PartnerGetResponse = {
+  status : number,
   message: string,
-  meta: any,
-  data: UserResponse
+  meta   : any,
+  data   : PartnerResponse[]
 };
 
 
 const map = {
-  getAuthFromRemote: (response?: GetLoginResponse) => {
-    return {
-      user_information: {
-        username  : response?.data.user_information.username,
-        full_name : response?.data.user_information.full_name,
-        created_at: response?.data.user_information.created_at,
-        isactive  : response?.data.user_information.isactive,
-      },
-      user_session: {
-        access_token: response?.data.user_session.access_token,
-        refresh_token: response?.data.user_session.refresh_token,
+  getDataFromResponse: (response?: PartnerGetResponse) => {
+    const PartnerData = response?.data.map( (val) => {
+      return {
+        id        : val.id,  
+        name      : val.name, 
+        created_at: val.created_at, 
+        created_by: val.created_by, 
+        user      : {
+          username: val.User.username,
+          full_name: val.User.full_name,
+          created_at: val.User.created_at,
+          isactive: val.User.isactive,
+
+        },
+        dn_amount : val.dn_amount, 
+        cn_amount : val.cn_amount, 
+        isactive  : val.isactive, 
+        bpcode    : val.bpcode, 
+        invoice   : val.invoice
       }
-    };
+    })
   },
 };
 
-const getLogin = async ({ payload }: LoginProps) => {
-  console.log("==========API===============");
-  console.log(payload);
-  console.log(LOGIN_PATH);
-  const { data } = await http.post(LOGIN_PATH, payload);
+const getPartner = async () => {
+  const { data } = await http.get(PARTNER_GET_PATH);
   console.log(data);
-  return map.getAuthFromRemote(data);
+  return map.getDataFromResponse(data);
 };
 
-const loginServices = {
-  getLogin,
+const partnerGetServices = {
+  getPartner,
 };
 
-export default loginServices;
+export default partnerGetServices;

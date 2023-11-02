@@ -20,7 +20,7 @@ const LoginPage: NextPage = () => {
     (state) => state.reducer.user.accessToken,
   );
 
-  console.log(accessToken);
+  // console.log(accessToken);
   // console.log(!!accessToken === true);
 
   useRedirect({

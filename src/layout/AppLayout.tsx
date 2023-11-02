@@ -8,10 +8,7 @@ import BottomBarComponent from './BottomBar';
 import { usePathname } from 'next/navigation';
 import useRedirect from '@/hooks/other/use-redirect';
 import { useTypedSelector } from '@/hooks/other/use-type-selector';
-import useLogout, { LogoutFormPropsRequest } from '@/hooks/auth/use-logout';
-// import theme from '@/utils/theme';
-// import { setAccessToken, setRefreshToken, setUserAuth } from '@/stores/features/auth.slice';
-// import { useDispatch } from 'react-redux';
+import useLogout from '@/hooks/auth/use-logout';;
 
 interface AppProps {
   title: string,
@@ -27,13 +24,7 @@ const AppLayout = ({ title, children }: AppProps) => {
     // console.log(open);
     setOpen(!open);
   };
-  // const dispatch = useDispatch();
-  // dispatch(setUserAuth({ username  : '',
-  // full_name : '',
-  // created_at: '',
-  // isactive  : true,}));
-  // dispatch(setAccessToken(''));
-  // dispatch(setRefreshToken(''));
+
   const accessToken = useTypedSelector(
     (state) => state.reducer.user.accessToken,
   );

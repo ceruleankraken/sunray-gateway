@@ -2,17 +2,10 @@ import { http } from '@/services/axios';
 import { PARTNER_CREATE_PATH } from '@/configs/constants';
 import { LoginFormPropsRequest } from '@/hooks/auth/use-login';
 import { User } from '@/types/user';
-import { PartnerCreateFormPropsRequest } from '@/hooks/partner/use-create';
+import { PartnerCreateFormPropsRequest } from '@/modals/partner/create';
 
 type PartnerCreateProps = {
   payload: PartnerCreateFormPropsRequest;
-};
-
-export type GetLoginResponse = {
-  status : number,
-  message: string,
-  meta   : any,
-  data   : PartnerCreateFormPropsRequest
 };
 
 const createPartner = async ({ payload }: PartnerCreateProps) => {

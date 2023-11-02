@@ -15,3 +15,4 @@ export const LOGIN_PATH          = '/user/login';
 export const LOGOUT_PATH         = '/user/logout';
 export const REFRESH_TOKEN_PATH  = '/user/refresh';
 export const PARTNER_CREATE_PATH = '/partner';
+export const PARTNER_GET_PATH    = '/partner';
