@@ -38,6 +38,14 @@ http.interceptors.response.use(
   async (err) => {
     const originalConfig = err.config
 
+    console.log("----AXIOS API----");
+    console.log(err.response);
+    console.log(err.response.status);
+    console.log(originalConfig);
+    console.log(originalConfig._retry);
+    console.log(!originalConfig._retry);
+    console.log(err.response.status === 401 && !originalConfig._retry);
+
     if (err.response.status === 401 && !originalConfig._retry) {
       originalConfig._retry = true;
 
@@ -49,7 +57,9 @@ http.interceptors.response.use(
         
         
         return http(originalConfig);
-      } catch (error) {
+      } catch (error) {    
+        console.log("ini error tuh");
+        console.log(error);
         store.dispatch(setAccessToken(''));
         store.dispatch(setRefreshToken(''));
         return Promise.reject(error)

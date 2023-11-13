@@ -16,7 +16,7 @@ type Pagination = {
 }
 
 type PartnerResponse = {
-  id        : number,
+  id        : string,
   name      : string,
   created_at: string,
   created_by: string,
@@ -43,14 +43,7 @@ const map = {
         id        : val.id,  
         name      : val.name, 
         created_at: val.created_at, 
-        created_by: val.created_by, 
-        user      : {
-          username: val.User.username,
-          full_name: val.User.full_name,
-          created_at: val.User.created_at,
-          isactive: val.User.isactive,
-
-        },
+        created_by: val.created_by,
         dn_amount : val.dn_amount, 
         cn_amount : val.cn_amount, 
         isactive  : val.isactive, 
@@ -58,12 +51,20 @@ const map = {
         invoice   : val.invoice
       }
     })
+    return PartnerData;
   },
 };
 
-const getPartner = async () => {
-  const { data } = await http.get(PARTNER_GET_PATH);
-  console.log(data);
+const getPartner = async (sortObject: any) => {
+
+  // const { data } = partner_id ? await http.get(PARTNER_GET_PATH+`/${partner_id}`) : await http.get(PARTNER_GET_PATH);
+  // let resp; 
+  const {data} = await http.get(PARTNER_GET_PATH,{
+    params: {
+      sort : sortObject?.field,
+      order: sortObject?.sort
+    }
+  });
   return map.getDataFromResponse(data);
 };
 

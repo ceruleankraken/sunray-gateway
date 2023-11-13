@@ -1,12 +1,27 @@
+import React from 'react';
 
-import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowsProp, GridSortModel } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 
 
-const TableComponent: React.FC<{columnData?: any[], rowData?: any[]}> = ({columnData, rowData}) => {
+const TableComponent: React.FC<{ 
+    columnData ?: any,
+    rowData    ?: any
+    handleQuery : (data: any)=>void,
+    loading     : boolean
+    // handleSortModelChange : ()=>void,
+
+  }> = ({columnData, rowData, handleQuery, loading}) => {
   
+    
+  const handleSortModelChange = React.useCallback((sortModel: GridSortModel) => {
+    // Here you save the data you need from the sort model
+    console.log(sortModel);
+    handleQuery({ sortModel: [...sortModel] });
+  }, []);
+
   const rows: GridRowsProp = [
     { id: 1, col1: 'Hello', col2: 'World' },
     { id: 2, col1: 'DataGridPro', col2: 'is Awesome' },
@@ -31,19 +46,33 @@ const TableComponent: React.FC<{columnData?: any[], rowData?: any[]}> = ({column
     //     marginTop: 25
     //   }}
     // >
-    <Box width={'100%'}>
-      <DataGrid rows={rows} columns={columns} />
-      <Fab 
+    // <Box sx={{minWidth:0}}>
+    <div style={{
+      width     : '100%',
+      minWidth  : 0,
+      display   : 'grid',
+      // transition: 'width 0.2s ease-out',
+    }}>
+      <DataGrid 
+        sx                = {{ overflowX: 'scroll' }}
+        rows              = {rowData}
+        columns           = {columnData}
+        scrollbarSize     = {5}
+        disableColumnMenu = {true}
+        sortingMode       = "server"
+        onSortModelChange = {handleSortModelChange}
+        loading           = {loading}
+      />
+      {/* <Fab 
         size       = 'large'
         color      = "primary"
         aria-label = "add"
         sx         = {fabStyle}
       >
         <AddIcon />
-      </Fab>
-    </Box>
-
-    // </div>
+      </Fab> */}
+    {/* </Box> */}
+    </div>
   )
 }
 

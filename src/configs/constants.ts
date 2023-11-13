@@ -10,9 +10,12 @@ export const IS_PRODUCTION  = env.nodeEnv === 'production';
 export const IS_BROWSER = typeof window !== 'undefined';
 export const IS_SERVER  = typeof window === 'undefined';
 
-export const REGISTER_PATH       = '/user/register';
-export const LOGIN_PATH          = '/user/login';
-export const LOGOUT_PATH         = '/user/logout';
-export const REFRESH_TOKEN_PATH  = '/user/refresh';
-export const PARTNER_CREATE_PATH = '/partner';
-export const PARTNER_GET_PATH    = '/partner';
+export const REGISTER_PATH        = '/user/register';
+export const LOGIN_PATH           = '/user/login';
+export const LOGOUT_PATH          = '/user/logout';
+export const REFRESH_TOKEN_PATH   = '/user/refresh';
+export const PARTNER_CREATE_PATH  = '/partner';
+export const PARTNER_GET_PATH     = '/partners/';
+export const PARTNER_GET_ONE_PATH = '/partner/';
+export const PARTNER_EDIT_PATH    = '/partner/';
+export const PARTNER_DELETE_PATH  = '/partner/';

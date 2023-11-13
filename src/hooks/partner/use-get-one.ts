@@ -4,24 +4,20 @@ import { useRouter } from 'next/router';
 import api from '@/services';
 
 
-export const usePartnerGet = (sortObject: {}) => {
+export const usePartnerGetOne = (partner_id?: string, setForm?: any) => {
   const dispatch = useDispatch();
   const router   = useRouter();
-  
-  console.log("mamamam");
-  console.log(sortObject);
-  
+
   return useQuery({
     queryKey : ['partner-get'],
-    queryFn  : (payload) => api.getPartner(sortObject),
+    queryFn  : (payload) => api.getPartnerOne(partner_id),
     enabled  : false,
     retry    : false,
     onSuccess: async (data) => {
-      // console.log(data);
-      // if(partner_id) {
-      //   console.log(data.data);
-      //   setForm(data.data);
-      // }
+      if(partner_id) {
+        console.log(data);
+        setForm(data);
+      }
       // console.log("mamama");
       // console.log(handleData);
       // console.log(data);
