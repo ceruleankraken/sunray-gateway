@@ -4,40 +4,54 @@ import { DataGrid, GridColDef, GridRowsProp, GridSortModel } from '@mui/x-data-g
 import { Box } from '@mui/material';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
+import { Pagination } from '@/services/partner/get';
 
 
 const TableComponent: React.FC<{ 
-    columnData ?: any,
-    rowData    ?: any
-    handleQuery : (data: any)=>void,
-    loading     : boolean
+  // handleQuery    : (data: any)=>void,
+    columnData    ?: any,
+    rowData       ?: any,
+    loading        : boolean,
+    pageInfo       : {page: number, pageSize: number},
+    handlePageInfo : any,
+    rowTotal       : number,
+    handleSortData : any,
+    columnHide     : any,
+
     // handleSortModelChange : ()=>void,
 
-  }> = ({columnData, rowData, handleQuery, loading}) => {
+  }> = ({columnData, rowData, loading, pageInfo, handlePageInfo, rowTotal, handleSortData, columnHide}) => {
   
-    
+
+  // const [paginationModel, setPaginationModel] = React.useState({
+  //   page    : pageInfo.current_page,
+  //   pageSize: pageInfo.per_page,
+  // });
+  // const [custSortModel, setCustSortModel] = React.useState<any[]>([]);
+
+  const [rowCountState, setRowCountState] = React.useState(
+    rowTotal || 0,
+  );
+
+  // React.useEffect(() => {
+  //   console.log("page berubah")
+  //   console.log(paginationModel)
+  //   handleQuery({ sortModel: [...custSortModel], pagination: paginationModel });
+  // }, [paginationModel]);
+
+  React.useEffect(() => {
+    setRowCountState((prevRowCountState) =>
+      rowTotal !== undefined ? rowTotal : prevRowCountState,
+    );
+  }, [rowTotal, setRowCountState]);
+
   const handleSortModelChange = React.useCallback((sortModel: GridSortModel) => {
     // Here you save the data you need from the sort model
-    console.log(sortModel);
-    handleQuery({ sortModel: [...sortModel] });
+    // console.log(sortModel);
+    
+    console.log("sort berubah")
+    handleSortData(sortModel)
   }, []);
-
-  const rows: GridRowsProp = [
-    { id: 1, col1: 'Hello', col2: 'World' },
-    { id: 2, col1: 'DataGridPro', col2: 'is Awesome' },
-    { id: 3, col1: 'MUI', col2: 'is Amazing' },
-  ];
-  
-  const columns: GridColDef[] = [
-    { field: 'col1', headerName: 'Column 1', width: 150 },
-    { field: 'col2', headerName: 'Column 2', width: 150 },
-  ];
-
-  const fabStyle = {
-    position: 'absolute',
-    bottom: 16,
-    right: 16,
-  };
 
   return (
     // <div 
@@ -54,14 +68,25 @@ const TableComponent: React.FC<{
       // transition: 'width 0.2s ease-out',
     }}>
       <DataGrid 
-        sx                = {{ overflowX: 'scroll' }}
-        rows              = {rowData}
-        columns           = {columnData}
-        scrollbarSize     = {5}
-        disableColumnMenu = {true}
-        sortingMode       = "server"
-        onSortModelChange = {handleSortModelChange}
-        loading           = {loading}
+        // initialState={{
+        //   columns   : columnData,
+        //   pagination: { paginationModel: { pageSize: 5 } },
+        // }}
+        sx                      = {{ overflowX: 'scroll' }}
+        columnVisibilityModel   = {columnHide}
+        rows                    = {rowData}
+        columns                 = {columnData}
+        scrollbarSize           = {5}
+        disableColumnMenu       = {true}
+        sortingMode             = "server"
+        onSortModelChange       = {handleSortModelChange}
+        loading                 = {loading}
+        pageSizeOptions         = {[5,10,15]}
+        rowCount                = {rowCountState}
+        paginationModel         = {pageInfo}
+        paginationMode          = "server"
+        onPaginationModelChange = {handlePageInfo}
+        
       />
       {/* <Fab 
         size       = 'large'

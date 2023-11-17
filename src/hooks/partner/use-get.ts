@@ -8,9 +8,6 @@ export const usePartnerGet = (sortObject: {}) => {
   const dispatch = useDispatch();
   const router   = useRouter();
   
-  console.log("mamamam");
-  console.log(sortObject);
-  
   return useQuery({
     queryKey : ['partner-get'],
     queryFn  : (payload) => api.getPartner(sortObject),

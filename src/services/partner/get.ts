@@ -8,30 +8,27 @@ import { User } from '@/types/user';
 //   payload: LoginFormPropsRequest;
 // };
 
-type Pagination = {
-  current_page: string,
-  total_page  : string,
-  per_page    : string,
-  total_data  : string
+export type Pagination = {
+  current_page: number,
+  total_page  : number,
+  per_page    : number,
+  total_data  : number
 }
 
 type PartnerResponse = {
   id        : string,
   name      : string,
-  created_at: string,
   created_by: string,
-  User      : User
   dn_amount : number,
   cn_amount : number,
   isactive  : boolean,
-  bpcode    : string
-  invoice   : any
+  bp_code   : string
 };
 
 export type PartnerGetResponse = {
   status : number,
   message: string,
-  meta   : any,
+  meta   : Pagination,
   data   : PartnerResponse[]
 };
 
@@ -40,18 +37,27 @@ const map = {
   getDataFromResponse: (response?: PartnerGetResponse) => {
     const PartnerData = response?.data.map( (val) => {
       return {
-        id        : val.id,  
-        name      : val.name, 
-        created_at: val.created_at, 
+        id        : val.id,
+        name      : val.name,
         created_by: val.created_by,
-        dn_amount : val.dn_amount, 
-        cn_amount : val.cn_amount, 
-        isactive  : val.isactive, 
-        bpcode    : val.bpcode, 
-        invoice   : val.invoice
+        dn_amount : val.dn_amount,
+        cn_amount : val.cn_amount,
+        isactive  : val.isactive,
+        bp_code   : val.bp_code,
       }
     })
-    return PartnerData;
+
+    const ResponseData = {
+      meta: {
+        current_page: response?.meta?.current_page,
+        total_page: response?.meta.total_page,
+        per_page: response?.meta.per_page,
+        total_data: response?.meta.total_data,
+      },
+      data: PartnerData
+    }
+
+    return ResponseData;
   },
 };
 
@@ -61,8 +67,11 @@ const getPartner = async (sortObject: any) => {
   // let resp; 
   const {data} = await http.get(PARTNER_GET_PATH,{
     params: {
-      sort : sortObject?.field,
-      order: sortObject?.sort
+      sort  : sortObject?.field,
+      order : sortObject?.sort,
+      limit : sortObject?.limit,
+      offset: sortObject?.offset,
+
     }
   });
   return map.getDataFromResponse(data);

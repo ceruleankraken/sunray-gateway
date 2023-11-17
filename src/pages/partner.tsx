@@ -18,6 +18,7 @@ import PartnerCreate from '@/modals/partner/create'
 import { usePartnerGet } from '@/hooks/partner/use-get'
 import usePartnerDelete from '@/hooks/partner/use-delete'
 import PartnerEdit from '@/modals/partner/edit'
+import { Pagination } from '@/services/partner/get'
 
 
 
@@ -36,17 +37,39 @@ export default function Partner() {
   const [loadingData, setLoadingData]         = React.useState(false);
   const [editPartnerID, setEditPartnerID]     = React.useState('');
   const [rowData, setRowData]                 = React.useState<any[]>([]);
-  const [queryOptions, setQueryOptions]       = React.useState({field: 'id', sort: 'asc'});
-  const [rows, setRows]                       = React.useState([]);
+  
+  const [pageData, setPageData]               = React.useState({
+    page    : 0,
+    pageSize: 5,
+  });
+  const [sortData, setSortData]               = React.useState<{field: string, sort:string }[]>([]);
+  const [rowTotal, setRowTotal]               = React.useState(0);
+  // const [pageData, setPageData]               = React.useState<Pagination>({
+  //   current_page: 0,
+  //   total_page  : 0,
+  //   per_page    : 5,
+  //   total_data  : 0
+  // });
+  const [queryOptions, setQueryOptions]       = React.useState({
+    field : 'id',
+    sort  : 'asc',
+    limit : '5',
+    offset: '',
+  });
   
   const { refetch: doGetPartner, data, isLoading: isLoadingPartner } = usePartnerGet(queryOptions);
   const handleOpenCreateModal                                        = () => setOpenCreateModal(true);
   const handleCloseCreateModal                                       = () => setOpenCreateModal(false);
-  const handleQuery                                                  = (data: any) => {
-    console.log("iniya");
+  const handleQuery                                                  = () => {
+    console.log("test================================");
     console.log(data);
-    const sortData = data.sortModel[0];
-    setQueryOptions(sortData)
+    console.log(sortData);
+    setQueryOptions({
+      field : sortData[0]?.field,
+      sort  : sortData[0]?.sort,
+      limit : pageData.pageSize.toString(),
+      offset: ((pageData.page)*pageData.pageSize).toString(),
+    })
   }
   const handleOpenEditModal                                          = (partner_id: string) => {
     setOpenEditModal(true);
@@ -60,29 +83,45 @@ export default function Partner() {
     console.log("get data partner");
     doGetPartner().then(
       (resp: any) => {
+        console.log(resp.data);
         console.log("set data partner");
-        setRowData(resp.data);
+        const startNo = (resp.data.meta.per_page * (resp.data.meta.current_page-1))
+        const rows    = resp.data.data.map( (val: any,idx: number) => ({no: startNo+idx+1, ...val}) )
+        setRowData(rows);
+        // setPageData({
+        //   page    : resp.data.meta.current_page - 1,
+        //   pageSize: resp.data.meta.per_page,
+        // });
+        setRowTotal(resp.data.meta.total_data)
       } 
     )
   }
+
   const { mutate: submitDelete, isLoading: isLoadIngDelete }         = usePartnerDelete({getData: () => getDataPartner()});
   
   
   const [headerData, setHeaderData]               = React.useState([
     
-    { field     : 'id',
-      headerName: 'No',
-      type      : 'number',
+    { 
+      field     : 'id',
+      headerName: 'ID',
+      type      : 'string',
       // minWidth  : 100,
       flex      : 0.3,
       filterble : false,
-      renderCell: (index:GridRenderCellParams) => index.api.getRowIndexRelativeToVisibleRows(index.row.id) + 1,
+      // renderCell: (index:GridRenderCellParams) => {
+      //   console.log(index.api.getSortedRowIds().indexOf(index.row.id));
+      //   // return index.api.getRowIndexRelativeToVisibleRows(index.row.id)+1
+      //   return index.api.getSortedRowIds().indexOf(index.row.id)+1
+      // },
+      // renderCell:(index) => index.api.getRowIndex(index.row.code)
     },
+    { field: 'no', headerName: 'No', type: 'number', flex: 0.1, filterble : false, sortable: false},
     { field: 'name', headerName: 'Name', type: 'string', minWidth:100, flex: 0.75},
-    { field: 'bpcode', headerName: 'BP Code', type: 'string', minWidth:100, flex: 0.5},
+    { field: 'bp_code', headerName: 'BP Code', type: 'string', minWidth:100, flex: 0.5},
     { field: 'dn_amount', headerName: 'DN Amount', type: 'number', minWidth:100, flex: 0.25},
     { field: 'cn_amount', headerName: 'CN Amount', type: 'number', minWidth:100, flex: 0.25},
-    { field: 'isactive', headerName: 'Is Active', type: 'boolean', minWidth:100, flex: 0.5},
+    { field: 'isactive', headerName: 'Is Active', type: 'string', minWidth:100, flex: 0.5},
     { field     : 'created_at',
       headerName: 'Created At',
       type      : 'string',
@@ -106,19 +145,6 @@ export default function Partner() {
         onClick = {() => {submitDelete({partner_id: params.row.id})}}
         showInMenu
       />,
-      
-      // <GridActionsCellItem
-      //   icon={<SecurityIcon />}
-      //   label="Toggle Admin"
-      //   onClick={toggleAdmin(params.id)}
-      //   showInMenu
-      // />,
-      // <GridActionsCellItem
-      //   icon={<FileCopyIcon />}
-      //   label="Duplicate User"
-      //   onClick={duplicateUser(params.id)}
-      //   showInMenu
-      // />,
     ]},
   ]);
     
@@ -131,7 +157,7 @@ export default function Partner() {
   }]
 
   useEffect(() => {
-    // console.log(isLoadingPartner)
+    console.log(isLoadingPartner)
     if (isLoadingPartner) {
       setLoadingData(true) 
     } else {
@@ -139,9 +165,18 @@ export default function Partner() {
     }
   }, [isLoadingPartner]);
 
+  useEffect(() => {
+    console.log("PAGEEEEEEEEEEEEEEEE")
+    console.log(pageData)
+    handleQuery();
+  }, [pageData, sortData]);
+
+
   useEffect( () => {
+    console.log("triggered")
+    console.log(queryOptions)
     getDataPartner()
-  },[])
+  },[queryOptions])
 
   return (
     <AppLayout title={"Partner"}>
@@ -186,13 +221,19 @@ export default function Partner() {
             </Box>
           </Stack>
         </Box>
-        
-        <TableComponent
-          rowData     = {rowData}
-          columnData  = {headerData}
-          handleQuery = {handleQuery}
-          loading     = {isLoadingPartner}
-        />
+        {!isLoadingPartner && 
+          <TableComponent
+            rowData        = {rowData}
+            columnData     = {headerData}
+            // handleQuery    = {(tableData: any) => handleQuery(tableData)}
+            loading        = {isLoadingPartner}
+            pageInfo       = {pageData}
+            handlePageInfo = {setPageData}
+            rowTotal       = {rowTotal}
+            handleSortData = {setSortData}
+            columnHide     = {{ id: false }}
+          />
+        }
         </Paper>
         <ModalComponent
           modalOpen    = {openCreateModal}
@@ -200,7 +241,7 @@ export default function Partner() {
           modalSize    = 'sm'
           modalTitle   = 'Create Partner'
         >
-          <PartnerCreate modalOnClose={handleCloseCreateModal}/>
+          <PartnerCreate modalOnClose={handleCloseCreateModal} getData={getDataPartner}/>
         </ModalComponent>
         <ModalComponent
           modalOpen    = {openEditModal}

@@ -9,9 +9,9 @@ export interface PartnerCreateFormPropsRequest {
   cn_amount: number | undefined,
   isactive : boolean | undefined,
 }
-export default function PartnerCreate({modalOnClose}:any) {
+export default function PartnerCreate({modalOnClose, getData}:any) {
   
-  const { mutate: submitCreatePartner, isLoading } = usePartnerCreate({closeModal: ()=>modalOnClose()});
+  const { mutate: submitCreatePartner, isLoading } = usePartnerCreate({closeModal: ()=>modalOnClose(), getData: () => getData()});
   
   const { 
     watch,

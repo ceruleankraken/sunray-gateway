@@ -6,7 +6,7 @@ import { AlertError, AlertSuccess } from '@/utils/notification';
 import { PartnerCreateFormPropsRequest } from '@/modals/partner/create';
 
 
-export const usePartnerCreate = ({closeModal}: any) => {
+export const usePartnerCreate = ({closeModal, getData}: any) => {
   const dispatch = useDispatch();
   const router   = useRouter();
 
@@ -16,6 +16,7 @@ export const usePartnerCreate = ({closeModal}: any) => {
     onSuccess: (data) => {
       AlertSuccess("Data created successfully");
       closeModal()
+      getData()
     },
     onError: (data: any) => {
       let message = data?.response.data.Message || 'Something went wrong, please try again!'

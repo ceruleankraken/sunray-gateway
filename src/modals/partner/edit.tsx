@@ -6,7 +6,7 @@ import { usePartnerGetOne } from '@/hooks/partner/use-get-one';
 
 export interface PartnerEditFormPropsRequest {
   name     : string | undefined,
-  bpcode   : string | undefined,
+  bp_code  : string | undefined,
   dn_amount: number | undefined,
   cn_amount: number | undefined,
   isactive : boolean | undefined,
@@ -30,7 +30,7 @@ export default function PartnerEdit({modalOnClose, partner_id, getData}:any) {
   } = useForm<PartnerEditFormPropsRequest>({
     defaultValues: {
       name     : '',
-      bpcode   : '',
+      bp_code  : '',
       dn_amount: 0,
       cn_amount: 0,
       isactive : false
@@ -40,7 +40,7 @@ export default function PartnerEdit({modalOnClose, partner_id, getData}:any) {
   const loadData = (data: any) => {
     reset({
       name     : data.name,
-      bpcode   : data.bpcode,
+      bp_code  : data.bp_code,
       dn_amount: data.dn_amount,
       cn_amount: data.cn_amount,
       isactive : data.isactive,
@@ -48,7 +48,7 @@ export default function PartnerEdit({modalOnClose, partner_id, getData}:any) {
   }
   
   const { mutate: submitEditPartner, isLoading: isLoadingEditPartner }  = usePartnerEdit({closeModal: ()=>modalOnClose(), partner_id, getData: () => getData()});
-  const { refetch: doGetPartner, data, isLoading: isLoadingGetPartner } = usePartnerGetOne(partner_id, (test: any)=>loadData(test));
+  const { refetch: doGetPartner, data, isLoading: isLoadingGetPartner } = usePartnerGetOne(partner_id, (dataOriginal: any)=>loadData(dataOriginal));
 
   useEffect( () => {
     doGetPartner().then(
@@ -122,7 +122,7 @@ export default function PartnerEdit({modalOnClose, partner_id, getData}:any) {
           />
 
           <Controller
-            name    = "bpcode"
+            name    = "bp_code"
             control = {control}
             rules   = {{ required: {
               value  : true,

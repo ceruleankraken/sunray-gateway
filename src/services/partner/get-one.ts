@@ -1,7 +1,6 @@
 import { http } from '@/services/axios';
 import { PARTNER_GET_ONE_PATH } from '@/configs/constants';
 import { LoginFormPropsRequest } from '@/hooks/auth/use-login';
-import { User } from '@/types/user';
 
 
 // type LoginProps = {
@@ -19,58 +18,38 @@ type PartnerResponse = {
   id        : string,
   name      : string,
   created_at: string,
-  created_by: string,
-  User      : User
   dn_amount : number,
   cn_amount : number,
   isactive  : boolean,
-  bpcode    : string
-  invoice   : any
+  bp_code    : string
 };
 
 export type PartnerGetResponse = {
   status : number,
   message: string,
   meta   : any,
-  data   : PartnerResponse[]
+  data   : PartnerResponse
 };
 
 
 const map = {
   getDataFromResponse: (response?: PartnerGetResponse) => {
-    const PartnerData = response?.data.map( (val) => {
-      return {
-        id        : val.id,  
-        name      : val.name, 
-        created_at: val.created_at, 
-        created_by: val.created_by, 
-        user      : {
-          username: val.User.username,
-          full_name: val.User.full_name,
-          created_at: val.User.created_at,
-          isactive: val.User.isactive,
-
-        },
-        dn_amount : val.dn_amount, 
-        cn_amount : val.cn_amount, 
-        isactive  : val.isactive, 
-        bpcode    : val.bpcode, 
-        invoice   : val.invoice
-      }
-    })
-    return PartnerData;
+    return {
+      id       : response?.data.id,
+      name     : response?.data.name,
+      dn_amount: response?.data.dn_amount,
+      cn_amount: response?.data.cn_amount,
+      isactive : response?.data.isactive,
+      bp_code   : response?.data.bp_code,
+    }
+    // return PartnerData;
   },
 };
 
 const getPartnerOne = async (partner_id?: string) => {
 
   // const { data } = partner_id ? await http.get(PARTNER_GET_PATH+`/${partner_id}`) : await http.get(PARTNER_GET_PATH);
-  const {data} = await http.get(PARTNER_GET_ONE_PATH,
-    {
-      params: {
-        id : partner_id
-      }
-    });
+  const {data} = await http.get(PARTNER_GET_ONE_PATH+partner_id);
   // return resp.data;
   return map.getDataFromResponse(data);
 };
