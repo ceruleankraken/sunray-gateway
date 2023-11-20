@@ -7,32 +7,35 @@ type LoginProps = {
   payload: LoginFormPropsRequest;
 };
 
-type UserReponse = {
-  uid     ?: number | undefined;
-  username?: string;
-  name    ?: string;
-  sex     ?: string;
-  email   ?: string | undefined;
+type UserResponse = {
+  user_information: User,
+  user_session: {
+    access_token : string,
+    refresh_token: string,
+  }
 };
 
 export type GetLoginResponse = {
-  user?: UserReponse;
-  accessToken?: string;
+  status: number,
+  message: string,
+  meta: any,
+  data: UserResponse
 };
 
 
 const map = {
   getAuthFromRemote: (response?: GetLoginResponse) => {
     return {
-      user:
-        ({
-          uid     : response?.user?.uid ?? undefined,
-          username: response?.user?.username ?? '',
-          name    : response?.user?.name ?? '',
-          sex     : response?.user?.sex ?? '',
-          email   : response?.user?.email ?? undefined,
-        } as User) ?? {},
-      accessToken: response?.accessToken ?? '',
+      user_information: {
+        username  : response?.data.user_information.username,
+        full_name : response?.data.user_information.full_name,
+        created_at: response?.data.user_information.created_at,
+        isactive  : response?.data.user_information.isactive,
+      },
+      user_session: {
+        access_token: response?.data.user_session.access_token,
+        refresh_token: response?.data.user_session.refresh_token,
+      }
     };
   },
 };

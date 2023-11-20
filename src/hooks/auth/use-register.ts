@@ -8,30 +8,30 @@ import {
   setRefreshToken,
 } from '@/stores/features/auth.slice';
 import { AlertError, AlertSuccess } from '@/utils/notification';
+// import { setSidebar } from '@/stores/features/sidebar/slice';
 
-export interface LoginFormPropsRequest {
+export interface RegisterFormPropsRequest {
   username: string;
   password: string;
 }
 
-export const useLogin = () => {
+export const useRegister = () => {
   const dispatch = useDispatch();
-  const router = useRouter();
+  const router   = useRouter();
 
   return useMutation({
     mutationKey: ['login'],
-    mutationFn: (payload: LoginFormPropsRequest) => api.getLogin({ payload }),
-    onSuccess: async (data) => {
-      await Promise.all([
-        dispatch(setUserAuth(data.user_information || '')),
-        dispatch(setAccessToken(data.user_session.access_token || '')),
-        dispatch(setRefreshToken(data.user_session.refresh_token || '')),
+    mutationFn : (payload: RegisterFormPropsRequest) => api.getLogin({ payload }),
+    onSuccess  : (data) => {
+      // await Promise.all([
+        // dispatch(setUserAuth(data.user_session.user)),
+        // dispatch(setAccessToken(data.user_session.access_token || '')),
+        // dispatch(setRefreshToken(data.user_session.refresh_token || '')),
         // dispatch(setUserOrg(data.org)),
         // dispatch(setSidebar(data.menu)),
-      ]);
-      AlertSuccess("Login Success");
-
-      // router.replace('/');
+      // ]);
+      AlertSuccess("Register Success")
+      router.replace('/');
     },
     onError: (data: any) => {
       let message = data?.response.data.Message || 'Something went wrong, please try again!'

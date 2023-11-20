@@ -12,15 +12,16 @@ import { getAccessToken } from "@/stores/features/auth.slice";
 import { LoadingButton } from "@mui/lab";
 import useRedirect from "@/hooks/other/use-redirect";
 import { useTypedSelector } from "@/hooks/other/use-type-selector";
+import { useRegister } from "@/hooks/auth/use-register";
 
-const LoginPage: NextPage = () => {
+const RegisterPage: NextPage = () => {
 
-  const router      = useRouter();
+  const router = useRouter();
   const accessToken = useTypedSelector(
     (state) => state.reducer.user.accessToken,
   );
 
-  // console.log(accessToken);
+  console.log(accessToken);
   // console.log(!!accessToken === true);
 
   useRedirect({
@@ -29,7 +30,7 @@ const LoginPage: NextPage = () => {
   });
 
 
-  const { mutate: submitLogin, isLoading } = useLogin();
+  const { mutate: submitRegister, isLoading } = useRegister();
   
   // const router = useRouter();
   
@@ -41,7 +42,7 @@ const LoginPage: NextPage = () => {
       username: data.get('username')?.toString() || '',
       password: data.get('password')?.toString() || ''
     }
-    submitLogin(formData);
+    submitRegister(formData);
 
     // router.replace('/');
   };
@@ -73,11 +74,11 @@ const LoginPage: NextPage = () => {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Sign up
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
             <TextField
@@ -109,9 +110,10 @@ const LoginPage: NextPage = () => {
               type    = "submit"
               loading = {isLoading}
               variant = "contained"
-              sx      = {{ mt: 3, mb: 2 }}
+              sx      = {{ mt: 3, mb: 2}}
+              color   = "secondary"
             >
-              Sign In
+              Register
             </LoadingButton>
             <Grid container>
               <Grid item xs>
@@ -121,12 +123,12 @@ const LoginPage: NextPage = () => {
                 </Link>
               </Grid>
               <Grid item>
-                <Link 
-                  key  = 'Sign Up'
-                  href = '/register'
+                <Link  
+                  key  = 'Sign In'
+                  href = '/login'
                   passHref
                 >
-                  {"Don't have an account? Sign Up"}
+                  {"Already have an account? Sign In"}
                 </Link>
               </Grid>
             </Grid>
@@ -145,4 +147,4 @@ const LoginPage: NextPage = () => {
   )
 }
 
-export default LoginPage;
+export default RegisterPage;

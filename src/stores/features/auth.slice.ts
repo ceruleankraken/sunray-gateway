@@ -5,19 +5,20 @@ import storage from 'redux-persist/lib/storage';
 
 type UserState = {
   user: User;
-  accessToken: string;
+  accessToken: string | undefined;
+  refreshToken: string | undefined;
   // org: Org[];
 };
 
 const initialState: UserState = {
   user: {
-    uid     : undefined,
-    username: '',
-    name    : '',
-    sex     : '',
-    email   : '',
+    username  : '',
+    full_name : '',
+    created_at: '',
+    isactive  : true,
   },
   accessToken: '',
+  refreshToken: '',
 };
 
 const userSlice = createSlice({
@@ -34,6 +35,11 @@ const userSlice = createSlice({
       state.accessToken = payload;
       return state;
     },
+    setRefreshToken: (state, actions: PayloadAction<string>) => {
+      const { payload } = actions;
+      state.refreshToken = payload;
+      return state;
+    },
     userLogout: (state) => {
       storage.removeItem('persist:root');
       state = initialState;
@@ -45,6 +51,6 @@ const userSlice = createSlice({
 export const getUserAuth                                 = (state: RootState) => state.reducer.user.user;
 export const getAccessToken                              = (state: RootState) => state.reducer.user.accessToken;
 // export const getOrg                                      = (state: RootState) => state.reducer.user.org;
-export const { setUserAuth, setAccessToken, userLogout } = userSlice.actions;
+export const { setUserAuth, setAccessToken, setRefreshToken, userLogout } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -8,6 +8,7 @@ import BottomBarComponent from './BottomBar';
 import { usePathname } from 'next/navigation';
 import useRedirect from '@/hooks/other/use-redirect';
 import { useTypedSelector } from '@/hooks/other/use-type-selector';
+import useLogout from '@/hooks/auth/use-logout';;
 
 interface AppProps {
   title: string,
@@ -15,20 +16,25 @@ interface AppProps {
 }
 
 const AppLayout = ({ title, children }: AppProps) => {
-  const [open, setOpen]                 = React.useState(true);
-  const handleToggle: () => void        = () => {
+  const { refetch: doLogout }    = useLogout();
+  const [open, setOpen]          = React.useState(true);
+  const pathname                 = usePathname();
+  const handleToggle: () => void = () => {
     // e.preventDefault()
-    console.log(open);
+    // console.log(open);
     setOpen(!open);
   };
+
   const accessToken = useTypedSelector(
     (state) => state.reducer.user.accessToken,
   );
-
-  const pathname = usePathname();
-
+  
+  const refreshToken = useTypedSelector(
+    (state) => state.reducer.user.refreshToken,
+  );
+  
   useRedirect({
-    toUrl: '/login',
+    toUrl    : '/login',
     condition: !!accessToken === false,
   });
 
@@ -50,7 +56,7 @@ const AppLayout = ({ title, children }: AppProps) => {
 
       {!!accessToken && (
         <>
-          <TopBarComponent opened={open} handleToggle={handleToggle}/>
+          <TopBarComponent opened={open} handleToggle={handleToggle} onLogout={doLogout}/>
           <SideBarComponent
             opened       = {open}
             handleToggle = {handleToggle}
@@ -83,7 +89,7 @@ const AppLayout = ({ title, children }: AppProps) => {
               }}
             >
               <Toolbar />
-              <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
                 {children}
               </Container> 
             </Box>
