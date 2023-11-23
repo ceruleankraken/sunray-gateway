@@ -80,8 +80,6 @@ export default function PartnerEdit({modalOnClose, partner_id, getData}:any) {
   },[])
 
   const onSubmit: SubmitHandler<PartnerEditFormPropsRequest> = (data) => {
-    console.log("ini data edit");
-    console.log(data);
     submitEditPartner(data)
   }
   
@@ -149,61 +147,65 @@ export default function PartnerEdit({modalOnClose, partner_id, getData}:any) {
             }
           />
 
-          <Controller
-            name    = "dn_amount"
-            control = {control}
-            rules   = {{ required: {
-              value  : true,
-              message: "DN Amount fields is required"
-            }}}
-            render  = { ({ 
-                field     : { onChange, value },
-                fieldState: { error },
-                formState,
-              }) => (
-              <TextField
-                helperText = {error ? error.message : null}
-                size       = "medium"
-                error      = {!!error}
-                onChange   = {(event) => onChange(+event.target.value)}
-                type       = 'number'
-                value      = {value}
-                label      = {"DN Amount"}
-                variant    = "outlined"
-                sx         = {{mb:2}}
-                fullWidth
-              />
-              )
-            }
-          />
+          <Stack direction={'row'} spacing={2}>
+            <Controller
+              name    = "dn_amount"
+              control = {control}
+              rules   = {{ required: {
+                value  : true,
+                message: "DN Amount fields is required"
+              }}}
+              render  = { ({ 
+                  field     : { onChange, value },
+                  fieldState: { error },
+                  formState,
+                }) => (
+                <TextField
+                  helperText = {error ? error.message : null}
+                  size       = "medium"
+                  error      = {!!error}
+                  onChange   = {(event) => onChange(+event.target.value)}
+                  type       = 'number'
+                  value      = {value}
+                  label      = {"DN Amount"}
+                  variant    = "outlined"
+                  sx         = {{mb:2}}
+                  fullWidth
+                  InputProps={{ readOnly: true }}
+                />
+                )
+              }
+            />
 
-          <Controller
-            name    = "cn_amount"
-            control = {control}
-            rules   = {{ required: {
-              value  : true,
-              message: "CN Amount fields is required"
-            }}}
-            render  = { ({ 
-                field     : { onChange, value },
-                fieldState: { error },
-                formState,
-              }) => (
-              <TextField
-                helperText = {error ? error.message : null}
-                size       = "medium"
-                error      = {!!error}
-                onChange   = {(event) => onChange(+event.target.value)}
-                type       = 'number'
-                value      = {value}
-                label      = {"CN Amount"}
-                variant    = "outlined"
-                sx         = {{mb:2}}
-                fullWidth
-              />
-              )
-            }
-          />
+            <Controller
+              name    = "cn_amount"
+              control = {control}
+              rules   = {{ required: {
+                value  : true,
+                message: "CN Amount fields is required"
+              }}}
+              render  = { ({ 
+                  field     : { onChange, value },
+                  fieldState: { error },
+                  formState,
+                }) => (
+                <TextField
+                  helperText = {error ? error.message : null}
+                  size       = "medium"
+                  error      = {!!error}
+                  onChange   = {(event) => onChange(+event.target.value)}
+                  type       = 'number'
+                  value      = {value}
+                  label      = {"CN Amount"}
+                  variant    = "outlined"
+                  sx         = {{mb:2}}
+                  fullWidth
+                  InputProps={{ readOnly: true }}
+                />
+                )
+              }
+            />
+          </Stack>
           
           <Controller
             name    = "isactive"

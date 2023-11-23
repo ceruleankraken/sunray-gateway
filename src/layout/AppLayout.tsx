@@ -56,7 +56,7 @@ const AppLayout = ({ title, children }: AppProps) => {
 
       {!!accessToken && (
         <>
-          <TopBarComponent opened={open} handleToggle={handleToggle} onLogout={doLogout}/>
+          <TopBarComponent opened={open} title={title} handleToggle={handleToggle} onLogout={doLogout}/>
           <SideBarComponent
             opened       = {open}
             handleToggle = {handleToggle}

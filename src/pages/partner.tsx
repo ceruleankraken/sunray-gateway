@@ -5,10 +5,11 @@ import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 import AppLayout from '@/layout/AppLayout'
-import { Box, Container, Paper, Toolbar, Typography, Grid, Stack} from '@mui/material'
+import { Box, IconButton, TextField, Container, Paper, Toolbar, Typography, Grid, Stack} from '@mui/material'
 import { GridActionsCellItem, GridRenderCellParams } from '@mui/x-data-grid'
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import SearchIcon from '@mui/icons-material/Search';
 
 import TableComponent from '@/components/table.component'
 import MenuListComponent from '@/components/menuList.component'
@@ -36,6 +37,7 @@ export default function Partner() {
   const [openEditModal, setOpenEditModal]     = React.useState(false);
   const [loadingData, setLoadingData]         = React.useState(false);
   const [editPartnerID, setEditPartnerID]     = React.useState('');
+  const [textSearchTable, setTextSearchTable] = React.useState('');
   const [rowData, setRowData]                 = React.useState<any[]>([]);
   
   const [pageData, setPageData]               = React.useState({
@@ -55,6 +57,7 @@ export default function Partner() {
     sort  : 'asc',
     limit : '5',
     offset: '',
+    q     : '',
   });
   
   const { refetch: doGetPartner, data, isLoading: isLoadingPartner } = usePartnerGet(queryOptions);
@@ -69,8 +72,10 @@ export default function Partner() {
       sort  : sortData[0]?.sort,
       limit : pageData.pageSize.toString(),
       offset: ((pageData.page)*pageData.pageSize).toString(),
+      q     : textSearchTable,
     })
   }
+
   const handleOpenEditModal                                          = (partner_id: string) => {
     setOpenEditModal(true);
     setEditPartnerID(partner_id);
@@ -83,7 +88,11 @@ export default function Partner() {
     console.log("get data partner");
     doGetPartner().then(
       (resp: any) => {
-        console.log(resp.data);
+        console.log(resp.status);
+        if(resp.status == "error"){
+          return;
+        }
+        
         console.log("set data partner");
         const startNo = (resp.data.meta.per_page * (resp.data.meta.current_page-1))
         const rows    = resp.data.data.map( (val: any,idx: number) => ({no: startNo+idx+1, ...val}) )
@@ -222,17 +231,38 @@ export default function Partner() {
           </Stack>
         </Box>
         {!isLoadingPartner && 
-          <TableComponent
-            rowData        = {rowData}
-            columnData     = {headerData}
-            // handleQuery    = {(tableData: any) => handleQuery(tableData)}
-            loading        = {isLoadingPartner}
-            pageInfo       = {pageData}
-            handlePageInfo = {setPageData}
-            rowTotal       = {rowTotal}
-            handleSortData = {setSortData}
-            columnHide     = {{ id: false }}
-          />
+          <>
+            <Box sx={{ mb:2, display: 'flex', alignItems: 'stretch', justifyContent: 'center', alignContent: 'center', }}>
+              <TextField
+                fullWidth
+                id       = "inputSearchTable"
+                size     = "small"
+                name     = "inputSearchTable"
+                value    = {textSearchTable}
+                label    = "Search"
+                variant  = "outlined"
+                onChange = { (e) => {
+                  setTextSearchTable(e.target.value)
+                }}
+              />
+              {/* <Button  variant="contained" color="primary" sx={{ width: '5%'}}> */}
+              <IconButton color='secondary' onClick={handleQuery} size="large">
+                <SearchIcon />
+              </IconButton>
+              {/* </Button> */}
+            </Box>
+            <TableComponent
+              rowData        = {rowData}
+              columnData     = {headerData}
+              // handleQuery    = {(tableData: any) => handleQuery(tableData)}
+              loading        = {isLoadingPartner}
+              pageInfo       = {pageData}
+              handlePageInfo = {setPageData}
+              rowTotal       = {rowTotal}
+              handleSortData = {setSortData}
+              columnHide     = {{ id: false }}
+            />
+          </>
         }
         </Paper>
         <ModalComponent

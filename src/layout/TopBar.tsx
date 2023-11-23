@@ -34,7 +34,7 @@ const TopBar = styled(MuiAppBar, {
 }));
 
 
-const TopBarComponent = ( {opened, handleToggle, onLogout, ...props}: any) => {
+const TopBarComponent = ( {opened, handleToggle, onLogout, title, ...props}: any) => {
 
   return (
     <TopBar position="absolute" open={opened}>
@@ -64,7 +64,7 @@ const TopBarComponent = ( {opened, handleToggle, onLogout, ...props}: any) => {
           noWrap
           sx={{ flexGrow: 1 }}
         >
-          Dashboard
+          {title}
         </Typography>
         <IconButton 
           color   = "inherit"
