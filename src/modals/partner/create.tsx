@@ -25,7 +25,7 @@ export default function PartnerCreate({modalOnClose, getData}:any) {
       bpcode   : '',
       dn_amount: 0,
       cn_amount: 0,
-      isactive : false
+      isactive : true
     }
   })
 
@@ -174,6 +174,7 @@ export default function PartnerCreate({modalOnClose, getData}:any) {
                       value          = {"start"}
                       labelPlacement = {"start"}
                       onChange       = {onChange}
+                      disabled       = {true}
                       control        = {
                         <Switch
                           checked    = {value}
