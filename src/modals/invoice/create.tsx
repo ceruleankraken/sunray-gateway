@@ -9,9 +9,9 @@ export interface PartnerCreateFormPropsRequest {
   cn_amount: number | undefined,
   isactive : boolean | undefined,
 }
-export default function PartnerCreate({modalOnClose, getData}:any) {
+export default function InvoiceCreate({modalOnClose, getData}:any) {
   
-  const { mutate: submitCreatePartner, isLoading } = usePartnerCreate({closeModal: ()=>modalOnClose(), getData: () => getData()});
+  const { mutate: submitCreateInvoice, isLoading } = usePartnerCreate({closeModal: ()=>modalOnClose(), getData: () => getData()});
   
   const { 
     watch,
@@ -30,7 +30,7 @@ export default function PartnerCreate({modalOnClose, getData}:any) {
   })
 
   const onSubmit: SubmitHandler<PartnerCreateFormPropsRequest> = (data) => {
-    submitCreatePartner(data)
+    submitCreateInvoice(data)
   }
   
 

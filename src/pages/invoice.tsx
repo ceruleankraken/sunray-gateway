@@ -10,13 +10,13 @@ import AddIcon from '@mui/icons-material/Add';
 import PartnerTableComponent from '@/components/partner/partnerTable.component'
 
 
-export default function Partner() {
+export default function Invoice() {
   const [openCreateModal, setOpenCreateModal] = React.useState(false);
   const handleOpenCreateModal                                        = () => setOpenCreateModal(true);
   const handleCloseCreateModal                                       = () => setOpenCreateModal(false);
   
   return (
-    <AppLayout title={"Partner"}>
+    <AppLayout title={"Invoice"}>
         <Paper 
           sx={{
             p            : 2,
@@ -28,12 +28,12 @@ export default function Partner() {
           <Box mb={3}>
             <Stack direction={"row"} display={"flex"} alignItems={"center"}>
               <Box flexGrow={1}>
-                <Typography variant="h4" color="initial" fontWeight={700} height={30} lineHeight={1.5} fontSize={'1.25rem'}>Partner</Typography>
-                <Typography variant="body1" color="initial" height={20} lineHeight={1} fontSize={'1 rem'}>{'Dashboard > Partner'}</Typography>
+                <Typography variant="h4" color="initial" fontWeight={700} height={30} lineHeight={1.5} fontSize={'1.25rem'}>Invoice</Typography>
+                <Typography variant="body1" color="initial" height={20} lineHeight={1} fontSize={'1 rem'}>{'Dashboard > Invoice'}</Typography>
               </Box>
               <Box>
                 <Button
-                  id            = 'partner-add'
+                  id            = 'invoice-add'
                   variant       = 'contained'
                   color         = 'secondary'
                   onClick       = {handleOpenCreateModal}

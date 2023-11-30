@@ -1,36 +1,88 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { TextField, Button, Stack, Switch, FormControl, FormLabel, FormGroup, FormHelperText, FormControlLabel} from '@mui/material'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
-import { usePartnerCreate } from '@/hooks/partner/use-create'
-export interface PartnerCreateFormPropsRequest {
+import { usePartnerEdit } from '@/hooks/partner/use-edit';
+import { usePartnerGetOne } from '@/hooks/partner/use-get-one';
+
+export interface InvoiceEditFormPropsRequest {
   name     : string | undefined,
-  bpcode   : string | undefined,
+  bp_code  : string | undefined,
   dn_amount: number | undefined,
   cn_amount: number | undefined,
   isactive : boolean | undefined,
 }
-export default function PartnerCreate({modalOnClose, getData}:any) {
+export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
   
-  const { mutate: submitCreatePartner, isLoading } = usePartnerCreate({closeModal: ()=>modalOnClose(), getData: () => getData()});
-  
+  // const [editPartnerData, setEditPertnerData] = useState({
+  //   name     : '',
+  //   bpcode   : '',
+  //   dn_amount: 0,
+  //   cn_amount: 0,
+  //   isactive : false
+  // })
   const { 
     watch,
     control,
     register,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm<PartnerCreateFormPropsRequest>({
+  } = useForm<InvoiceEditFormPropsRequest>({
     defaultValues: {
       name     : '',
-      bpcode   : '',
+      bp_code  : '',
       dn_amount: 0,
       cn_amount: 0,
-      isactive : true
+      isactive : false
     }
   })
 
-  const onSubmit: SubmitHandler<PartnerCreateFormPropsRequest> = (data) => {
-    submitCreatePartner(data)
+  const loadData = (data: any) => {
+    reset({
+      name     : data.name,
+      bp_code  : data.bp_code,
+      dn_amount: data.dn_amount,
+      cn_amount: data.cn_amount,
+      isactive : data.isactive,
+    })
+  }
+  
+  const { mutate: submitEditPartner, isLoading: isLoadingEditPartner }  = usePartnerEdit({closeModal: ()=>modalOnClose(), invoice_id, getData: () => getData()});
+  const { refetch: doGetPartner, data, isLoading: isLoadingGetPartner } = usePartnerGetOne(invoice_id, (dataOriginal: any)=>loadData(dataOriginal));
+
+  useEffect( () => {
+    doGetPartner().then(
+      (resp: any) => {
+        console.log(resp);
+        // console.log(resp.data.data);
+        // setEditPertnerData({
+        //   // name     : resp.data[0].name,
+        //   // bpcode   : resp.data[0].bpcode,
+        //   // dn_amount: resp.data[0].dn_amount,
+        //   // cn_amount: resp.data[0].cn_amount,
+        //   // isactive : resp.data[0].isactive,
+          
+        //   name     : resp.data.data.name,
+        //   bpcode   : resp.data.data.bpcode,
+        //   dn_amount: resp.data.data.dn_amount,
+        //   cn_amount: resp.data.data.cn_amount,
+        //   isactive : resp.data.data.isactive,
+        // })
+        // reset({
+        //   name     : resp.data.data.name,
+        //   bpcode   : resp.data.data.bpcode,
+        //   dn_amount: resp.data.data.dn_amount,
+        //   cn_amount: resp.data.data.cn_amount,
+        //   isactive : resp.data.data.isactive,
+        // });
+      } 
+    )
+  },[])
+
+  const onSubmit: SubmitHandler<InvoiceEditFormPropsRequest> = (data) => {
+    console.log("ini data edit");
+    console.log(data);
+    submitEditPartner(data)
   }
   
 
@@ -50,13 +102,15 @@ export default function PartnerCreate({modalOnClose, getData}:any) {
                 field     : { onChange, value },
                 fieldState: { error },
                 formState,
+                
               }) => (
               <TextField
-                helperText = {error ? error.message : null}
-                size       = "medium"
-                error      = {!!error}
-                onChange   = {onChange}
-                type       = 'string'
+              {...register('name')}
+              helperText = {error ? error.message : null}
+              size       = "medium"
+              error      = {!!error}
+              onChange   = {onChange}
+              type       = 'string'
                 value      = {value}
                 label      = {"Name"}
                 variant    = "outlined"
@@ -68,7 +122,7 @@ export default function PartnerCreate({modalOnClose, getData}:any) {
           />
 
           <Controller
-            name    = "bpcode"
+            name    = "bp_code"
             control = {control}
             rules   = {{ required: {
               value  : true,
@@ -175,7 +229,6 @@ export default function PartnerCreate({modalOnClose, getData}:any) {
                       control        = {
                         <Switch
                           checked    = {value}
-                          disabled   = {true}
                           onChange   = {onChange}
                           inputProps = {{ 'aria-label': 'controlled' }}
                           // sx         = {{mb:2}}
@@ -235,7 +288,7 @@ export default function PartnerCreate({modalOnClose, getData}:any) {
             type  = 'number'
             required
           /> */}
-          <Button type={'submit'} variant={'contained'} color={'primary'}>
+          <Button type={'submit'} variant={'contained'} color={'secondary'}>
             Submit
           </Button>
         </Stack>
