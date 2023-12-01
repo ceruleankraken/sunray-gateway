@@ -3,6 +3,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PeopleIcon from '@mui/icons-material/People';
 import React from 'react';
 import ReceiptIcon from '@mui/icons-material/Receipt';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
 
 export const menus:({title: string, path: string, icon: any})[] = [
   {
@@ -26,8 +27,8 @@ export const menus:({title: string, path: string, icon: any})[] = [
     icon : <PeopleIcon />,
   },
   {
-    title: 'Invoice',
-    path : '/invoice',
-    icon : <ReceiptIcon />,
+    title: 'Product',
+    path : '/product',
+    icon : <Inventory2Icon />,
   },
 ]

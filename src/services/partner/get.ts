@@ -2,18 +2,7 @@ import { http } from '@/services/axios';
 import { LOGIN_PATH, PARTNER_GET_PATH } from '@/configs/constants';
 import { LoginFormPropsRequest } from '@/hooks/auth/use-login';
 import { User } from '@/types/user';
-
-
-// type LoginProps = {
-//   payload: LoginFormPropsRequest;
-// };
-
-export type Pagination = {
-  current_page: number,
-  total_page  : number,
-  per_page    : number,
-  total_data  : number
-}
+import { Pagination } from '@/types/pagination';
 
 type PartnerResponse = {
   id        : string,

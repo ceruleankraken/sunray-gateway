@@ -3,14 +3,8 @@ import { TextField, Button, Stack, Switch, FormControl, FormLabel, FormGroup, Fo
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { usePartnerEdit } from '@/hooks/partner/use-edit';
 import { usePartnerGetOne } from '@/hooks/partner/use-get-one';
+import { PartnerEditFormPropsRequest } from '@/services/partner/edit';
 
-export interface PartnerEditFormPropsRequest {
-  name     : string | undefined,
-  bp_code  : string | undefined,
-  dn_amount: number | undefined,
-  cn_amount: number | undefined,
-  isactive : boolean | undefined,
-}
 export default function PartnerEdit({modalOnClose, partner_id, getData}:any) {
   
   // const [editPartnerData, setEditPertnerData] = useState({

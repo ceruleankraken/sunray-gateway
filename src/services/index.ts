@@ -6,6 +6,12 @@ import partnerGetOneServices from './partner/get-one';
 import partnerDeleteServices from './partner/delete';
 import partnerEditServices from './partner/edit';
 
+import productCreateServices from './product/create';
+import productEditServices from './product/edit';
+import productGetServices from './product/get';
+import productGetOneServices from './product/get-one';
+import productDeleteServices from './product/delete';
+
 const api = {
   ...loginServices,
   ...logoutServices,
@@ -14,6 +20,11 @@ const api = {
   ...partnerGetOneServices,
   ...partnerDeleteServices,
   ...partnerEditServices,
+  ...productCreateServices,
+  ...productEditServices,
+  ...productGetServices,
+  ...productGetOneServices,
+  ...productDeleteServices,
 };
 
 export default api;

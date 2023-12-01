@@ -7,13 +7,6 @@ import { LoginFormPropsRequest } from '@/hooks/auth/use-login';
 //   payload: LoginFormPropsRequest;
 // };
 
-type Pagination = {
-  current_page: string,
-  total_page  : string,
-  per_page    : string,
-  total_data  : string
-}
-
 type PartnerResponse = {
   id        : string,
   name      : string,

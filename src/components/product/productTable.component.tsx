@@ -1,25 +1,23 @@
 
 import React from 'react';
-import moment from 'moment'
-import styles from '@/styles/Home.module.css'
 
 import { GridActionsCellItem, GridRenderCellParams } from '@mui/x-data-grid'
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
 import TableComponent from '@/components/table.component'
-import PartnerCreate from '@/modals/partner/create'
-import { usePartnerGet } from '@/hooks/partner/use-get'
-import usePartnerDelete from '@/hooks/partner/use-delete'
-import PartnerEdit from '@/modals/partner/edit'
 import ModalComponent from '@/components/modal.component'
+import { useProductGet } from '@/hooks/product/use-get';
+import useProductDelete from '@/hooks/product/use-delete';
+import ProductEdit from '@/modals/product/edit';
+import ProductCreate from '@/modals/product/create';
 
 
-const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
+const ProductTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
   const [openEditModal, setOpenEditModal] = React.useState(false);
   const [loadingData, setLoadingData]     = React.useState(false);
-  const [editInvoiceID, setEditInvoiceID] = React.useState('');
+  const [editProductID, setEditProductID] = React.useState('');
   const [rowData, setRowData]             = React.useState<any[]>([]);
   const [sortData, setSortData]           = React.useState<{field: string, sort:string }[]>([]);
   const [rowTotal, setRowTotal]           = React.useState(0);
@@ -34,8 +32,8 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     offset: '',
   });
   
-  const { refetch: doGetPartner, data, isLoading: isLoadingPartner } = usePartnerGet(queryOptions);
-  const { mutate: submitDelete, isLoading: isLoadIngDelete }         = usePartnerDelete({getData: () => getDataPartner()});
+  const { refetch: doGetProduct, data, isLoading: isLoadingProduct } = useProductGet(queryOptions);
+  const { mutate: submitDelete, isLoading: isLoadIngDelete }         = useProductDelete({getData: () => getDataProduct()});
   
   
   const handleQuery = () => {
@@ -48,14 +46,14 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   }
   const handleOpenEditModal = (partner_id: string) => {
     setOpenEditModal(true);
-    setEditInvoiceID(partner_id);
+    setEditProductID(partner_id);
   }
   const handleCloseEditModal = () => {
     setOpenEditModal(false);
-    setEditInvoiceID('');
+    setEditProductID('');
   }
-  const getDataPartner = () => {
-    doGetPartner().then(
+  const getDataProduct = () => {
+    doGetProduct().then(
       (resp: any) => {
         if(resp.status == 'error') {
         }
@@ -91,7 +89,7 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         key     = {"delete-"+params.id}
         icon    = {<DeleteIcon />}
         label   = "Delete"
-        onClick = {() => {submitDelete({partner_id: params.row.id})}}
+        onClick = {() => {submitDelete({product_id: params.row.id})}}
         showInMenu
       />,
     ]},
@@ -99,12 +97,12 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
   
   React.useEffect(() => {
-    if (isLoadingPartner) {
+    if (isLoadingProduct) {
       setLoadingData(true) 
     } else {
       setLoadingData(false)
     }
-  }, [isLoadingPartner]);
+  }, [isLoadingProduct]);
 
   React.useEffect(() => {
     handleQuery();
@@ -112,16 +110,16 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
 
   React.useEffect( () => {
-    getDataPartner()
+    getDataProduct()
   },[queryOptions])
 
   return (
     <>
-      {!isLoadingPartner && 
+      {!isLoadingProduct && 
         <TableComponent
           rowData        = {rowData}
           columnData     = {headerData}
-          loading        = {isLoadingPartner}
+          loading        = {isLoadingProduct}
           pageInfo       = {pageData}
           handlePageInfo = {setPageData}
           rowTotal       = {rowTotal}
@@ -133,21 +131,21 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         modalOpen    = {openEditModal}
         modalOnClose = {handleCloseEditModal}
         modalSize    = 'sm'
-        modalTitle   = 'Edit Invoice'
+        modalTitle   = 'Edit Product'
       >
-        <PartnerEdit modalOnClose={handleCloseEditModal} partner_id={editInvoiceID} getData={getDataPartner}/>
+        <ProductEdit modalOnClose={handleCloseEditModal} product_id={editProductID} getData={getDataProduct}/>
       </ModalComponent>
 
       <ModalComponent
         modalOpen    = {openCreate}
         modalOnClose = {handleCloseCreate}
         modalSize    = 'sm'
-        modalTitle   = 'Create Invoice'
+        modalTitle   = 'Create Product'
       >
-        <PartnerCreate modalOnClose={handleCloseCreate} getData={getDataPartner}/>
+        <ProductCreate modalOnClose={handleCloseCreate} getData={getDataProduct}/>
       </ModalComponent>
     </>
   )
 }
 
-export default PartnerTableComponent;
+export default ProductTableComponent;

@@ -2,13 +2,8 @@ import React from 'react'
 import { TextField, Button, Stack, Switch, FormControl, FormLabel, FormGroup, FormHelperText, FormControlLabel} from '@mui/material'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { usePartnerCreate } from '@/hooks/partner/use-create'
-export interface PartnerCreateFormPropsRequest {
-  name     : string | undefined,
-  bpcode   : string | undefined,
-  dn_amount: number | undefined,
-  cn_amount: number | undefined,
-  isactive : boolean | undefined,
-}
+import { PartnerCreateFormPropsRequest } from '@/services/partner/create';
+
 export default function PartnerCreate({modalOnClose, getData}:any) {
   
   const { mutate: submitCreatePartner, isLoading } = usePartnerCreate({closeModal: ()=>modalOnClose(), getData: () => getData()});

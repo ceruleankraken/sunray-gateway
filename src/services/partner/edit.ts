@@ -2,8 +2,14 @@ import { http } from '@/services/axios';
 import { PARTNER_CREATE_PATH, PARTNER_EDIT_PATH } from '@/configs/constants';
 import { LoginFormPropsRequest } from '@/hooks/auth/use-login';
 import { User } from '@/types/user';
-import { PartnerCreateFormPropsRequest } from '@/modals/partner/create';
-import { PartnerEditFormPropsRequest } from '@/modals/partner/edit';
+
+export interface PartnerEditFormPropsRequest {
+  name     : string | undefined,
+  bp_code  : string | undefined,
+  dn_amount: number | undefined,
+  cn_amount: number | undefined,
+  isactive : boolean | undefined,
+}
 
 type PartnerEditProps = {
   payload: PartnerEditFormPropsRequest;
