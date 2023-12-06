@@ -4,6 +4,7 @@ import React from 'react';
 import { GridActionsCellItem, GridRenderCellParams } from '@mui/x-data-grid'
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import SearchIcon from '@mui/icons-material/Search';
 
 import TableComponent from '@/components/table.component'
 import ModalComponent from '@/components/modal.component'
@@ -11,17 +12,19 @@ import { useProductGet } from '@/hooks/product/use-get';
 import useProductDelete from '@/hooks/product/use-delete';
 import ProductEdit from '@/modals/product/edit';
 import ProductCreate from '@/modals/product/create';
+import { Box, IconButton, TextField, Skeleton } from '@mui/material';
 
 
 const ProductTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
-  const [openEditModal, setOpenEditModal] = React.useState(false);
-  const [loadingData, setLoadingData]     = React.useState(false);
-  const [editProductID, setEditProductID] = React.useState('');
-  const [rowData, setRowData]             = React.useState<any[]>([]);
-  const [sortData, setSortData]           = React.useState<{field: string, sort:string }[]>([]);
-  const [rowTotal, setRowTotal]           = React.useState(0);
-  const [pageData, setPageData]           = React.useState({
+  const [openEditModal, setOpenEditModal]     = React.useState(false);
+  const [loadingData, setLoadingData]         = React.useState(false);
+  const [editProductID, setEditProductID]     = React.useState('');
+  const [textSearchTable, setTextSearchTable] = React.useState('');
+  const [rowData, setRowData]                 = React.useState<any[]>([]);
+  const [sortData, setSortData]               = React.useState<{field: string, sort:string }[]>([]);
+  const [rowTotal, setRowTotal]               = React.useState(0);
+  const [pageData, setPageData]               = React.useState({
     page    : 0,
     pageSize: 5,
   });
@@ -30,6 +33,7 @@ const ProductTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     sort  : 'asc',
     limit : '5',
     offset: '',
+    q     : '',
   });
   
   const { refetch: doGetProduct, data, isLoading: isLoadingProduct } = useProductGet(queryOptions);
@@ -42,6 +46,7 @@ const ProductTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       sort  : sortData[0]?.sort,
       limit : pageData.pageSize.toString(),
       offset: ((pageData.page)*pageData.pageSize).toString(),
+      q     : textSearchTable,
     })
   }
   const handleOpenEditModal = (partner_id: string) => {
@@ -115,7 +120,37 @@ const ProductTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
   return (
     <>
-      {!isLoadingProduct && 
+      <Box sx={{ mb:2, display: 'flex', alignItems: 'stretch', justifyContent: 'center', alignContent: 'center', }}>
+        <TextField
+          fullWidth
+          id       = "inputSearchTable"
+          size     = "small"
+          name     = "inputSearchTable"
+          value    = {textSearchTable}
+          label    = "Search"
+          variant  = "outlined"
+          onChange = { (e) => {
+            setTextSearchTable(e.target.value)
+          }}
+        />
+        {/* <Button  variant="contained" color="primary" sx={{ width: '5%'}}> */}
+        <IconButton color='secondary' onClick={handleQuery} size="large">
+          <SearchIcon />
+        </IconButton>
+        {/* </Button> */}
+      </Box>
+      {
+      isLoadingProduct ?
+        <Skeleton >
+          <div 
+            style = {{
+              width  : '100%',
+              height : 400,
+            }}
+          > 
+          </div>
+        </Skeleton>
+      :
         <TableComponent
           rowData        = {rowData}
           columnData     = {headerData}

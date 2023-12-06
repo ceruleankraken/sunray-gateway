@@ -106,7 +106,7 @@ export default function PartnerCreate({modalOnClose, getData}:any) {
                 helperText = {error ? error.message : null}
                 size       = "medium"
                 error      = {!!error}
-                onChange   = {(event) => onChange(+event.target.value)}
+                onChange   = {onChange}
                 type       = 'number'
                 value      = {value}
                 label      = {"DN Amount"}
@@ -134,7 +134,7 @@ export default function PartnerCreate({modalOnClose, getData}:any) {
                 helperText = {error ? error.message : null}
                 size       = "medium"
                 error      = {!!error}
-                onChange   = {(event) => onChange(+event.target.value)}
+                onChange   = {onChange}
                 type       = 'number'
                 value      = {value}
                 label      = {"CN Amount"}

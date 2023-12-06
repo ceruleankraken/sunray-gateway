@@ -6,6 +6,7 @@ import styles from '@/styles/Home.module.css'
 import { GridActionsCellItem, GridRenderCellParams } from '@mui/x-data-grid'
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import SearchIcon from '@mui/icons-material/Search';
 
 import TableComponent from '@/components/table.component'
 import PartnerCreate from '@/modals/partner/create'
@@ -13,17 +14,19 @@ import { usePartnerGet } from '@/hooks/partner/use-get'
 import usePartnerDelete from '@/hooks/partner/use-delete'
 import PartnerEdit from '@/modals/partner/edit'
 import ModalComponent from '@/components/modal.component'
+import { Box, IconButton, TextField, Skeleton } from '@mui/material';
 
 
 const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
-  const [openEditModal, setOpenEditModal] = React.useState(false);
-  const [loadingData, setLoadingData]     = React.useState(false);
-  const [editPartnerID, setEditPartnerID] = React.useState('');
-  const [rowData, setRowData]             = React.useState<any[]>([]);
-  const [sortData, setSortData]           = React.useState<{field: string, sort:string }[]>([]);
-  const [rowTotal, setRowTotal]           = React.useState(0);
-  const [pageData, setPageData]           = React.useState({
+  const [openEditModal, setOpenEditModal]     = React.useState(false);
+  const [loadingData, setLoadingData]         = React.useState(false);
+  const [textSearchTable, setTextSearchTable] = React.useState('');
+  const [editPartnerID, setEditPartnerID]     = React.useState('');
+  const [rowData, setRowData]                 = React.useState<any[]>([]);
+  const [sortData, setSortData]               = React.useState<{field: string, sort:string }[]>([]);
+  const [rowTotal, setRowTotal]               = React.useState(0);
+  const [pageData, setPageData]               = React.useState({
     page    : 0,
     pageSize: 5,
   });
@@ -32,6 +35,7 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     sort  : 'asc',
     limit : '5',
     offset: '',
+    q     : '',
   });
   
   const { refetch: doGetPartner, data, isLoading: isLoadingPartner } = usePartnerGet(queryOptions);
@@ -44,6 +48,7 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       sort  : sortData[0]?.sort,
       limit : pageData.pageSize.toString(),
       offset: ((pageData.page)*pageData.pageSize).toString(),
+      q     : textSearchTable,
     })
   }
   const handleOpenEditModal                                          = (partner_id: string) => {
@@ -68,8 +73,6 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
           setRowData(rows);
           setRowTotal(resp.data.meta.total_data)
         }
-
-        
       } 
     )
   }
@@ -130,7 +133,37 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
   return (
     <>
-      {!isLoadingPartner && 
+      <Box sx={{ mb:2, display: 'flex', alignItems: 'stretch', justifyContent: 'center', alignContent: 'center', }}>
+        <TextField
+          fullWidth
+          id       = "inputSearchTable"
+          size     = "small"
+          name     = "inputSearchTable"
+          value    = {textSearchTable}
+          label    = "Search"
+          variant  = "outlined"
+          onChange = { (e) => {
+            setTextSearchTable(e.target.value)
+          }}
+        />
+        {/* <Button  variant="contained" color="primary" sx={{ width: '5%'}}> */}
+        <IconButton color='secondary' onClick={handleQuery} size="large">
+          <SearchIcon />
+        </IconButton>
+        {/* </Button> */}
+      </Box>
+      {
+      isLoadingPartner ?
+        <Skeleton >
+          <div 
+            style = {{
+              width  : '100%',
+              height : 400,
+            }}
+          > 
+          </div>
+        </Skeleton>
+      :
         <TableComponent
           rowData        = {rowData}
           columnData     = {headerData}

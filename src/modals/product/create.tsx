@@ -78,7 +78,7 @@ export default function ProductCreate({modalOnClose, getData}:any) {
                 helperText = {error ? error.message : null}
                 size       = "medium"
                 error      = {!!error}
-                onChange   = {(event) => onChange(+event.target.value)}
+                onChange   = {onChange}
                 type       = 'string'
                 value      = {value}
                 label      = {"Value"}
@@ -106,7 +106,7 @@ export default function ProductCreate({modalOnClose, getData}:any) {
                 helperText = {error ? error.message : null}
                 size       = "medium"
                 error      = {!!error}
-                onChange   = {(event) => onChange(+event.target.value)}
+                onChange   = {onChange}
                 type       = 'string'
                 value      = {value}
                 label      = {"UPC"}
@@ -132,7 +132,7 @@ export default function ProductCreate({modalOnClose, getData}:any) {
               }) => (
                 <TextField
                   size        = "medium"
-                  onChange    = {(event) => onChange(+event.target.value)}
+                  onChange    = {onChange}
                   placeholder = 'Description'
                   value       = {value}
                   label       = {"Description"}
