@@ -132,7 +132,7 @@ export default function ProductEdit({modalOnClose, product_id, getData}:any) {
                 helperText = {error ? error.message : null}
                 size       = "medium"
                 error      = {!!error}
-                onChange   = {(event) => onChange(+event.target.value)}
+                onChange   = {onChange}
                 type       = 'string'
                 value      = {value}
                 label      = {"UPC"}
@@ -154,7 +154,7 @@ export default function ProductEdit({modalOnClose, product_id, getData}:any) {
               }) => (
               <TextField
                 size        = "medium"
-                onChange    = {(event) => onChange(+event.target.value)}
+                onChange    = {onChange}
                 placeholder = 'Description'
                 value       = {value}
                 label       = {"Description"}
