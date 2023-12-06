@@ -60,7 +60,7 @@ const getPartner = async (sortObject: any) => {
       order : sortObject?.sort,
       limit : sortObject?.limit,
       offset: sortObject?.offset,
-
+      q     : sortObject?.q,
     }
   });
   return map.getDataFromResponse(data);
