@@ -12,16 +12,6 @@ export const menus:({title: string, path: string, icon: any})[] = [
     icon : <DashboardIcon />,
   },
   {
-    title: 'Order',
-    path : '/order',
-    icon : <ShoppingCartIcon />,
-  },
-  {
-    title: 'Customer',
-    path : '/customer',
-    icon : <PeopleIcon />,
-  },
-  {
     title: 'Partner',
     path : '/partner',
     icon : <PeopleIcon />,
@@ -30,5 +20,10 @@ export const menus:({title: string, path: string, icon: any})[] = [
     title: 'Product',
     path : '/product',
     icon : <Inventory2Icon />,
+  },
+  {
+    title: 'Invoice',
+    path : '/invoice',
+    icon : <ReceiptIcon />,
   },
 ]

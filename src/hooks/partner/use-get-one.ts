@@ -15,23 +15,8 @@ export const usePartnerGetOne = (partner_id?: string, setForm?: any) => {
     retry    : false,
     onSuccess: async (data) => {
       if(partner_id) {
-        console.log(data);
         setForm(data);
       }
-      // console.log("mamama");
-      // console.log(handleData);
-      // console.log(data);
-      // handleData(data);
-      // await Promise.all([
-      //   dispatch(setUserAuth(data.user_session.user)),
-      //   dispatch(setAccessToken(data.user_session.access_token || '')),
-      //   dispatch(setRefreshToken(data.user_session.refresh_token || '')),
-      //   dispatch(setUserOrg(data.org)),
-      //   dispatch(setSidebar(data.menu)),
-      // ]);
-      // await Promise.all([ dispatch(userLogout()) ]);
-
-      // router.replace('/login');
     },
   });
 };

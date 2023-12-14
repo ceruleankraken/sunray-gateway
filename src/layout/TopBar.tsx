@@ -57,7 +57,7 @@ const TopBarComponent = ( {opened, handleToggle, onLogout, ...props}: any) => {
         >
           <MenuIcon />
         </IconButton>
-        <Typography
+        {/* <Typography
           component="h1"
           variant="h6"
           color="inherit"
@@ -65,10 +65,14 @@ const TopBarComponent = ( {opened, handleToggle, onLogout, ...props}: any) => {
           sx={{ flexGrow: 1 }}
         >
           Dashboard
-        </Typography>
+        </Typography> */}
         <IconButton 
           color   = "inherit"
           onClick = {onLogout}
+          sx={{
+            flexGrow      : 1,
+            justifyContent: "flex-end"
+          }}
         >
           <LogoutIcon />
         </IconButton>

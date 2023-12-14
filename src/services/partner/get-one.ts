@@ -11,10 +11,11 @@ type PartnerResponse = {
   id        : string,
   name      : string,
   created_at: string,
+  created_by: string,
   dn_amount : number,
   cn_amount : number,
   isactive  : boolean,
-  bp_code    : string
+  bp_code   : string
 };
 
 export type PartnerGetResponse = {
@@ -28,12 +29,14 @@ export type PartnerGetResponse = {
 const map = {
   getDataFromResponse: (response?: PartnerGetResponse) => {
     return {
-      id       : response?.data.id,
-      name     : response?.data.name,
-      dn_amount: response?.data.dn_amount,
-      cn_amount: response?.data.cn_amount,
-      isactive : response?.data.isactive,
+      id        : response?.data.id,
+      name      : response?.data.name,
+      dn_amount : response?.data.dn_amount,
+      cn_amount : response?.data.cn_amount,
+      isactive  : response?.data.isactive,
       bp_code   : response?.data.bp_code,
+      created_at: response?.data.created_at,
+      created_by: response?.data.created_by,
     }
     // return PartnerData;
   },

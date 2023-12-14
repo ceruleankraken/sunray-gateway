@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import api from '@/services';
 import { AlertError, AlertSuccess } from '@/utils/notification';
-import { PartnerCreateFormPropsRequest } from '@/modals/partner/create';
+import { PartnerCreateFormPropsRequest } from '@/services/partner/create';
 
 
 export const usePartnerCreate = ({closeModal, getData}: any) => {
@@ -21,7 +21,6 @@ export const usePartnerCreate = ({closeModal, getData}: any) => {
     onError: (data: any) => {
       let message = data?.response.data.Message || 'Something went wrong, please try again!'
       AlertError(message)
-      console.log(data);
     },
   });
 };

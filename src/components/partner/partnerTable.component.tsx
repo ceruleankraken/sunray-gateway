@@ -63,9 +63,6 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     doGetPartner().then(
       (resp: any) => {
         if(resp.status == 'error') {
-          // setRowData([])
-          // setRowTotal(0)
-          // return;
         }
         else {
           const startNo = (resp.data.meta.per_page * (resp.data.meta.current_page-1))
@@ -136,6 +133,7 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       <Box sx={{ mb:2, display: 'flex', alignItems: 'stretch', justifyContent: 'center', alignContent: 'center', }}>
         <TextField
           fullWidth
+          color    = 'secondary'
           id       = "inputSearchTable"
           size     = "small"
           name     = "inputSearchTable"

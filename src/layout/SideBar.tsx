@@ -62,8 +62,19 @@ const SideBarComponent = ( {opened, handleToggle, pathActive, ...props}: any ) =
           // justifyContent: 'flex-end',
         }}
       >
-          <Typography variant="h4" flexGrow={1}  align={"center"} color="primary">MENU</Typography>
-        {/* </Box> */}
+          <Typography
+            variant    = "h4"
+            flexGrow   = {1}
+            align      = {"center"}
+            color      = "secondary"
+            fontWeight = {700}
+            // height     = {30}
+            // lineHeight = {1.5}
+            // fontSize   = {'1.25rem'}
+          >
+            MENU
+          </Typography>
+       {/* </Box> */}
         <IconButton onClick={handleToggle}>
           <ChevronLeftIcon />
         </IconButton>

@@ -32,7 +32,6 @@ const usePartnerDelete = ({getData}: any) => {
     onError: (data: any) => {
       let message = data?.response.data.Message || 'Something went wrong, please try again!'
       AlertError(message)
-      console.log(data);
     },
   });
 };

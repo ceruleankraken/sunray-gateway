@@ -123,6 +123,7 @@ const ProductTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       <Box sx={{ mb:2, display: 'flex', alignItems: 'stretch', justifyContent: 'center', alignContent: 'center', }}>
         <TextField
           fullWidth
+          color    = 'secondary'
           id       = "inputSearchTable"
           size     = "small"
           name     = "inputSearchTable"

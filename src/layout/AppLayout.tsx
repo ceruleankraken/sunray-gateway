@@ -29,29 +29,15 @@ const AppLayout = ({ title, children }: AppProps) => {
     (state) => state.reducer.user.accessToken,
   );
   
-  const refreshToken = useTypedSelector(
-    (state) => state.reducer.user.refreshToken,
-  );
-  
   useRedirect({
     toUrl    : '/login',
     condition: !!accessToken === false,
   });
 
-  
-  // const [menuSelected, setMenuSelected] = React.useState("");
-  // const menuSelectedToggle: (selected: string) => void  = (selected: string) => {
-  //   console.log("pilihan: "+selected);
-  //   console.log("status: "+menuSelected);
-  //   setMenuSelected(selected);
-  // };
-
-
-
   return (
     <>
       <Head>
-        <title> {title} | NEXTT </title>
+        <title> {title} | MyFaktur.ID </title>
       </Head>
 
       {!!accessToken && (
@@ -63,33 +49,27 @@ const AppLayout = ({ title, children }: AppProps) => {
             pathActive   = {pathname}
           />
           <Box
+            component="main"
             sx={{
               backgroundColor: (theme) =>
                 theme.palette.mode === 'light'
                   ? theme.palette.grey[100]
-                      :    theme.palette.grey[900],
-              display  : 'flex',
-              flexGrow : 1,
-              flexFlow : 'column',
-              flexWrap : 'nowrap',
-              minHeight: '100vh',
+                  : theme.palette.grey[900],
+              flexGrow     : 1,
+              width        : '100%',
+              display      : 'flex',
+              flexDirection: 'column',
+              minHeight    : '100vh',
+              overflow     : "auto",
             }}
           >
-            <Box
-              component="main"
+            <Box 
               sx={{
-                backgroundColor: (theme) =>
-                  theme.palette.mode === 'light'
-                    ? theme.palette.grey[100]
-                        :   theme.palette.grey[900],
-                flexGrow: 1,
-                // width: '100%',
-                // height  : '100vh',
-                overflow: 'auto',
+                paddingY:8
               }}
             >
-              <Toolbar />
-              <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
+              {/* <Toolbar /> */}
+              <Container maxWidth={false} sx={{ mt: 3, mb: 3 }}>
                 {children}
               </Container> 
             </Box>

@@ -1,19 +1,22 @@
 import React, { useEffect } from 'react'
 
+import Head from 'next/head'
+import Image from 'next/image'
+import { Inter } from 'next/font/google'
 import AppLayout from '@/layout/AppLayout'
 import { Box, Button, Paper, Toolbar, Typography, Grid, Stack} from '@mui/material'
 
 import AddIcon from '@mui/icons-material/Add';
-import ProductTableComponent from '@/components/product/productTable.component'
+import PartnerTableComponent from '@/components/partner/partnerTable.component'
 
 
-export default function Product() {
+export default function Invoice() {
   const [openCreateModal, setOpenCreateModal] = React.useState(false);
   const handleOpenCreateModal                 = () => setOpenCreateModal(true);
   const handleCloseCreateModal                = () => setOpenCreateModal(false);
   
   return (
-    <AppLayout title={"Product"}>
+    <AppLayout title={"Invoice"}>
         <Paper 
           sx={{
             p            : 2,
@@ -25,17 +28,17 @@ export default function Product() {
           <Box mb={3}>
             <Stack direction={"row"} display={"flex"} alignItems={"center"}>
               <Box flexGrow={1}>
-                <Typography variant="h4" color="black" fontWeight={700} height={30} lineHeight={1.5} fontSize={'1.25rem'}>Product</Typography>
-                <Typography variant="body1" color="black" height={20} lineHeight={1} fontSize={'1 rem'}>{'Dashboard > Product'}</Typography>
+                <Typography variant="h4" color="black" fontWeight={700} height={30} lineHeight={1.5} fontSize={'1.25rem'}>Invoice</Typography>
+                <Typography variant="body1" color="black" height={20} lineHeight={1} fontSize={'1 rem'}>{'Dashboard > Invoice'}</Typography>
               </Box>
               <Box>
                 <Button
-                  id        = 'product-add'
-                  variant   = 'contained'
-                  color     = 'secondary'
-                  onClick   = {handleOpenCreateModal}
-                  startIcon = { <AddIcon /> }
-                  sx        = {{
+                  id            = 'invoice-add'
+                  variant       = 'contained'
+                  color         = 'secondary'
+                  onClick       = {handleOpenCreateModal}
+                  startIcon     = { <AddIcon /> }
+                  sx={{
                     justifyContent: 'center',
                     alignItems    : 'center',
                     alignContent  : 'center',
@@ -46,11 +49,6 @@ export default function Product() {
               </Box>
             </Stack>
           </Box>
-
-          <ProductTableComponent 
-            openCreate        = {openCreateModal}
-            handleCloseCreate = {handleCloseCreateModal}
-          />
         </Paper>
     </AppLayout>
   )

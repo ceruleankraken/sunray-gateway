@@ -4,14 +4,16 @@ import { LoginFormPropsRequest } from '@/hooks/auth/use-login';
 import { User } from '@/types/user';
 import { Pagination } from '@/types/pagination';
 
+
 type PartnerResponse = {
   id        : string,
   name      : string,
-  created_by: string,
+  bp_code   : string
   dn_amount : number,
   cn_amount : number,
   isactive  : boolean,
-  bp_code   : string
+  created_by: string,
+  created_at: string,
 };
 
 export type PartnerGetResponse = {
@@ -29,6 +31,7 @@ const map = {
         id        : val.id,
         name      : val.name,
         created_by: val.created_by,
+        created_at: val.created_at,
         dn_amount : val.dn_amount,
         cn_amount : val.cn_amount,
         isactive  : val.isactive,
@@ -39,9 +42,9 @@ const map = {
     const ResponseData = {
       meta: {
         current_page: response?.meta?.current_page,
-        total_page: response?.meta.total_page,
-        per_page: response?.meta.per_page,
-        total_data: response?.meta.total_data,
+        total_page  : response?.meta.total_page,
+        per_page    : response?.meta.per_page,
+        total_data  : response?.meta.total_data,
       },
       data: PartnerData
     }

@@ -15,10 +15,7 @@ type PartnerCreateProps = {
 };
 
 const createPartner = async ({ payload }: PartnerCreateProps) => {
-  console.log("==========API PARTNER===============");
-  console.log(payload);
   const { data } = await http.post(PARTNER_CREATE_PATH, payload);
-  console.log(data);
   return data
 };
 

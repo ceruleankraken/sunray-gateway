@@ -22,14 +22,13 @@ export default function Partner() {
             p            : 2,
             display      : 'flex',
             flexDirection: 'column',
-            // height       : 240,
           }}
         >
           <Box mb={3}>
             <Stack direction={"row"} display={"flex"} alignItems={"center"}>
               <Box flexGrow={1}>
-                <Typography variant="h4" color="initial" fontWeight={700} height={30} lineHeight={1.5} fontSize={'1.25rem'}>Partner</Typography>
-                <Typography variant="body1" color="initial" height={20} lineHeight={1} fontSize={'1 rem'}>{'Dashboard > Partner'}</Typography>
+                <Typography variant="h4" color="black" fontWeight={700} height={30} lineHeight={1.5} fontSize={'1.25rem'}>Partner</Typography>
+                <Typography variant="body1" color="black" height={20} lineHeight={1} fontSize={'1 rem'}>{'Dashboard > Partner'}</Typography>
               </Box>
               <Box>
                 <Button
