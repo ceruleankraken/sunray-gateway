@@ -2,7 +2,12 @@ import { http } from '@/services/axios';
 import { PARTNER_CREATE_PATH, PARTNER_DELETE_PATH } from '@/configs/constants';
 import { LoginFormPropsRequest } from '@/hooks/auth/use-login';
 import { User } from '@/types/user';
-import { PartnerDeleteFormPropsRequest } from '@/hooks/partner/use-delete';
+
+
+export interface PartnerDeleteFormPropsRequest {
+  partner_id: string
+}
+
 
 type PartnerDeleteProps = {
   payload: PartnerDeleteFormPropsRequest

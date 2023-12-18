@@ -18,7 +18,7 @@ type PartnerResponse = {
   bp_code   : string
 };
 
-export type PartnerGetResponse = {
+type PartnerGetOneResponse = {
   status : number,
   message: string,
   meta   : any,
@@ -27,7 +27,7 @@ export type PartnerGetResponse = {
 
 
 const map = {
-  getDataFromResponse: (response?: PartnerGetResponse) => {
+  getDataFromResponse: (response?: PartnerGetOneResponse) => {
     return {
       id        : response?.data.id,
       name      : response?.data.name,

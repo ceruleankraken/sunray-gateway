@@ -16,7 +16,7 @@ type PartnerResponse = {
   created_at: string,
 };
 
-export type PartnerGetResponse = {
+type PartnerGetResponse = {
   status : number,
   message: string,
   meta   : Pagination,

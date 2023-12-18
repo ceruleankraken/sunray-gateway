@@ -9,12 +9,8 @@ import {
 } from '@/stores/features/auth.slice';
 import { useTypedSelector } from '../other/use-type-selector';
 import { AlertError, AlertSuccess } from '@/utils/notification';
+import { PartnerDeleteFormPropsRequest } from '@/services/partner/delete';
 // import { setSidebar } from '@/stores/features/sidebar/slice';
-
-
-export interface PartnerDeleteFormPropsRequest {
-  partner_id: string
-}
 
 
 const usePartnerDelete = ({getData}: any) => {
