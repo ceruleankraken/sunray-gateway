@@ -1,21 +1,24 @@
 import { http } from '@/services/axios';
 import { INVOICE_CREATE_PATH } from '@/configs/constants';
 
+export interface HeaderInvoice {
+    discount    : number | undefined,
+    batchno     : string | undefined,
+    ispercentage: boolean
+    partner_id  : string | undefined,
+    pay_date    : string | undefined
+}
 export interface LineInvoice {
-  product_id  : string | undefined,
-  qty         : number | undefined,
-  price       : number | undefined,
-  discount    : number | undefined,
-  ispercentage: boolean
+    product_id  : string | undefined,
+    qty         : number | undefined,
+    price       : number | undefined,
+    discount    : number | undefined,
+    ispercentage: boolean
 }
 
 export interface InvoiceCreateFormPropsRequest {
-  partner_id  : string | undefined,
-  batchno     : string | undefined,
-  pay_date    : number | undefined,
-  ispercentage: number | undefined,
-  isactive    : boolean,
-  line        : LineInvoice[]
+  header: HeaderInvoice
+  line  : LineInvoice[]
 }
 
 type InvoiceCreateProps = {
@@ -27,8 +30,8 @@ const createInvoice = async ({ payload }: InvoiceCreateProps) => {
   return data
 };
 
-const partnerCreateInvoice = {
+const invoiceCreateServices = {
   createInvoice,
 };
 
-export default partnerCreateInvoice;
+export default invoiceCreateServices;

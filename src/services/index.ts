@@ -12,6 +12,12 @@ import productGetServices from './product/get';
 import productGetOneServices from './product/get-one';
 import productDeleteServices from './product/delete';
 
+import invoiceCreateServices from './invoice/create';
+import invoiceEditServices from './invoice/edit';
+import invoiceGetServices from './invoice/get';
+import invoiceGetOneServices from './invoice/get-one';
+import invoiceDeleteServices from './invoice/delete';
+
 const api = {
   ...loginServices,
   ...logoutServices,
@@ -25,6 +31,11 @@ const api = {
   ...productGetServices,
   ...productGetOneServices,
   ...productDeleteServices,
+  ...invoiceCreateServices,
+  ...invoiceEditServices,
+  ...invoiceGetServices,
+  ...invoiceGetOneServices,
+  ...invoiceDeleteServices,
 };
 
 export default api;

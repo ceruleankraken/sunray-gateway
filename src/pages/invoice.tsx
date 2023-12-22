@@ -8,6 +8,7 @@ import { Box, Button, Paper, Toolbar, Typography, Grid, Stack} from '@mui/materi
 
 import AddIcon from '@mui/icons-material/Add';
 import PartnerTableComponent from '@/components/partner/partnerTable.component'
+import InvoiceTableComponent from '@/components/invoice/invoiceTable.component'
 
 
 export default function Invoice() {
@@ -49,6 +50,11 @@ export default function Invoice() {
               </Box>
             </Stack>
           </Box>
+
+          <InvoiceTableComponent 
+            openCreate        = {openCreateModal}
+            handleCloseCreate = {handleCloseCreateModal}
+          />
         </Paper>
     </AppLayout>
   )

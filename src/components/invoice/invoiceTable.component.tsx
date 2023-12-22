@@ -15,6 +15,8 @@ import usePartnerDelete from '@/hooks/partner/use-delete'
 import PartnerEdit from '@/modals/partner/edit'
 import ModalComponent from '@/components/modal.component'
 import { Box, IconButton, TextField, Skeleton } from '@mui/material';
+import { useInvoiceGet } from '@/hooks/invoice/use-get';
+import { useInvoiceDelete } from '@/hooks/invoice/use-delete';
 
 
 const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
@@ -38,11 +40,11 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     q     : '',
   });
   
-  const { refetch: doGetPartner, data, isLoading: isLoadingPartner } = usePartnerGet(queryOptions);
-  const { mutate: submitDelete, isLoading: isLoadIngDelete }         = usePartnerDelete({getData: () => getDataPartner()});
+  const { refetch: doGetInvoice, data, isLoading: isLoadingInvoice } = useInvoiceGet(queryOptions);
+  const { mutate: submitDelete, isLoading: isLoadIngDelete }         = useInvoiceDelete({getData: () => getDataInvoice()});
   
   
-  const handleQuery                                                  = () => {
+  const handleQuery  = () => {
     setQueryOptions({
       field : sortData[0]?.field,
       sort  : sortData[0]?.sort,
@@ -51,16 +53,16 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       q     : textSearchTable,
     })
   }
-  const handleOpenEditModal                                          = (invoice_id: string) => {
+  const handleOpenEditModal  = (invoice_id: string) => {
     setOpenEditModal(true);
     setEditInvoiceID(invoice_id);
   }
-  const handleCloseEditModal                                         = () => {
+  const handleCloseEditModal = () => {
     setOpenEditModal(false);
     setEditInvoiceID('');
   }
-  const getDataPartner                                               = () => {
-    doGetPartner().then(
+  const getDataInvoice = () => {
+    doGetInvoice().then(
       (resp: any) => {
         if(resp.status == 'error') {
         }
@@ -104,7 +106,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         key     = {"delete-"+params.id}
         icon    = {<DeleteIcon />}
         label   = "Delete"
-        onClick = {() => {submitDelete({partner_id: params.row.id})}}
+        onClick = {() => {submitDelete({invoice_id: params.row.id})}}
         showInMenu
       />,
     ]},
@@ -112,12 +114,12 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
   
   React.useEffect(() => {
-    if (isLoadingPartner) {
+    if (isLoadingInvoice) {
       setLoadingData(true) 
     } else {
       setLoadingData(false)
     }
-  }, [isLoadingPartner]);
+  }, [isLoadingInvoice]);
 
   React.useEffect(() => {
     handleQuery();
@@ -125,7 +127,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
 
   React.useEffect( () => {
-    getDataPartner()
+    getDataInvoice()
   },[queryOptions])
 
   return (
@@ -151,7 +153,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         {/* </Button> */}
       </Box>
       {
-      isLoadingPartner ?
+      isLoadingInvoice ?
         <Skeleton >
           <div 
             style = {{
@@ -166,7 +168,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
           rowData        = {rowData}
           columnData     = {headerData}
           // handleQuery    = {(tableData: any) => handleQuery(tableData)}
-          loading        = {isLoadingPartner}
+          loading        = {isLoadingInvoice}
           pageInfo       = {pageData}
           handlePageInfo = {setPageData}
           rowTotal       = {rowTotal}
@@ -178,18 +180,18 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         modalOpen    = {openEditModal}
         modalOnClose = {handleCloseEditModal}
         modalSize    = 'sm'
-        modalTitle   = 'Edit Partner'
+        modalTitle   = 'Edit Invoice'
       >
-        <PartnerEdit modalOnClose={handleCloseEditModal} partner_id={editPartnerID} getData={getDataPartner}/>
+        {/* <PartnerEdit modalOnClose={handleCloseEditModal} partner_id={editPartnerID} getData={getDataPartner}/> */}
       </ModalComponent>
 
       <ModalComponent
         modalOpen    = {openCreate}
         modalOnClose = {handleCloseCreate}
         modalSize    = 'sm'
-        modalTitle   = 'Create Partner'
+        modalTitle   = 'Create Invoice'
       >
-        <PartnerCreate modalOnClose={handleCloseCreate} getData={getDataPartner}/>
+        {/* <PartnerCreate modalOnClose={handleCloseCreate} getData={getDataPartner}/> */}
       </ModalComponent>
     </>
   )

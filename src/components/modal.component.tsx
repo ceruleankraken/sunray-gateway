@@ -1,6 +1,6 @@
 import React from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-import { Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText, IconButton } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText, IconButton, DialogProps } from '@mui/material';
 
 const style = {
   position : 'absolute' as 'absolute',
@@ -10,16 +10,24 @@ const style = {
   width    : '90%',
   bgcolor  : 'background.paper',
   // border   : '2px solid #000',
-  boxShadow: 24,
-  p        : 4,
+  boxShadow  : 24,
+  p          : 4,
 };
 
-const ModalComponent = ({modalOpen, modalOnClose, modalId, modalBody, modalTitle, modalSize,  children }: any) => {
+const ModalComponent = ({modalOpen, modalOnClose, modalId, modalBody, modalTitle, modalSize,  children, isTemporary }: any) => {
+
+  const handleClose: DialogProps["onClose"] = (event, reason) => {
+
+    if (reason && reason === "backdropClick")
+        return;
+    modalOnClose();
+}
+
   return (
 
       <Dialog
         open             = {modalOpen}
-        onClose          = {modalOnClose}
+        onClose          = {isTemporary ? modalOnClose : handleClose}
         fullWidth        = {true}
         maxWidth         = {modalSize}
         aria-labelledby  = {modalId}

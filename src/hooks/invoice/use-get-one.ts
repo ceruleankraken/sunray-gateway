@@ -4,17 +4,17 @@ import { useRouter } from 'next/router';
 import api from '@/services';
 
 
-export const usePartnerGetOne = (partner_id?: string, setForm?: any) => {
+export const useInvoiceGetOne = (invoice_id?: string, setForm?: any) => {
   const dispatch = useDispatch();
   const router   = useRouter();
 
   return useQuery({
-    queryKey : ['partner-get-one'],
-    queryFn  : (payload) => api.getPartnerOne(partner_id),
+    queryKey : ['invoice-get-one'],
+    queryFn  : (payload) => api.getInvoiceOne(invoice_id),
     enabled  : false,
     retry    : false,
     onSuccess: async (data) => {
-      if(partner_id) {
+      if(invoice_id) {
         setForm(data);
       }
     },
