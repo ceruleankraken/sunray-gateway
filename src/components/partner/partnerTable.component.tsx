@@ -42,7 +42,7 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   const { mutate: submitDelete, isLoading: isLoadIngDelete }         = usePartnerDelete({getData: () => getDataPartner()});
   
   
-  const handleQuery                                                  = () => {
+  const handleQuery = () => {
     setQueryOptions({
       field : sortData[0]?.field,
       sort  : sortData[0]?.sort,
@@ -51,15 +51,15 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       q     : textSearchTable,
     })
   }
-  const handleOpenEditModal                                          = (partner_id: string) => {
+  const handleOpenEditModal = (partner_id: string) => {
     setOpenEditModal(true);
     setEditPartnerID(partner_id);
   }
-  const handleCloseEditModal                                         = () => {
+  const handleCloseEditModal = () => {
     setOpenEditModal(false);
     setEditPartnerID('');
   }
-  const getDataPartner                                               = () => {
+  const getDataPartner = () => {
     doGetPartner().then(
       (resp: any) => {
         if(resp.status == 'error') {
@@ -74,8 +74,6 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     )
   }
 
-  
-  
   const [headerData, setHeaderData]               = React.useState([
     { field: 'id', headerName: 'ID', type : 'string', flex : 0.3, filterble: false },
     { field: 'no', headerName: 'No', type: 'number', flex: 0.1, filterble : false, sortable: false},
@@ -175,6 +173,7 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         />
       }
       <ModalComponent
+        isTemporary = {false}
         modalOpen    = {openEditModal}
         modalOnClose = {handleCloseEditModal}
         modalSize    = 'sm'

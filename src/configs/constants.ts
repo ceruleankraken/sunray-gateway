@@ -27,7 +27,7 @@ export const PRODUCT_GET_ONE_PATH = '/product/';
 export const PRODUCT_EDIT_PATH    = '/product/';
 export const PRODUCT_DELETE_PATH  = '/product/';
 
-export const INVOICE_CREATE_PATH  = '/invoice/';
+export const INVOICE_CREATE_PATH  = '/invoice/v2';
 export const INVOICE_GET_PATH     = '/invoices/';
 export const INVOICE_GET_ONE_PATH = '/invoice/';
 export const INVOICE_EDIT_PATH    = '/invoice/';

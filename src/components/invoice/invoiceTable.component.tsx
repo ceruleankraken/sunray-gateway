@@ -17,6 +17,7 @@ import ModalComponent from '@/components/modal.component'
 import { Box, IconButton, TextField, Skeleton } from '@mui/material';
 import { useInvoiceGet } from '@/hooks/invoice/use-get';
 import { useInvoiceDelete } from '@/hooks/invoice/use-delete';
+import InvoiceCreate from '@/modals/invoice/create';
 
 
 const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
@@ -33,11 +34,13 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     pageSize: 5,
   });
   const [queryOptions, setQueryOptions]   = React.useState({
-    field : 'id',
-    sort  : 'asc',
-    limit : '5',
-    offset: '',
-    q     : '',
+    field    : 'id',
+    sort     : 'asc',
+    limit    : '5',
+    offset   : '',
+    q        : '',
+    date_from: '2023-01-01',
+    date_to  : '2023-12-31',
   });
   
   const { refetch: doGetInvoice, data, isLoading: isLoadingInvoice } = useInvoiceGet(queryOptions);
@@ -46,11 +49,13 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   
   const handleQuery  = () => {
     setQueryOptions({
-      field : sortData[0]?.field,
-      sort  : sortData[0]?.sort,
-      limit : pageData.pageSize.toString(),
-      offset: ((pageData.page)*pageData.pageSize).toString(),
-      q     : textSearchTable,
+      field    : sortData[0]?.field,
+      sort     : sortData[0]?.sort,
+      limit    : pageData.pageSize.toString(),
+      offset   : ((pageData.page)*pageData.pageSize).toString(),
+      q        : textSearchTable,
+      date_from: '2023-01-01',
+      date_to  : '2023-12-31',
     })
   }
   const handleOpenEditModal  = (invoice_id: string) => {
@@ -77,22 +82,15 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   }
 
   
-  
   const [headerData, setHeaderData]               = React.useState([
     { field: 'id', headerName: 'ID', type : 'string', flex : 0.3, filterble: false },
     { field: 'no', headerName: 'No', type: 'number', flex: 0.1, filterble : false, sortable: false},
-    { field: 'name', headerName: 'Name', type: 'string', minWidth:100, flex: 0.75},
-    { field: 'bp_code', headerName: 'BP Code', type: 'string', minWidth:100, flex: 0.5},
-    { field: 'dn_amount', headerName: 'DN Amount', type: 'number', minWidth:100, flex: 0.25},
-    { field: 'cn_amount', headerName: 'CN Amount', type: 'number', minWidth:100, flex: 0.25},
-    { field: 'isactive', headerName: 'Is Active', type: 'string', minWidth:100, flex: 0.5},
-    { field     : 'created_at',
-      headerName: 'Created At',
-      type      : 'string',
-      minWidth  : 100,
-      flex      : 1,
-      renderCell: (params:GridRenderCellParams) => moment(params.value).format("DD-MM-YYYY HH:mm:ss"),
+    { field: 'documentno', headerName: 'No Document', type: 'string', minWidth:100, flex: 0.75},
+    { field: 'batchno', headerName: 'No Batch', type: 'string', minWidth:100, flex: 0.5},
+    { field: 'partner', headerName: 'Partner', type: 'string', minWidth:100, flex: 0.25,
+      valueGetter: (params: GridRenderCellParams) => params.row.partner.name 
     },
+    { field: 'status', headerName: 'Status', type: 'string', minWidth:100, flex: 0.25},
     { field: 'action', type: 'actions', width:100, getActions: (params: GridRenderCellParams) => [
       // eslint-disable-next-line react/jsx-key
       <GridActionsCellItem
@@ -188,10 +186,10 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       <ModalComponent
         modalOpen    = {openCreate}
         modalOnClose = {handleCloseCreate}
-        modalSize    = 'sm'
+        modalSize    = 'xl'
         modalTitle   = 'Create Invoice'
       >
-        {/* <PartnerCreate modalOnClose={handleCloseCreate} getData={getDataPartner}/> */}
+        <InvoiceCreate modalOnClose={handleCloseCreate} getData={getDataInvoice}/>
       </ModalComponent>
     </>
   )

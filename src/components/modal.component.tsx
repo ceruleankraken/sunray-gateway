@@ -31,7 +31,7 @@ const ModalComponent = ({modalOpen, modalOnClose, modalId, modalBody, modalTitle
         fullWidth        = {true}
         maxWidth         = {modalSize}
         aria-labelledby  = {modalId}
-        aria-describedby = "alert-dialog-description"
+        aria-describedby = {modalId+"-description"}
       >
         <DialogTitle id={modalId}>
           {modalTitle}

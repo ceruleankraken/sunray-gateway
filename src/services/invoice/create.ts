@@ -2,17 +2,20 @@ import { http } from '@/services/axios';
 import { INVOICE_CREATE_PATH } from '@/configs/constants';
 
 export interface HeaderInvoice {
-    discount    : number | undefined,
-    batchno     : string | undefined,
-    ispercentage: boolean
-    partner_id  : string | undefined,
-    pay_date    : string | undefined
+    // documenton  : string | undefined,
+    // status      : string | undefined,
+    batchno     : string,
+    discount    : string,
+    ispercentage: boolean,
+    partner_id  : string,
+    pay_date    : string
 }
 export interface LineInvoice {
-    product_id  : string | undefined,
-    qty         : number | undefined,
-    price       : number | undefined,
-    discount    : number | undefined,
+    product_id  : string,
+    product_name: string,
+    qty         : string,
+    price       : string,
+    discount    : string,
     ispercentage: boolean
 }
 

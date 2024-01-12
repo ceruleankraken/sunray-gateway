@@ -1,5 +1,5 @@
 import { http } from '@/services/axios';
-import { PARTNER_GET_PATH } from '@/configs/constants';
+import { INVOICE_GET_PATH } from '@/configs/constants';
 import { Pagination } from '@/types/pagination';
 
 type InvoiceResponse = {
@@ -69,13 +69,15 @@ const getInvoice = async (sortObject: any) => {
 
   // const { data } = partner_id ? await http.get(PARTNER_GET_PATH+`/${partner_id}`) : await http.get(PARTNER_GET_PATH);
   // let resp; 
-  const {data} = await http.get(PARTNER_GET_PATH,{
+  const {data} = await http.get(INVOICE_GET_PATH,{
     params: {
-      sort  : sortObject?.field,
-      order : sortObject?.sort,
-      limit : sortObject?.limit,
-      offset: sortObject?.offset,
-      q     : sortObject?.q,
+      sort     : sortObject?.field,
+      order    : sortObject?.sort,
+      limit    : sortObject?.limit,
+      offset   : sortObject?.offset,
+      q        : sortObject?.q,
+      date_from: sortObject?.date_from,
+      date_to  : sortObject?.date_to,
     }
   });
   return data;

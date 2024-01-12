@@ -12,8 +12,8 @@ import PartnerTableComponent from '@/components/partner/partnerTable.component'
 
 export default function Partner() {
   const [openCreateModal, setOpenCreateModal] = React.useState(false);
-  const handleOpenCreateModal                                        = () => setOpenCreateModal(true);
-  const handleCloseCreateModal                                       = () => setOpenCreateModal(false);
+  const handleOpenCreateModal                 = () => setOpenCreateModal(true);
+  const handleCloseCreateModal                = () => setOpenCreateModal(false);
   
   return (
     <AppLayout title={"Partner"}>
@@ -50,7 +50,7 @@ export default function Partner() {
           </Box>
 
           <PartnerTableComponent 
-            openCreate = {openCreateModal}
+            openCreate        = {openCreateModal}
             handleCloseCreate = {handleCloseCreateModal}
           />
         </Paper>
