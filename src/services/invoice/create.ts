@@ -29,7 +29,25 @@ type InvoiceCreateProps = {
 };
 
 const createInvoice = async ({ payload }: InvoiceCreateProps) => {
-  const { data } = await http.post(INVOICE_CREATE_PATH, payload);
+
+  const newLine = payload.line.map( (val) => ({
+    product_id  : val.product_id,
+    product_name: val.product_name,
+    qty         : parseInt(val.qty),
+    price       : parseInt(val.price),
+    discount    : parseFloat(val.discount),
+    ispercentage: val.ispercentage,
+  }))
+  const { data } = await http.post(INVOICE_CREATE_PATH, {
+    header: {
+      batchno     : payload.header.batchno,
+      discount    : parseFloat(payload.header.discount),
+      ispercentage: payload.header.ispercentage,
+      partner_id  : payload.header.partner_id,
+      pay_date    : payload.header.pay_date,
+    },
+    line: newLine,
+  });
   return data
 };
 

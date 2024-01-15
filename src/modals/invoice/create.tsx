@@ -5,7 +5,7 @@ import { usePartnerCreate } from '@/hooks/partner/use-create'
 import { PartnerCreateFormPropsRequest } from '@/services/partner/create';
 import { useInvoiceCreate } from '@/hooks/invoice/use-create';
 import { HeaderInvoice, InvoiceCreateFormPropsRequest, LineInvoice } from '@/services/invoice/create';
-import { DataGrid, GridActionsCellItem, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
@@ -33,31 +33,40 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
   });
 
   const { mutate: submitCreateInvoice, isLoading } = useInvoiceCreate({closeModal: ()=>modalOnClose(), getData: () => getData()});
-  const [lineInvoice, setLineInvoice]              = React.useState<LineInvoice[]>([])
-  const deleteLineInvoice                          = (id: any) => {
-    const newLine = lineInvoice.filter( (element) => element !== id );
-    setLineInvoice(newLine)
-  }
+  const [lineInvoice, setLineInvoice]              = React.useState<any[]>([])
+  const deleteLineInvoice                          = React.useCallback(
+    (id: any) => () => {
+      console.log(id);
+      console.log(lineInvoice);
+      // const newLine = lineInvoice.filter( (element) => element.line_id !== id );
+      // setLineInvoice(newLine)
+    }, [],
+  );
 
-  const [lineColumn, setLineColumn]   = React.useState([
-    { field: 'line_id', headerName: 'ID', type : 'string', flex : 0.3, filterble: false },
-    { field: 'no', headerName: 'No', type: 'number', width: 10, filterble : false, sortable: false},
-    { field: 'product_name', headerName: 'Product', type : 'string', minWidth: 250, filterble: false },
-    { field: 'qty', headerName: 'Qty', type : 'string', minWidth: 100, filterble: false },
-    { field: 'price', headerName: 'Price', type : 'string', minWidth: 100, filterble: false },
-    { field: 'amount', headerName: 'Amount', type : 'string', minWidth: 100, filterble: false },
-    { field: 'total', headerName: 'Total', type : 'string', minWidth: 150, filterble: false },
-    { field: 'action', type: 'actions', width:50, getActions: (params: GridRenderCellParams) => [
-      // eslint-disable-next-line react/jsx-key
-      <GridActionsCellItem
-        key     = {"delete-"+params.id}
-        icon    = {<DeleteIcon />}
-        label   = "Delete"
-        onClick = {() => deleteLineInvoice(params.row.id)}
-        showInMenu
-      />,
-    ]},
-  ]);
+  const lineColumn  = React.useMemo<GridColDef<any>[]>(
+    () => [
+      { field: 'line_id', headerName: 'ID', type : 'string', flex : 0.3, filterble: false },
+      { field: 'no', headerName: 'No', type: 'number', width: 10, filterble : false, sortable: false,
+      renderCell: (params) => params.api.getAllRowIds().indexOf(params.id)+1
+      },
+      { field: 'product_name', headerName: 'Product', type : 'string', minWidth: 250, filterble: false },
+      { field: 'qty', headerName: 'Qty', type : 'string', minWidth: 100, filterble: false },
+      { field: 'price', headerName: 'Price', type : 'string', minWidth: 100, filterble: false },
+      { field: 'amount', headerName: 'Amount', type : 'string', minWidth: 100, filterble: false },
+      { field: 'total', headerName: 'Total', type : 'string', minWidth: 150, filterble: false },
+      { field: 'action', type: 'actions', width:50, getActions: (params) => [
+        // eslint-disable-next-line react/jsx-key
+        <GridActionsCellItem
+          key     = {"delete-"+params.id}
+          icon    = {<DeleteIcon />}
+          label   = "Delete"
+          onClick = {deleteLineInvoice(params.row.line_id)}
+          showInMenu
+        />,
+      ]},
+    ],
+    [deleteLineInvoice],
+  );
 
   const getDataPartner = () => {
     doGetPartner().then(
@@ -113,8 +122,8 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
   }
 
   const submitAddLineInvoice = (data:any) => {
-    const lineLength = lineInvoice.length;
-    let   newData    = {no: lineLength+1, line_id: Date.now().toString(), ...data }
+    // const lineLength = lineInvoice.length;
+    let   newData    = {line_id: Date.now().toString(), ...data }
 
     setLineInvoice( (prev) => [...prev, newData ])
   }
@@ -174,6 +183,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
 
   React.useEffect( () => {
     countGrandTotal();
+    console.log(lineInvoice);
   }, [lineInvoice])
 
   React.useEffect(() => {

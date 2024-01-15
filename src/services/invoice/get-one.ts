@@ -9,9 +9,7 @@ import { INVOICE_GET_ONE_PATH } from '@/configs/constants';
 type InvoiceResponse = {
   id          : string,
   created_at  : string,
-  updated_at  : string
-  grand_total : number,
-  discount    : number,
+  updated_at  : string,
   batchno     : string,
   status      : string,
   docaction   : string,
@@ -19,6 +17,9 @@ type InvoiceResponse = {
   documentno  : string,
   ispercentage: boolean
   pay_date    : string,
+  total_line  : number,
+  discount    : number,
+  grand_total : number,
   createdby   : {
     user_uuid: string,
     usename  : string,
@@ -30,6 +31,34 @@ type InvoiceResponse = {
   partner: {
     id  : string,
     name: string,
+  }
+  line: {
+    id          : string,
+    created_at  : string,
+    updated_at  : string,
+    qty         : number,
+    price       : number,
+    amount      : number,
+    discount    : number,
+    ispercentage: boolean,
+    createdby   : {
+      user_uuid: string,
+      username : string,
+    },
+    updatedby   : {
+      user_uuid: string,
+      username : string,
+    },
+    invoice: {
+      id        : string,
+      batchno   : string,
+      documentno: string,
+      oustanding: number,
+    },
+    product: {
+      id  : string,
+      name: string,
+    }
   }
 };
 

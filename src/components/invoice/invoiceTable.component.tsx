@@ -18,6 +18,7 @@ import { Box, IconButton, TextField, Skeleton } from '@mui/material';
 import { useInvoiceGet } from '@/hooks/invoice/use-get';
 import { useInvoiceDelete } from '@/hooks/invoice/use-delete';
 import InvoiceCreate from '@/modals/invoice/create';
+import InvoiceEdit from '@/modals/invoice/edit';
 
 
 const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
@@ -40,7 +41,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     offset   : '',
     q        : '',
     date_from: '2023-01-01',
-    date_to  : '2023-12-31',
+    date_to  : '2024-12-31',
   });
   
   const { refetch: doGetInvoice, data, isLoading: isLoadingInvoice } = useInvoiceGet(queryOptions);
@@ -55,12 +56,12 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       offset   : ((pageData.page)*pageData.pageSize).toString(),
       q        : textSearchTable,
       date_from: '2023-01-01',
-      date_to  : '2023-12-31',
+      date_to  : '2024-12-31',
     })
   }
   const handleOpenEditModal  = (invoice_id: string) => {
-    setOpenEditModal(true);
     setEditInvoiceID(invoice_id);
+    setOpenEditModal(true);
   }
   const handleCloseEditModal = () => {
     setOpenEditModal(false);
@@ -74,6 +75,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         else {
           const startNo = (resp.data.meta.per_page * (resp.data.meta.current_page-1))
           const rows    = resp.data.data.map( (val: any,idx: number) => ({no: startNo+idx+1, ...val}) )
+          console.log(rows);
           setRowData(rows);
           setRowTotal(resp.data.meta.total_data)
         }
@@ -177,9 +179,10 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       <ModalComponent
         modalOpen    = {openEditModal}
         modalOnClose = {handleCloseEditModal}
-        modalSize    = 'sm'
+        modalSize    = 'xl'
         modalTitle   = 'Edit Invoice'
       >
+        <InvoiceEdit modalOnClose={handleCloseEditModal} invoice_id={editInvoiceID} getData={getDataInvoice}/>
         {/* <PartnerEdit modalOnClose={handleCloseEditModal} partner_id={editPartnerID} getData={getDataPartner}/> */}
       </ModalComponent>
 

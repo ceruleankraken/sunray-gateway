@@ -32,9 +32,9 @@ export default function InvoiceAddLine({modalOnClose, onSubmitAdd}:any) {
       // product_name: '',
       qty         : '',
       price       : '',
-      discount    : '',
+      discount    : '0',
       ispercentage: true,
-      amount      : '',
+      amount      : 0,
       total       : 0,
     }
   })
@@ -67,9 +67,10 @@ export default function InvoiceAddLine({modalOnClose, onSubmitAdd}:any) {
     const price        = parseInt(getValues('price') || '0')
     const discount     = parseFloat(getValues('discount') || '0')
     const ispercentage = getValues('ispercentage')
-    const amount       = parseInt(getValues('amount') || '0')
+    // const amount       = parseInt(getValues('amount') || '0')
 
-    let hitung = qty*price*amount;
+    let hitung = qty*price;
+    setValue('amount',hitung);
     let total  = 0;
     if(ispercentage == true){
       total = hitung - ( (discount/100)*hitung );
@@ -90,16 +91,10 @@ export default function InvoiceAddLine({modalOnClose, onSubmitAdd}:any) {
     const re = /^[0-9\b]+$/;
 
     if (event.target.value === '' || re.test(event.target.value)) {
+      if (event.target.value.substring(0, 1) == '0'){
+        event.target.value = event.target.value.substring(1);
+      }
       // setValue('qty', event.target.value)
-      onChange(event)
-      countTotal();
-    }
-  }
-
-  const onAmountChange = (onChange: any, event: any) => {
-    const re = /^[0-9\b]+$/;
-
-    if (event.target.value === '' || re.test(event.target.value)) {
       onChange(event)
       countTotal();
     }
@@ -109,6 +104,10 @@ export default function InvoiceAddLine({modalOnClose, onSubmitAdd}:any) {
     const re = /^[0-9\b]+$/;
 
     if (event.target.value === '' || re.test(event.target.value)) {
+      if (event.target.value.substring(0, 1) == '0'){
+        event.target.value = event.target.value.substring(1);
+      }
+
       onChange(event)
       countTotal();
     }
@@ -120,6 +119,10 @@ export default function InvoiceAddLine({modalOnClose, onSubmitAdd}:any) {
 
     // if value is not blank, then test the regex
     if (event.target.value === '' || re.test(event.target.value)) {
+      if (event.target.value.substring(0, 1) == '0'){
+        event.target.value = event.target.value.substring(1);
+      }
+
       if(getValues('ispercentage') == true){
         if(event.target.value >= 100) {
           onChange(event)
@@ -139,6 +142,7 @@ export default function InvoiceAddLine({modalOnClose, onSubmitAdd}:any) {
   const onPercentageChange = (onChange: any, event:any) => {
     // console.log(event.target);
     if(event.target.checked == true){
+
       if( parseInt(getValues('discount') || '0') >= 100){
         setValue('discount', '100')
       }
@@ -326,10 +330,6 @@ export default function InvoiceAddLine({modalOnClose, onSubmitAdd}:any) {
           <Controller
             name    = "amount"
             control = {control}
-            rules   = {{ required: {
-              value  : true,
-              message: "Amount fields is required"
-            }}}
             render  = { ({ 
                 field     : { onChange, value },
                 fieldState: { error },
@@ -339,7 +339,7 @@ export default function InvoiceAddLine({modalOnClose, onSubmitAdd}:any) {
                 helperText = {error ? error.message : null}
                 size       = "medium"
                 error      = {!!error}
-                onChange   = {e => onAmountChange(onChange, e)}
+                disabled   = {true}
                 type       = 'string'
                 value      = {value}
                 label      = {"Amount"}
