@@ -19,14 +19,17 @@ import { useInvoiceGet } from '@/hooks/invoice/use-get';
 import { useInvoiceDelete } from '@/hooks/invoice/use-delete';
 import InvoiceCreate from '@/modals/invoice/create';
 import InvoiceEdit from '@/modals/invoice/edit';
+import ModalConfirmComponent from '../modalconfirm.component';
 
 
 const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
   const [openEditModal, setOpenEditModal]     = React.useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
   const [loadingData, setLoadingData]         = React.useState(false);
   const [textSearchTable, setTextSearchTable] = React.useState('');
   const [editInvoiceID, setEditInvoiceID]     = React.useState('');
+  const [deleteInvoiceID, setDeleteInvoiceID] = React.useState('');
   const [rowData, setRowData]                 = React.useState<any[]>([]);
   const [sortData, setSortData]               = React.useState<{field: string, sort:string }[]>([]);
   const [rowTotal, setRowTotal]               = React.useState(0);
@@ -67,6 +70,16 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     setOpenEditModal(false);
     setEditInvoiceID('');
   }
+
+  const handleCloseDeleteModal = () => setOpenDeleteModal(false);
+  const handleOpenDeleteModal  = (invoice_id: string) => {
+    setDeleteInvoiceID(invoice_id)
+    setOpenDeleteModal(true);
+  }
+  const handleDeleteInvoice = () => {
+    submitDelete({invoice_id: deleteInvoiceID})
+  }
+
   const getDataInvoice = () => {
     doGetInvoice().then(
       (resp: any) => {
@@ -106,7 +119,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         key     = {"delete-"+params.id}
         icon    = {<DeleteIcon />}
         label   = "Delete"
-        onClick = {() => {submitDelete({invoice_id: params.row.id})}}
+        onClick = {() => {handleOpenDeleteModal(params.row.id)}}
         showInMenu
       />,
     ]},
@@ -194,6 +207,13 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       >
         <InvoiceCreate modalOnClose={handleCloseCreate} getData={getDataInvoice}/>
       </ModalComponent>
+
+      <ModalConfirmComponent
+        modalId      = 'invoice-delete'
+        modalOpen    = {openDeleteModal}
+        modalOnClose = {handleCloseDeleteModal}
+        onDelete     = {handleDeleteInvoice} 
+      />
     </>
   )
 }

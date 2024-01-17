@@ -15,14 +15,17 @@ import usePartnerDelete from '@/hooks/partner/use-delete'
 import PartnerEdit from '@/modals/partner/edit'
 import ModalComponent from '@/components/modal.component'
 import { Box, IconButton, TextField, Skeleton } from '@mui/material';
+import ModalConfirmComponent from '../modalconfirm.component';
 
 
 const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
   const [openEditModal, setOpenEditModal]     = React.useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
   const [loadingData, setLoadingData]         = React.useState(false);
   const [textSearchTable, setTextSearchTable] = React.useState('');
   const [editPartnerID, setEditPartnerID]     = React.useState('');
+  const [deletePartnerID, setDeletePartnerID] = React.useState('');
   const [rowData, setRowData]                 = React.useState<any[]>([]);
   const [sortData, setSortData]               = React.useState<{field: string, sort:string }[]>([]);
   const [rowTotal, setRowTotal]               = React.useState(0);
@@ -74,6 +77,15 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     )
   }
 
+  const handleCloseDeleteModal = () => setOpenDeleteModal(false);
+  const handleOpenDeleteModal  = (invoice_id: string) => {
+    setDeletePartnerID(invoice_id)
+    setOpenDeleteModal(true);
+  }
+  const handleDeletePartner = () => {
+    submitDelete({partner_id: deletePartnerID})
+  }
+
   const [headerData, setHeaderData]               = React.useState([
     { field: 'id', headerName: 'ID', type : 'string', flex : 0.3, filterble: false },
     { field: 'no', headerName: 'No', type: 'number', flex: 0.1, filterble : false, sortable: false},
@@ -102,7 +114,7 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         key     = {"delete-"+params.id}
         icon    = {<DeleteIcon />}
         label   = "Delete"
-        onClick = {() => {submitDelete({partner_id: params.row.id})}}
+        onClick = {() => {handleOpenDeleteModal(params.row.id)}}
         showInMenu
       />,
     ]},
@@ -190,6 +202,13 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       >
         <PartnerCreate modalOnClose={handleCloseCreate} getData={getDataPartner}/>
       </ModalComponent>
+
+      <ModalConfirmComponent
+        modalId      = 'partner-delete'
+        modalOpen    = {openDeleteModal}
+        modalOnClose = {handleCloseDeleteModal}
+        onDelete     = {handleDeletePartner} 
+      />
     </>
   )
 }

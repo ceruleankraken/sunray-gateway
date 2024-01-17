@@ -135,22 +135,19 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
       total = total - discount;
     }
 
-    // setValue('grand_total',total)
+    setValue('grand_total',total)
   }
 
   const onSubmit: SubmitHandler<{}> = (data: any) => {
 
     const createObj = {
-      header : {
-        batchno     : data.batchno,
-        discount    : data.discount,
-        ispercentage: data.ispercentage,
-        partner_id  : data.partner_id,
-        pay_date    : dayjs(data.pay_date).format('DD-MM-YYYY'),
-      },
-      line: lineInvoice,
+      batchno     : data.batchno,
+      discount    : parseFloat(data.discount),
+      ispercentage: data.ispercentage,
+      partner_id  : data.partner_id,
     }
-    // submitEditInvoice(createObj)
+
+    submitEditInvoice(createObj)
   }
 
   const onDiscountChange = (onChange: any, event: any) => {
@@ -287,6 +284,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
                       value     = {dayjs(value,'DD-MM-YYYY')}
                       format    = 'DD-MM-YYYY'
                       onChange  = {onChange}
+                      disabled   = {true}
                       sx        = {{mb:2}}
                       slotProps = {{
                         textField: {

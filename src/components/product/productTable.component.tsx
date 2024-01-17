@@ -13,13 +13,16 @@ import useProductDelete from '@/hooks/product/use-delete';
 import ProductEdit from '@/modals/product/edit';
 import ProductCreate from '@/modals/product/create';
 import { Box, IconButton, TextField, Skeleton } from '@mui/material';
+import ModalConfirmComponent from '../modalconfirm.component';
 
 
 const ProductTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
   const [openEditModal, setOpenEditModal]     = React.useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
   const [loadingData, setLoadingData]         = React.useState(false);
   const [editProductID, setEditProductID]     = React.useState('');
+  const [deleteProductID, setDeleteProductID] = React.useState('');
   const [textSearchTable, setTextSearchTable] = React.useState('');
   const [rowData, setRowData]                 = React.useState<any[]>([]);
   const [sortData, setSortData]               = React.useState<{field: string, sort:string }[]>([]);
@@ -72,6 +75,14 @@ const ProductTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     )
   }
 
+  const handleCloseDeleteModal = () => setOpenDeleteModal(false);
+  const handleOpenDeleteModal  = (invoice_id: string) => {
+    setDeleteProductID(invoice_id)
+    setOpenDeleteModal(true);
+  }
+  const handleDeletePartner = () => {
+    submitDelete({product_id: deleteProductID})
+  }
   
   
   const [headerData, setHeaderData] = React.useState([
@@ -94,7 +105,7 @@ const ProductTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         key     = {"delete-"+params.id}
         icon    = {<DeleteIcon />}
         label   = "Delete"
-        onClick = {() => {submitDelete({product_id: params.row.id})}}
+        onClick = {() => {handleOpenDeleteModal(params.row.id)}}
         showInMenu
       />,
     ]},
@@ -180,6 +191,13 @@ const ProductTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       >
         <ProductCreate modalOnClose={handleCloseCreate} getData={getDataProduct}/>
       </ModalComponent>
+      
+      <ModalConfirmComponent
+        modalId      = 'product-delete'
+        modalOpen    = {openDeleteModal}
+        modalOnClose = {handleCloseDeleteModal}
+        onDelete     = {handleDeletePartner} 
+      />
     </>
   )
 }
