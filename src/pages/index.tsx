@@ -3,48 +3,31 @@ import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 import AppLayout from '@/layout/AppLayout'
-import { Box, Container, Grid, Paper, Toolbar } from '@mui/material'
+import { Box, Container, Grid, Paper, Stack, Toolbar, Typography } from '@mui/material'
+import BreadcrumbsComponent from '@/components/breadCrumb.component'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   return (
-    <AppLayout title={"TS"}>
-      <Grid container spacing={3}>
-        {/* Chart */}
-        <Grid item xs={12} md={8} lg={9}>
-          <Paper
-            sx={{
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              height: 240,
-            }}
-          >
-            {/* <Chart /> */}
-          </Paper>
-        </Grid>
-        {/* Recent Deposits */}
-        <Grid item xs={12} md={4} lg={3}>
-          <Paper
-            sx={{
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              height: 240,
-            }}
-          >
-            {/* <Deposits /> */}
-          </Paper>
-        </Grid>
-        {/* Recent Orders */}
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-            {/* <Orders /> */}
-            AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-          </Paper>
-        </Grid>
-      </Grid>
+    <AppLayout title={"Home"}>
+      <Paper
+        sx={{
+          p            : 2,
+          display      : 'flex',
+          flexDirection: 'column',
+          height       : 400,
+        }}
+      >
+        <Box mb={3}>
+          <Stack direction={"row"} display={"flex"} alignItems={"center"}>
+            <Box flexGrow={1}>
+              <Typography variant="h4" color="black" fontWeight={700} height={30} lineHeight={1.5} fontSize={'1.25rem'}>Home</Typography>
+              <BreadcrumbsComponent />
+            </Box>
+          </Stack>
+        </Box>
+      </Paper>
     </AppLayout>
   )
 }

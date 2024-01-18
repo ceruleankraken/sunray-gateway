@@ -5,25 +5,29 @@ import React from 'react';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 
-export const menus:({title: string, path: string, icon: any})[] = [
+export const menus:({title: string, path: string, url: string, icon: any, child?: any})[] = [
   {
     title: 'Home',
     path : '/',
+    url  : '',
     icon : <DashboardIcon />,
   },
   {
     title: 'Partner',
     path : '/partner',
+    url  : 'partner',
     icon : <PeopleIcon />,
   },
   {
     title: 'Product',
     path : '/product',
+    url  : 'product',
     icon : <Inventory2Icon />,
   },
   {
     title: 'Invoice',
     path : '/invoice',
+    url  : 'invoice',
     icon : <ReceiptIcon />,
   },
 ]

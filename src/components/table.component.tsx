@@ -4,7 +4,7 @@ import { DataGrid, GridColDef, GridRowsProp, GridSortModel } from '@mui/x-data-g
 import { Box } from '@mui/material';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
-import { Pagination } from '@/services/partner/get';
+import { Pagination } from '@/types/pagination';
 import { styled } from '@mui/material/styles';
 
 

@@ -8,6 +8,7 @@ import { Box, Button, Paper, Toolbar, Typography, Grid, Stack} from '@mui/materi
 
 import AddIcon from '@mui/icons-material/Add';
 import PartnerTableComponent from '@/components/partner/partnerTable.component'
+import BreadcrumbsComponent from '@/components/breadCrumb.component'
 
 
 export default function Partner() {
@@ -28,7 +29,7 @@ export default function Partner() {
             <Stack direction={"row"} display={"flex"} alignItems={"center"}>
               <Box flexGrow={1}>
                 <Typography variant="h4" color="black" fontWeight={700} height={30} lineHeight={1.5} fontSize={'1.25rem'}>Partner</Typography>
-                <Typography variant="body1" color="black" height={20} lineHeight={1} fontSize={'1 rem'}>{'Dashboard > Partner'}</Typography>
+                <BreadcrumbsComponent />
               </Box>
               <Box>
                 <Button
