@@ -5,6 +5,7 @@ import { usePartnerCreate } from '@/hooks/partner/use-create'
 import { PartnerCreateFormPropsRequest } from '@/services/partner/create';
 import { LineInvoice } from '@/services/invoice/create';
 import { useProductGet } from '@/hooks/product/use-get';
+import { AlertError } from '@/utils/notification';
 
 export default function InvoiceAddLine({modalOnClose, onSubmitAdd}:any) {
 
@@ -45,8 +46,13 @@ export default function InvoiceAddLine({modalOnClose, onSubmitAdd}:any) {
 
     const newData = {...data, product_name: selectedProduct[0].label}
     // setValue('product_name', selectedProduct[0].label)
-    onSubmitAdd(newData)
-    modalOnClose()
+    const enter = onSubmitAdd(newData)
+    if (enter) {
+      modalOnClose()
+    }
+    else{
+      AlertError('Product Duplicate!')
+    }
   }
 
   const getDataProduct = () => {

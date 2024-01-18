@@ -8,9 +8,8 @@ import { HeaderInvoice, InvoiceCreateFormPropsRequest, LineInvoice } from '@/ser
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
-
 import 'dayjs/locale/en-gb';
+
 import moment from 'moment'
 import { usePartnerGet } from '@/hooks/partner/use-get';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -34,14 +33,19 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
 
   const { mutate: submitCreateInvoice, isLoading } = useInvoiceCreate({closeModal: ()=>modalOnClose(), getData: () => getData()});
   const [lineInvoice, setLineInvoice]              = React.useState<any[]>([])
-  const deleteLineInvoice                          = React.useCallback(
-    (id: any) => () => {
-      console.log(id);
-      console.log(lineInvoice);
-      // const newLine = lineInvoice.filter( (element) => element.line_id !== id );
-      // setLineInvoice(newLine)
-    }, [],
-  );
+  // const deleteLineInvoice                          = React.useCallback(
+  //   (id: any) => () => {
+  //     console.log(id);
+  //     console.log(lineInvoice);
+  //     // const newLine = lineInvoice.filter( (element) => element.line_id !== id );
+  //     // setLineInvoice(newLine)
+  //   }, [],
+  // );
+
+  const deleteLineInvoice = React.useCallback((index:number) => {
+    console.log(lineInvoice);
+    setLineInvoice( (prevList) => prevList.filter( (row:any) => row.line_id !== index))
+  },[]);
 
   const lineColumn  = React.useMemo<GridColDef<any>[]>(
     () => [
@@ -60,7 +64,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
           key     = {"delete-"+params.id}
           icon    = {<DeleteIcon />}
           label   = "Delete"
-          onClick = {deleteLineInvoice(params.row.line_id)}
+          onClick = {() => deleteLineInvoice(params.row.line_id)}
           showInMenu
         />,
       ]},
@@ -125,7 +129,15 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
     // const lineLength = lineInvoice.length;
     let   newData    = {line_id: Date.now().toString(), ...data }
 
-    setLineInvoice( (prev) => [...prev, newData ])
+    const check = lineInvoice.filter( (val) => val.product_id == newData.product_id)
+
+    if(check.length > 0) {
+      return false;
+    }
+    else {
+      setLineInvoice( (prev) => [...prev, newData ])
+      return true;
+    }
   }
 
   const onSubmit: SubmitHandler<{}> = (data: any) => {

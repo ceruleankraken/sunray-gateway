@@ -26,7 +26,7 @@ export default function Invoice() {
             // height       : 240,
           }}
         >
-          <Box mb={3}>
+          <Box mb={1}>
             <Stack direction={"row"} display={"flex"} alignItems={"center"}>
               <Box flexGrow={1}>
                 <Typography variant="h4" color="black" fontWeight={700} height={30} lineHeight={1.5} fontSize={'1.25rem'}>Invoice</Typography>
@@ -50,12 +50,12 @@ export default function Invoice() {
               </Box>
             </Stack>
           </Box>
-
-          <InvoiceTableComponent 
-            openCreate        = {openCreateModal}
-            handleCloseCreate = {handleCloseCreateModal}
-          />
         </Paper>
+
+        <InvoiceTableComponent 
+          openCreate        = {openCreateModal}
+          handleCloseCreate = {handleCloseCreateModal}
+        />
     </AppLayout>
   )
 }

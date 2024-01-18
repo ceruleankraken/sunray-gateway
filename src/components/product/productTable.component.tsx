@@ -144,6 +144,11 @@ const ProductTableComponent = ({ openCreate, handleCloseCreate }: any) => {
           onChange = { (e) => {
             setTextSearchTable(e.target.value)
           }}
+          onKeyUp     = {(event:any) => {
+            if (event.key === 'Enter' || event.target.value == '') {
+              handleQuery();
+            }
+          }}
         />
         {/* <Button  variant="contained" color="primary" sx={{ width: '5%'}}> */}
         <IconButton color='secondary' onClick={handleQuery} size="large">
