@@ -52,7 +52,6 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   });
   
   const { refetch: doGetInvoice, data, isLoading: isLoadingInvoice } = useInvoiceGet(queryOptions);
-  const { mutate: submitDelete, isLoading: isLoadIngDelete }         = useInvoiceDelete({getData: () => getDataInvoice()});
   
   
   const handleQuery  = () => {
@@ -82,6 +81,9 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     setDeleteInvoiceID(invoice_id)
     setOpenDeleteModal(true);
   }
+  
+  const { mutate: submitDelete, isLoading: isLoadIngDelete }         = useInvoiceDelete({modalClose: handleCloseDeleteModal,getData: () => getDataInvoice()});
+
   const handleDeleteInvoice = () => {
     submitDelete({invoice_id: deleteInvoiceID})
   }

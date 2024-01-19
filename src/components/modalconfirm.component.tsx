@@ -12,6 +12,7 @@ interface ModalConfirmProps {
 }
 
 const ModalConfirmComponent: React.FC<ModalConfirmProps> = ({modalOpen, modalOnClose, modalId, onDelete }: any) => {
+
   return (
 
       <Dialog

@@ -33,17 +33,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
 
   const { mutate: submitCreateInvoice, isLoading } = useInvoiceCreate({closeModal: ()=>modalOnClose(), getData: () => getData()});
   const [lineInvoice, setLineInvoice]              = React.useState<any[]>([])
-  // const deleteLineInvoice                          = React.useCallback(
-  //   (id: any) => () => {
-  //     console.log(id);
-  //     console.log(lineInvoice);
-  //     // const newLine = lineInvoice.filter( (element) => element.line_id !== id );
-  //     // setLineInvoice(newLine)
-  //   }, [],
-  // );
-
-  const deleteLineInvoice = React.useCallback((index:number) => {
-    console.log(lineInvoice);
+  const deleteLineInvoice                          = React.useCallback((index:number) => {
     setLineInvoice( (prevList) => prevList.filter( (row:any) => row.line_id !== index))
   },[]);
 

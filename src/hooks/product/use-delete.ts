@@ -3,7 +3,7 @@ import { useMutation, useQuery } from 'react-query';
 import { AlertError, AlertSuccess } from '@/utils/notification';
 import { ProductDeleteFormPropsRequest } from '@/services/product/delete';
 
-const useProductDelete = ({getData}: any) => {
+const useProductDelete = ({modalClose, getData}: any) => {
 
   return useMutation({
     mutationKey: ['product-delete'],
@@ -11,6 +11,7 @@ const useProductDelete = ({getData}: any) => {
     onSuccess  : async (data) => {
       AlertSuccess("Data Deleted Successfully");
       getData();
+      modalClose();
     },
     onError: (data: any) => {
       let message = data?.response.data.Message || 'Something went wrong, please try again!'

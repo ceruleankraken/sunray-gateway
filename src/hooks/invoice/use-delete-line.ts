@@ -9,19 +9,19 @@ import {
 } from '@/stores/features/auth.slice';
 import { useTypedSelector } from '../other/use-type-selector';
 import { AlertError, AlertSuccess } from '@/utils/notification';
-import { InvoiceDeleteFormPropsRequest } from '@/services/invoice/delete';
+import { InvoiceLineDeleteFormPropsRequest } from '@/services/invoice/delete-line';
 
 
-export const useInvoiceDelete = ({modalClose, getData}: any) => {
+export const useInvoiceLineDelete = ({modalClose, updateTable}: any) => {
   const dispatch                  = useDispatch();
   const router                    = useRouter();
 
   return useMutation({
-    mutationKey: ['invoice-delete'],
-    mutationFn : (payload: InvoiceDeleteFormPropsRequest) => api.deleteInvoice({ payload }),
+    mutationKey: ['invoice-line-delete'],
+    mutationFn : (payload: InvoiceLineDeleteFormPropsRequest) => api.deleteInvoiceLine({ payload }),
     onSuccess  : async (data) => {
       AlertSuccess("Data Deleted Successfully");
-      getData();
+      updateTable();
       modalClose();
       // router.replace('/');
     },

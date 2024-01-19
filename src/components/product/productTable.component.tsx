@@ -40,7 +40,6 @@ const ProductTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   });
   
   const { refetch: doGetProduct, data, isLoading: isLoadingProduct } = useProductGet(queryOptions);
-  const { mutate: submitDelete, isLoading: isLoadIngDelete }         = useProductDelete({getData: () => getDataProduct()});
   
   
   const handleQuery = () => {
@@ -80,6 +79,8 @@ const ProductTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     setDeleteProductID(invoice_id)
     setOpenDeleteModal(true);
   }
+  const { mutate: submitDelete, isLoading: isLoadIngDelete }         = useProductDelete({modalClose: handleCloseDeleteModal,getData: () => getDataProduct()});
+  
   const handleDeletePartner = () => {
     submitDelete({product_id: deleteProductID})
   }

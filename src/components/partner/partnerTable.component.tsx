@@ -42,7 +42,6 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   });
   
   const { refetch: doGetPartner, data, isLoading: isLoadingPartner } = usePartnerGet(queryOptions);
-  const { mutate: submitDelete, isLoading: isLoadIngDelete }         = usePartnerDelete({getData: () => getDataPartner()});
   
   
   const handleQuery = () => {
@@ -82,6 +81,8 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     setDeletePartnerID(invoice_id)
     setOpenDeleteModal(true);
   }
+  const { mutate: submitDelete, isLoading: isLoadIngDelete }         = usePartnerDelete({modalClose: handleCloseDeleteModal, getData: () => getDataPartner()});
+  
   const handleDeletePartner = () => {
     submitDelete({partner_id: deletePartnerID})
   }

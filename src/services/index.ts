@@ -17,6 +17,9 @@ import invoiceEditServices from './invoice/edit';
 import invoiceGetServices from './invoice/get';
 import invoiceGetOneServices from './invoice/get-one';
 import invoiceDeleteServices from './invoice/delete';
+import invoiceLineEditServices from './invoice/edit-line';
+import invoiceLineDeleteServices from './invoice/delete-line';
+import invoiceLineGetOneServices from './invoice/get-line';
 
 const api = {
   ...loginServices,
@@ -36,6 +39,10 @@ const api = {
   ...invoiceGetServices,
   ...invoiceGetOneServices,
   ...invoiceDeleteServices,
+  ...invoiceLineEditServices,
+  ...invoiceLineDeleteServices,
+  ...invoiceLineGetOneServices,
+  
 };
 
 export default api;

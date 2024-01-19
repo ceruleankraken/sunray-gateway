@@ -1,32 +1,34 @@
 import React from 'react'
-import { TextField, Button, Stack, Switch, FormControl, FormLabel, FormGroup, FormHelperText, FormControlLabel, MenuItem, Box} from '@mui/material'
+import { TextField, Button, Stack, Switch, FormControlLabel, MenuItem, Box} from '@mui/material'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
-import { usePartnerCreate } from '@/hooks/partner/use-create'
-import { PartnerCreateFormPropsRequest } from '@/services/partner/create';
-import { useInvoiceCreate } from '@/hooks/invoice/use-create';
-import { HeaderInvoice, InvoiceCreateFormPropsRequest, LineInvoice } from '@/services/invoice/create';
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 
 import 'dayjs/locale/en-gb';
 import moment from 'moment'
 import { usePartnerGet } from '@/hooks/partner/use-get';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ModalComponent from '@/components/modal.component';
-import InvoiceAddLine from './add_line';
+import EditIcon from '@mui/icons-material/Edit';
 import dayjs from 'dayjs';
 import { useInvoiceEdit } from '@/hooks/invoice/use-edit';
 import { useInvoiceGetOne } from '@/hooks/invoice/use-get-one';
+import { useInvoiceLineDelete } from '@/hooks/invoice/use-delete-line';
+import ModalConfirmComponent from '@/components/modalconfirm.component';
+import ModalComponent from '@/components/modal.component';
+import InvoiceEditLine from './edit_line';
 
 export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
 
   // const [openAddLineModal, setOpenAddLineModal]                      = React.useState(false);
   // const handleOpenAddLineModal                                       = () => setOpenAddLineModal(true);
   // const handleCloseAddLineModal                                      = () => setOpenAddLineModal(false);
-  const [partnerOptions, setPartnerOptions] = React.useState([])
-  const [lineInvoice, setLineInvoice]       = React.useState<any[]>([])
+  const [partnerOptions, setPartnerOptions]           = React.useState([])
+  const [lineInvoice, setLineInvoice]                 = React.useState<any[]>([])
+  const [deleteInvoiceLineID, setDeleteInvoiceLineID] = React.useState('');
+  const [editInvoiceLineID, setEditInvoiceLineID]     = React.useState('');
+  const [openDeleteModal, setOpenDeleteModal]         = React.useState(false);
+  const [openEditModal, setOpenEditModal]             = React.useState(false);
 
   const { refetch: doGetPartner, data: dataPartner, isLoading: isLoadingPartner } = usePartnerGet({
     field : 'id',
@@ -74,32 +76,73 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
     setLineInvoice(rows);
   }
   
+  
+  
+  // const deleteLineInvoice = () => {
+  //   setLineInvoice( (prevList) => prevList.filter( (row:any) => row.line_id !== deleteInvoiceLineID))
+  // };
+
+
+  const handleCloseDeleteModal = () => setOpenDeleteModal(false);
+  const handleOpenDeleteModal  = (invoice_line_id: string) => {
+    setDeleteInvoiceLineID(invoice_line_id)
+    setOpenDeleteModal(true);
+  }
+  const { mutate: submitDeleteLine, isLoading: isLoadIngDeleteLine } = useInvoiceLineDelete({ modalClose: handleCloseDeleteModal ,updateTable: () => doGetInvoice() });
+  
+  const handleDeleteInvoiceLine = () => {
+    submitDeleteLine({invoice_line_id: deleteInvoiceLineID})
+  }
+
+
+  const handleOpenEditModal  = (invoice_id: string) => {
+    setEditInvoiceLineID(invoice_id);
+    setOpenEditModal(true);
+  }
+  const handleCloseEditModal = () => {
+    setOpenEditModal(false);
+    setEditInvoiceLineID('');
+  }
+
 
   const { mutate: submitEditInvoice, isLoading }                        = useInvoiceEdit({closeModal: ()=>modalOnClose(), invoice_id: invoice_id, getData: () => getData()});
   const { refetch: doGetInvoice, data, isLoading: isLoadingGetPartner } = useInvoiceGetOne(invoice_id, (dataOriginal: any)=>loadData(dataOriginal));
 
   const [lineColumn, setLineColumn]  = React.useState([
-      { field: 'line_id', headerName: 'ID', type : 'string', flex : 0.3, filterble: false },
+      { field: 'id', headerName: 'ID', type : 'string', flex : 0.3, filterble: false },
       { field: 'no', headerName: 'No', type: 'number', width: 10, filterble : false, sortable: false,
         renderCell: (params: any) => params.api.getAllRowIds().indexOf(params.id)+1
       },
+      { field: 'product_id', headerName: 'Product', type : 'string', minWidth: 250, filterble: false,
+        valueGetter: (params: GridRenderCellParams) => params.row.product.id 
+      },
       { field: 'product', headerName: 'Product', type : 'string', minWidth: 250, filterble: false,
         valueGetter: (params: GridRenderCellParams) => params.row.product.name 
+      },
+      { field: 'invoice', headerName: 'Invoice ID', type : 'string', minWidth: 250, filterble: false,
+        valueGetter: (params: GridRenderCellParams) => params.row.invoice.id 
       },
       { field: 'qty', headerName: 'Qty', type : 'string', minWidth: 100, filterble: false },
       { field: 'price', headerName: 'Price', type : 'string', minWidth: 100, filterble: false },
       { field: 'amount', headerName: 'Amount', type : 'string', minWidth: 100, filterble: false },
       { field: 'total', headerName: 'Total', type : 'string', minWidth: 150, filterble: false },
-      // { field: 'action', type: 'actions', width:50, getActions: (params) => [
-      //   // eslint-disable-next-line react/jsx-key
-      //   <GridActionsCellItem
-      //     key     = {"delete-"+params.id}
-      //     icon    = {<DeleteIcon />}
-      //     label   = "Delete"
-      //     onClick = {deleteLineInvoice(params.row.line_id)}
-      //     showInMenu
-      //   />,
-      // ]},
+      { field: 'action', type: 'actions', width:50, getActions: (params: any) => [
+        // eslint-disable-next-line react/jsx-key
+        <GridActionsCellItem
+          key     = {"edit-"+params.id}
+          icon    = {<EditIcon />}
+          label   = "Edit"
+          onClick = {() => handleOpenEditModal(params.row.id)}
+          showInMenu
+        />,
+        <GridActionsCellItem
+          key     = {"delete-"+params.id}
+          icon    = {<DeleteIcon />}
+          label   = "Delete"
+          onClick = {() => handleOpenDeleteModal(params.row.id)}
+          showInMenu
+        />,
+      ]},
     ],
   );
 
@@ -417,13 +460,13 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
                 // display: 'grid',
               }}>
                 <DataGrid 
-                  getRowId              = { (row: any) => row.line_id }
+                  getRowId              = { (row: any) => row.id }
                   sx                    = {{ overflowX: 'scroll' }}
                   rows                  = {lineInvoice}
                   columns               = {lineColumn}
                   scrollbarSize         = {5}
                   disableColumnMenu     = {true}
-                  columnVisibilityModel = {{ line_id: false }}
+                  columnVisibilityModel = {{ id: false, invoice: false, product_id: false }}
                 />
               </div>
             </Stack>
@@ -431,6 +474,23 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
           </Stack>
         </form>
       </LocalizationProvider>
+
+      <ModalComponent
+        modalOpen    = {openEditModal}
+        modalOnClose = {handleCloseEditModal}
+        modalSize    = 'sm'
+        modalTitle   = 'Edit Invoice Line'
+      >
+        <InvoiceEditLine modalOnClose={handleCloseEditModal} invoice_line_id={editInvoiceLineID} getData={doGetInvoice}/>
+        {/* <PartnerEdit modalOnClose={handleCloseEditModal} partner_id={editPartnerID} getData={getDataPartner}/> */}
+      </ModalComponent>
+
+      <ModalConfirmComponent
+        modalId      = 'invoice-line-delete'
+        modalOpen    = {openDeleteModal}
+        modalOnClose = {handleCloseDeleteModal}
+        onDelete     = {handleDeleteInvoiceLine} 
+      />
     </>
   )
 }

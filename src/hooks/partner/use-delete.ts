@@ -13,7 +13,7 @@ import { PartnerDeleteFormPropsRequest } from '@/services/partner/delete';
 // import { setSidebar } from '@/stores/features/sidebar/slice';
 
 
-const usePartnerDelete = ({getData}: any) => {
+const usePartnerDelete = ({modalClose, getData}: any) => {
   const dispatch                  = useDispatch();
   const router                    = useRouter();
 
@@ -23,6 +23,7 @@ const usePartnerDelete = ({getData}: any) => {
     onSuccess  : async (data) => {
       AlertSuccess("Data Deleted Successfully");
       getData();
+      modalClose();
       // router.replace('/');
     },
     onError: (data: any) => {
