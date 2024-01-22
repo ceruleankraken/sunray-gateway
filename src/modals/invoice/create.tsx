@@ -20,6 +20,7 @@ import dayjs from 'dayjs';
 export default function InvoiceCreate({modalOnClose, getData}:any) {
 
   const [openAddLineModal, setOpenAddLineModal]                      = React.useState(false);
+  const [grandTotal, setGrandTotal]                                  = React.useState(0);
   const handleOpenAddLineModal                                       = () => setOpenAddLineModal(true);
   const handleCloseAddLineModal                                      = () => setOpenAddLineModal(false);
   const [partnerOptions, setPartnerOptions]                          = React.useState([])
@@ -90,7 +91,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
       ispercentage: false,
       partner_id  : '',
       pay_date    : '',
-      grand_total : 0,
+      // grand_total : 0,
     }
   })
 
@@ -112,7 +113,8 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
       total = total - discount;
     }
 
-    setValue('grand_total',total)
+    // setValue('grand_total',total)
+    setGrandTotal(total)
   }
 
   const submitAddLineInvoice = (data:any) => {
@@ -191,6 +193,20 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
   React.useEffect(() => {
     getDataPartner();
   },[])
+
+  const FooterGrandTotal = () => {
+
+    const grandTotalRupiah = new Intl.NumberFormat('id-ID', {
+      style   : 'currency',
+      currency: 'IDR',
+    }).format(grandTotal);
+
+    return (
+      <Box sx={{ p: 1, display: 'flex' }}>
+        Grand Total: {grandTotalRupiah}
+      </Box>
+    );
+  }
 
   return (
     <>
@@ -392,7 +408,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
                 </Button>
               </Box>
               
-              <Controller
+              {/* <Controller
                 name    = "grand_total"
                 control = {control}
                 render  = { ({ 
@@ -415,7 +431,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
                   />
                   )
                 }
-              />
+              /> */}
 
               <Button type={'submit'} variant={'contained'} color={'primary'}>
                 Submit
@@ -435,6 +451,13 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
                   scrollbarSize         = {5}
                   disableColumnMenu     = {true}
                   columnVisibilityModel = {{ line_id: false }}
+                  hideFooterPagination  = {true}
+                  slots                 = {{
+                    footer: FooterGrandTotal,
+                  }}
+
+                  // autoPageSize
+                  // pageSizeOptions={[]}
                 />
               </div>
             </Stack>
