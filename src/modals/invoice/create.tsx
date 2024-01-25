@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextField, Button, Stack, Switch, FormControl, FormLabel, FormGroup, FormHelperText, FormControlLabel, MenuItem, Box} from '@mui/material'
+import { TextField, Button, Stack, Switch, FormControl, FormLabel, FormGroup, FormHelperText, FormControlLabel, MenuItem, Box, Autocomplete} from '@mui/material'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { usePartnerCreate } from '@/hooks/partner/use-create'
 import { PartnerCreateFormPropsRequest } from '@/services/partner/create';
@@ -16,6 +16,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ModalComponent from '@/components/modal.component';
 import InvoiceAddLine from './add_line';
 import dayjs from 'dayjs';
+import { usePartnerGetActive } from '@/hooks/partner/use-get-active';
 
 export default function InvoiceCreate({modalOnClose, getData}:any) {
 
@@ -24,13 +25,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
   const handleOpenAddLineModal                                       = () => setOpenAddLineModal(true);
   const handleCloseAddLineModal                                      = () => setOpenAddLineModal(false);
   const [partnerOptions, setPartnerOptions]                          = React.useState([])
-  const { refetch: doGetPartner, data, isLoading: isLoadingPartner } = usePartnerGet({
-    field : 'id',
-    sort  : 'asc',
-    limit : '999',
-    offset: '',
-    q     : '',
-  });
+  const { refetch: doGetPartner, data, isLoading: isLoadingPartner } = usePartnerGetActive();
 
   const { mutate: submitCreateInvoice, isLoading } = useInvoiceCreate({closeModal: ()=>modalOnClose(), getData: () => getData()});
   const [lineInvoice, setLineInvoice]              = React.useState<any[]>([])
@@ -66,6 +61,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
   const getDataPartner = () => {
     doGetPartner().then(
       (resp: any) => {
+        console.log(resp)
         if(resp.status == 'error') {
         }
         else {
@@ -86,7 +82,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      discount    : '',
+      discount    : '0',
       batchno     : '',
       ispercentage: false,
       partner_id  : '',
@@ -133,10 +129,6 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
   }
 
   const onSubmit: SubmitHandler<{}> = (data: any) => {
-    console.log(data);
-    console.log(data.pay_date)
-    console.log(dayjs(data.pay_date).format('DD-MM-YYYY'))
-
     const createObj = {
       header : {
         batchno     : data.batchno,
@@ -227,27 +219,47 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
                     fieldState: { error },
                     formState,
                   }) => (
-                  <TextField
-                    helperText = {error ? error.message : null}
-                    size       = "medium"
-                    error      = {!!error}
-                    onChange   = {onChange}
-                    type       = 'string'
-                    value      = {value}
-                    label      = {"Partner"}
-                    variant    = "outlined"
-                    sx         = {{mb:2}}
-                    select
+                  <Autocomplete
+                    disablePortal
                     fullWidth
-                  >
-                    {
-                      partnerOptions.map((option: {label: string, value: string}) => (
-                        <MenuItem key={option.value} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      ))
+                    id          = "select-partner"
+                    options     = {partnerOptions}
+                    onChange    = {onChange}
+                    sx          = {{ mb: 2 }}
+                    renderInput = { (params: any) => 
+                      <TextField 
+                        {...params}
+                        helperText = {error ? error.message : null}
+                        size       = "medium"
+                        error      = {!!error}
+                        type       = 'string'
+                        value      = {value}
+                        label      = {"Partner"}
+                        variant    = "outlined"
+                      />
                     }
-                  </TextField>
+                  />
+                  // <TextField
+                  //   helperText = {error ? error.message : null}
+                  //   size       = "medium"
+                  //   error      = {!!error}
+                  //   onChange   = {onChange}
+                  //   type       = 'string'
+                  //   value      = {value}
+                  //   label      = {"Partner"}
+                  //   variant    = "outlined"
+                  //   sx         = {{mb:2}}
+                  //   select
+                  //   fullWidth
+                  // >
+                  //   {
+                  //     partnerOptions.map((option: {label: string, value: string}) => (
+                  //       <MenuItem key={option.value} value={option.value}>
+                  //         {option.label}
+                  //       </MenuItem>
+                  //     ))
+                  //   }
+                  // </TextField>
                   )
                 }
               />

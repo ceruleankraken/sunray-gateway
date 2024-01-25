@@ -3,6 +3,7 @@ import logoutServices from '@/services/auth/logout';
 import partnerCreateServices from './partner/create';
 import partnerGetServices from './partner/get';
 import partnerGetOneServices from './partner/get-one';
+import partnerGetActiveServices from './partner/get-active';
 import partnerDeleteServices from './partner/delete';
 import partnerEditServices from './partner/edit';
 
@@ -10,6 +11,7 @@ import productCreateServices from './product/create';
 import productEditServices from './product/edit';
 import productGetServices from './product/get';
 import productGetOneServices from './product/get-one';
+import productGetActiveServices from './product/get-active';
 import productDeleteServices from './product/delete';
 
 import invoiceCreateServices from './invoice/create';
@@ -27,12 +29,14 @@ const api = {
   ...partnerCreateServices,
   ...partnerGetServices,
   ...partnerGetOneServices,
+  ...partnerGetActiveServices,
   ...partnerDeleteServices,
   ...partnerEditServices,
   ...productCreateServices,
   ...productEditServices,
   ...productGetServices,
   ...productGetOneServices,
+  ...productGetActiveServices,
   ...productDeleteServices,
   ...invoiceCreateServices,
   ...invoiceEditServices,

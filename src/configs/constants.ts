@@ -15,17 +15,19 @@ export const LOGIN_PATH           = '/user/login';
 export const LOGOUT_PATH          = '/user/logout';
 export const REFRESH_TOKEN_PATH   = '/user/refresh';
 
-export const PARTNER_CREATE_PATH  = '/partner/';
-export const PARTNER_GET_PATH     = '/partners/';
-export const PARTNER_GET_ONE_PATH = '/partner/';
-export const PARTNER_EDIT_PATH    = '/partner/';
-export const PARTNER_DELETE_PATH  = '/partner/';
+export const PARTNER_CREATE_PATH     = '/partner/';
+export const PARTNER_GET_PATH        = '/partners/';
+export const PARTNER_GET_ONE_PATH    = '/partner/';
+export const PARTNER_GET_PATIAL_PATH = '/partner/patial/';
+export const PARTNER_EDIT_PATH       = '/partner/';
+export const PARTNER_DELETE_PATH     = '/partner/';
 
-export const PRODUCT_CREATE_PATH  = '/product/';
-export const PRODUCT_GET_PATH     = '/products/';
-export const PRODUCT_GET_ONE_PATH = '/product/';
-export const PRODUCT_EDIT_PATH    = '/product/';
-export const PRODUCT_DELETE_PATH  = '/product/';
+export const PRODUCT_CREATE_PATH     = '/product/';
+export const PRODUCT_GET_PATH        = '/products/';
+export const PRODUCT_GET_ONE_PATH    = '/product/';
+export const PRODUCT_GET_PATIAL_PATH = '/product/patial/';
+export const PRODUCT_EDIT_PATH       = '/product/';
+export const PRODUCT_DELETE_PATH     = '/product/';
 
 export const INVOICE_CREATE_PATH      = '/invoice/v2';
 export const INVOICE_GET_PATH         = '/invoices/';

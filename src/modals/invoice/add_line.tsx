@@ -1,23 +1,14 @@
 import React from 'react'
-import { TextField, Button, Stack, Switch, FormControl, FormLabel, FormGroup, FormHelperText, FormControlLabel, MenuItem} from '@mui/material'
+import { TextField, Button, Stack, Switch, FormControlLabel, MenuItem, Autocomplete} from '@mui/material'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
-import { usePartnerCreate } from '@/hooks/partner/use-create'
-import { PartnerCreateFormPropsRequest } from '@/services/partner/create';
-import { LineInvoice } from '@/services/invoice/create';
-import { useProductGet } from '@/hooks/product/use-get';
 import { AlertError } from '@/utils/notification';
+import { useProductGetActive } from '@/hooks/product/use-get-active';
 
 export default function InvoiceAddLine({modalOnClose, onSubmitAdd}:any) {
 
   const [checkValid, setCheckValid]                                  = React.useState(true)
   const [productOptions, setProductOptions]                          = React.useState([])
-  const { refetch: doGetProduct, data, isLoading: isLoadingProduct } = useProductGet({
-    field : 'id',
-    sort  : 'asc',
-    limit : '999',
-    offset: '',
-    q     : '',
-  });
+  const { refetch: doGetProduct, data, isLoading: isLoadingProduct } = useProductGetActive();
 
   const { 
     watch,
@@ -180,27 +171,47 @@ export default function InvoiceAddLine({modalOnClose, onSubmitAdd}:any) {
                 fieldState: { error },
                 formState,
               }) => (
-              <TextField
-                helperText = {error ? error.message : null}
-                size       = "medium"
-                error      = {!!error}
-                onChange   = {onChange}
-                type       = 'string'
-                value      = {value}
-                label      = {"Product"}
-                variant    = "outlined"
-                sx         = {{mb:2}}
-                select
+              <Autocomplete
+                disablePortal
                 fullWidth
-              >
-                {
-                  productOptions.map((option: {label: string, value: string}) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))
+                id          = "select-product"
+                options     = {productOptions}
+                onChange    = {onChange}
+                sx          = {{ mb: 2 }}
+                renderInput = { (params: any) => 
+                  <TextField 
+                    {...params}
+                    helperText = {error ? error.message : null}
+                    size       = "medium"
+                    error      = {!!error}
+                    type       = 'string'
+                    value      = {value}
+                    label      = {"Product"}
+                    variant    = "outlined"
+                  />
                 }
-              </TextField>
+              />
+              // <TextField
+              //   helperText = {error ? error.message : null}
+              //   size       = "medium"
+              //   error      = {!!error}
+              //   onChange   = {onChange}
+              //   type       = 'string'
+              //   value      = {value}
+              //   label      = {"Product"}
+              //   variant    = "outlined"
+              //   sx         = {{mb:2}}
+              //   select
+              //   fullWidth
+              // >
+              //   {
+              //     productOptions.map((option: {label: string, value: string}) => (
+              //       <MenuItem key={option.value} value={option.value}>
+              //         {option.label}
+              //       </MenuItem>
+              //     ))
+              //   }
+              // </TextField>
               )
             }
           />

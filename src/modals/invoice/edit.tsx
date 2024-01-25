@@ -1,13 +1,11 @@
 import React from 'react'
-import { TextField, Button, Stack, Switch, FormControlLabel, MenuItem, Box} from '@mui/material'
+import { TextField, Button, Stack, Switch, FormControlLabel, MenuItem, Box, Autocomplete} from '@mui/material'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 import 'dayjs/locale/en-gb';
-import moment from 'moment'
-import { usePartnerGet } from '@/hooks/partner/use-get';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import dayjs from 'dayjs';
@@ -17,6 +15,7 @@ import { useInvoiceLineDelete } from '@/hooks/invoice/use-delete-line';
 import ModalConfirmComponent from '@/components/modalconfirm.component';
 import ModalComponent from '@/components/modal.component';
 import InvoiceEditLine from './edit_line';
+import { usePartnerGetActive } from '@/hooks/partner/use-get-active';
 
 export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
 
@@ -30,13 +29,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
   const [openDeleteModal, setOpenDeleteModal]         = React.useState(false);
   const [openEditModal, setOpenEditModal]             = React.useState(false);
 
-  const { refetch: doGetPartner, data: dataPartner, isLoading: isLoadingPartner } = usePartnerGet({
-    field : 'id',
-    sort  : 'asc',
-    limit : '999',
-    offset: '',
-    q     : '',
-  });
+  const { refetch: doGetPartner, data: dataPartner, isLoading: isLoadingPartner } = usePartnerGetActive();
   
   const { 
     watch,
@@ -49,7 +42,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      discount    : '',
+      discount    : '0',
       batchno     : '',
       ispercentage: false,
       partner_id  : '',
@@ -257,27 +250,48 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
                     fieldState: { error },
                     formState,
                   }) => (
-                  <TextField
-                    helperText = {error ? error.message : null}
-                    size       = "medium"
-                    error      = {!!error}
-                    onChange   = {onChange}
-                    type       = 'string'
-                    value      = {value}
-                    label      = {"Partner"}
-                    variant    = "outlined"
-                    sx         = {{mb:2}}
-                    select
+
+                  <Autocomplete
+                    disablePortal
                     fullWidth
-                  >
-                    {
-                      partnerOptions.map((option: {label: string, value: string}) => (
-                        <MenuItem key={option.value} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      ))
+                    id          = "select-partner"
+                    options     = {partnerOptions}
+                    onChange    = {onChange}
+                    sx          = {{ mb: 2 }}
+                    renderInput = { (params: any) => 
+                      <TextField 
+                        {...params}
+                        helperText = {error ? error.message : null}
+                        size       = "medium"
+                        error      = {!!error}
+                        type       = 'string'
+                        value      = {value}
+                        label      = {"Partner"}
+                        variant    = "outlined"
+                      />
                     }
-                  </TextField>
+                  />
+                  // <TextField
+                  //   helperText = {error ? error.message : null}
+                  //   size       = "medium"
+                  //   error      = {!!error}
+                  //   onChange   = {onChange}
+                  //   type       = 'string'
+                  //   value      = {value}
+                  //   label      = {"Partner"}
+                  //   variant    = "outlined"
+                  //   sx         = {{mb:2}}
+                  //   select
+                  //   fullWidth
+                  // >
+                  //   {
+                  //     partnerOptions.map((option: {label: string, value: string}) => (
+                  //       <MenuItem key={option.value} value={option.value}>
+                  //         {option.label}
+                  //       </MenuItem>
+                  //     ))
+                  //   }
+                  // </TextField>
                   )
                 }
               />
