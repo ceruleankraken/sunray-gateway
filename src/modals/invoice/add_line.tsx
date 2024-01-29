@@ -20,7 +20,7 @@ export default function InvoiceAddLine({modalOnClose, onSubmitAdd}:any) {
     formState: { errors, isValid },
   } = useForm({
     defaultValues: {
-      product_id  : '',
+      product_id  : null,
       // product_name: '',
       qty         : '',
       price       : '',
@@ -32,10 +32,12 @@ export default function InvoiceAddLine({modalOnClose, onSubmitAdd}:any) {
   })
 
   const onSubmit: SubmitHandler<{}> = (data: any) => {
-    const selectedProduct: any = productOptions.filter( (product: any) => product.value == data.product_id);
-    // console.log(selectedProduct)
+    // const selectedProduct: any = productOptions.filter( (product: any) => product.value == data.product_id);
+    // console.log(data)
+    // console.log(productOptions)
 
-    const newData = {...data, product_name: selectedProduct[0].label}
+    let newData            = {...data, product_name: data.product_id.label}
+        newData.product_id = data.product_id.value
     // setValue('product_name', selectedProduct[0].label)
     const enter = onSubmitAdd(newData)
     if (enter) {
@@ -174,10 +176,51 @@ export default function InvoiceAddLine({modalOnClose, onSubmitAdd}:any) {
               <Autocomplete
                 disablePortal
                 fullWidth
-                id          = "select-product"
-                options     = {productOptions}
-                onChange    = {onChange}
-                sx          = {{ mb: 2 }}
+                value                = {value}
+                id                   = "select-product"
+                options              = {productOptions}
+                onChange             = {(e, data) => onChange(data)}
+                sx                   = {{ mb: 2 }}
+                isOptionEqualToValue = {(option:any, value:any) => option.value === value.value}
+                getOptionLabel       = {(option:any) => option.label}
+                // renderOption         ={(option:any) => option.label}
+                // getOptionLabel       = {(option:any) => option.label}
+
+                // isOptionEqualToValue = {(option:any, value:any) => option.id === value.id}
+                // isOptionEqualToValue = {(option, value) => {
+                //   //nothing that is put in here will cause the warning to go away
+                //   if (value == "") {
+                //     return false;
+                //   } else if (value === option) {
+                //     return true;
+                //   }
+                //   else { 
+                //     return false;
+                //   }
+                // }}      
+                // getOptionLabel       ={(option:any) => option.label}
+                // isOptionEqualToValue = {(option, value) => {
+                //   if (value === "" || value === option){
+                //     console.log(option)
+                //     console.log(value)
+                //     return true;
+                //   }
+                //   else { 
+                //     return false;
+                //   }
+                // }}
+                // getOptionLabel={(option: any) => {
+                //   return option?.label || option;
+                // }}
+                // getOptionLabel    = {(option:any) => option.title ? option.title : ''}
+                // getOptionSelected = {(option:any, value: any) => {
+                //   //nothing that is put in here will cause the warning to go away
+                //   if (value === "") {
+                //     return true;
+                //   } else if (value === option) {
+                //     return true;
+                //   }
+                // }}
                 renderInput = { (params: any) => 
                   <TextField 
                     {...params}
@@ -185,7 +228,6 @@ export default function InvoiceAddLine({modalOnClose, onSubmitAdd}:any) {
                     size       = "medium"
                     error      = {!!error}
                     type       = 'string'
-                    value      = {value}
                     label      = {"Product"}
                     variant    = "outlined"
                   />

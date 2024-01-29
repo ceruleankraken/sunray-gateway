@@ -85,7 +85,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
       discount    : '0',
       batchno     : '',
       ispercentage: false,
-      partner_id  : '',
+      partner_id  : null,
       pay_date    : '',
       // grand_total : 0,
     }
@@ -118,7 +118,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
     let   newData    = {line_id: Date.now().toString(), ...data }
 
     const check = lineInvoice.filter( (val) => val.product_id == newData.product_id)
-
+    console.log(newData);
     if(check.length > 0) {
       return false;
     }
@@ -134,7 +134,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
         batchno     : data.batchno,
         discount    : data.discount,
         ispercentage: data.ispercentage,
-        partner_id  : data.partner_id,
+        partner_id  : data.partner_id.value,
         pay_date    : dayjs(data.pay_date).format('DD-MM-YYYY'),
       },
       line: lineInvoice,
@@ -187,7 +187,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
   },[])
 
   const FooterGrandTotal = () => {
-
+    
     const grandTotalRupiah = new Intl.NumberFormat('id-ID', {
       style   : 'currency',
       currency: 'IDR',
@@ -222,18 +222,20 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
                   <Autocomplete
                     disablePortal
                     fullWidth
-                    id          = "select-partner"
-                    options     = {partnerOptions}
-                    onChange    = {onChange}
-                    sx          = {{ mb: 2 }}
-                    renderInput = { (params: any) => 
+                    id                   = "select-partner"
+                    options              = {partnerOptions}  
+                    onChange             = {(e, data) => onChange(data)}
+                    value                = {value}
+                    sx                   = {{ mb: 2 }}
+                    isOptionEqualToValue = {(option:any, value:any) => option.value === value.value}
+                    getOptionLabel       = {(option:any) => option.label}
+                    renderInput          = { (params: any) => 
                       <TextField 
                         {...params}
                         helperText = {error ? error.message : null}
                         size       = "medium"
                         error      = {!!error}
                         type       = 'string'
-                        value      = {value}
                         label      = {"Partner"}
                         variant    = "outlined"
                       />
@@ -394,6 +396,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
                         }
                         sx={{
                           display      : "flex",
+                          flexWrap     : 'wrap',
                           flexDirection: "row",
                           margin       : 0,
                           mb           : 2,

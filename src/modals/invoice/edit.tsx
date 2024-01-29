@@ -24,6 +24,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
   // const handleCloseAddLineModal                                      = () => setOpenAddLineModal(false);
   const [partnerOptions, setPartnerOptions]           = React.useState([])
   const [lineInvoice, setLineInvoice]                 = React.useState<any[]>([])
+  const [grandTotal, setGrandTotal]                                  = React.useState(0);
   const [deleteInvoiceLineID, setDeleteInvoiceLineID] = React.useState('');
   const [editInvoiceLineID, setEditInvoiceLineID]     = React.useState('');
   const [openDeleteModal, setOpenDeleteModal]         = React.useState(false);
@@ -40,32 +41,42 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
     getValues,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<{
+    discount    : string,
+    batchno     : string,
+    ispercentage: boolean,
+    partner_id  : {} | null,
+    pay_date    : string,
+    docaction   : string,
+    // grand_total : number,
+  }>({
     defaultValues: {
       discount    : '0',
       batchno     : '',
       ispercentage: false,
-      partner_id  : '',
+      partner_id  : null,
       pay_date    : '',
       docaction   : '',
-      grand_total : 0,
+      // grand_total : 0,
     }
   })
 
   const loadData = (data: any) => {
+    // console.log(data);
     reset({
       discount    : data.data.discount,
       batchno     : data.data.batchno,
       ispercentage: data.data.ispercentage,
-      partner_id  : data.data.partner.id,
+      partner_id  : data.data.partner ? {value: data.data.partner.id, label: data.data.partner.name} : null,
       pay_date    : dayjs(data.data.pay_date).format('DD-MM-YYYY').toString(),
-      grand_total : data.data.grand_total,
+      // grand_total : data.data.grand_total,
     })
     
     const rows    = data.data.line.map( (val: any,idx: number) => ({line_id: idx, ...val}) )
     // data.data.line.map((val) => ({
 
     // }))
+    setGrandTotal(data.data.grand_total)
     setLineInvoice(rows);
   }
   
@@ -161,7 +172,8 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
 
     let total = 0;
     lineInvoice.forEach((value: any) => {
-      total = total + value.total
+      // console.log(value.total);
+      total = total + value.amount
     })
     
     if(ispercentage == true){
@@ -171,7 +183,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
       total = total - discount;
     }
 
-    setValue('grand_total',total)
+    setGrandTotal(total)
   }
 
   const onSubmit: SubmitHandler<{}> = (data: any) => {
@@ -180,9 +192,8 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
       batchno     : data.batchno,
       discount    : parseFloat(data.discount),
       ispercentage: data.ispercentage,
-      partner_id  : data.partner_id,
+      partner_id  : data.partner_id.value,
     }
-
     submitEditInvoice(createObj)
   }
 
@@ -223,13 +234,28 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
 
   React.useEffect( () => {
     countGrandTotal();
-    console.log(lineInvoice);
   }, [lineInvoice])
 
   React.useEffect(() => {
     getDataPartner();
     doGetInvoice();
   },[])
+
+  
+  const FooterGrandTotal = () => {
+
+    // console.log(grandTotal)
+    const grandTotalRupiah = new Intl.NumberFormat('id-ID', {
+      style   : 'currency',
+      currency: 'IDR',
+    }).format(grandTotal);
+
+    return (
+      <Box sx={{ p: 1, display: 'flex' }}>
+        Grand Total: {grandTotalRupiah}
+      </Box>
+    );
+  }
 
   return (
     <>
@@ -254,18 +280,20 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
                   <Autocomplete
                     disablePortal
                     fullWidth
-                    id          = "select-partner"
-                    options     = {partnerOptions}
-                    onChange    = {onChange}
-                    sx          = {{ mb: 2 }}
-                    renderInput = { (params: any) => 
+                    id                   = "select-partner"
+                    options              = {partnerOptions}
+                    onChange             = {(e, data) => onChange(data)}
+                    value                = {value}
+                    sx                   = {{ mb: 2 }}
+                    isOptionEqualToValue = {(option:any, value:any) => option.value === value.value}
+                    getOptionLabel       = {(option:any) => option.label}
+                    renderInput          = { (params: any) => 
                       <TextField 
                         {...params}
                         helperText = {error ? error.message : null}
                         size       = "medium"
                         error      = {!!error}
                         type       = 'string'
-                        value      = {value}
                         label      = {"Partner"}
                         variant    = "outlined"
                       />
@@ -438,7 +466,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
                 />
               </Stack>
               
-              <Controller
+              {/* <Controller
                 name    = "grand_total"
                 control = {control}
                 render  = { ({ 
@@ -461,7 +489,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
                   />
                   )
                 }
-              />
+              /> */}
 
               <Button type={'submit'} variant={'contained'} color={'primary'}>
                 Submit
@@ -481,6 +509,10 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
                   scrollbarSize         = {5}
                   disableColumnMenu     = {true}
                   columnVisibilityModel = {{ id: false, invoice: false, product_id: false }}
+                  hideFooterPagination  = {true}
+                  slots                 = {{
+                    footer: FooterGrandTotal,
+                  }}
                 />
               </div>
             </Stack>

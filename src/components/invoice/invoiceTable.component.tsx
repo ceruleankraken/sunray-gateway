@@ -7,6 +7,7 @@ import { GridActionsCellItem, GridRenderCellParams } from '@mui/x-data-grid'
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from '@mui/icons-material/Search';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 import { Box, IconButton, TextField, Skeleton, Paper, Accordion, AccordionSummary, AccordionDetails, Stack } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -116,6 +117,14 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     { field: 'status', headerName: 'Status', type: 'string', minWidth:100, flex: 0.25},
     { field: 'action', type: 'actions', width:100, getActions: (params: GridRenderCellParams) => [
       // eslint-disable-next-line react/jsx-key
+      
+      <GridActionsCellItem
+        key     = {"delete-"+params.id}
+        icon    = {<AssignmentIcon />}
+        label   = "Change Status"
+        onClick = {() => console.log("yihaaa")}
+        showInMenu
+      />,
       <GridActionsCellItem
         key     = {"edit-"+params.id}
         icon    = {<EditIcon />}

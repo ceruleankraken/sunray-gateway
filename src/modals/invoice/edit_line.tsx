@@ -20,10 +20,19 @@ export default function InvoiceEditLine({modalOnClose, invoice_line_id, getData}
     getValues,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm({
+  } = useForm<{
+    invoice_id  : string,
+    product_id  : {} | null,
+    qty         : string,
+    price       : string,
+    discount    : string,
+    ispercentage: boolean,
+    amount      : number,
+    total       : number,
+  }>({
     defaultValues: {
       invoice_id  : '',
-      product_id  : '',
+      product_id  : null,
       qty         : '',
       price       : '',
       discount    : '0',
@@ -37,7 +46,7 @@ export default function InvoiceEditLine({modalOnClose, invoice_line_id, getData}
     console.log(data)
     reset({
       invoice_id  : data.data.invoice.id,
-      product_id  : data.data.product.id,
+      product_id  : data.data.product ? {value: data.data.product.id, label: data.data.product.name} : null,
       qty         : data.data.qty.toString(),
       price       : data.data.price.toString(),
       discount    : data.data.discount.toString(),
@@ -54,8 +63,11 @@ export default function InvoiceEditLine({modalOnClose, invoice_line_id, getData}
 
   const onSubmit: SubmitHandler<{}> = (data: any) => {
     // const selectedProduct: any = productOptions.filter( (product: any) => product.value == data.product_id);
-    // const newData              = {...data, product_name: selectedProduct[0].label}
-    submitEditInvoice(data);
+    
+    let newData            = {...data, product_name: data.product_id.label}
+        newData.product_id = data.product_id.value
+    console.log(newData);
+    submitEditInvoice(newData);
   }
 
   const getDataProduct = () => {
@@ -187,18 +199,20 @@ export default function InvoiceEditLine({modalOnClose, invoice_line_id, getData}
               <Autocomplete
                 disablePortal
                 fullWidth
-                id          = "select-product"
-                options     = {productOptions}
-                onChange    = {onChange}
-                sx          = {{ mb: 2 }}
-                renderInput = { (params: any) => 
+                id                   = "select-product"
+                options              = {productOptions}
+                value                = {value}
+                onChange             = {(e, data) => onChange(data)}
+                sx                   = {{ mb: 2 }}
+                isOptionEqualToValue = {(option:any, value:any) => option.value === value.value}
+                getOptionLabel       = {(option:any) => option.label}
+                renderInput          = { (params: any) => 
                   <TextField 
                     {...params}
                     helperText = {error ? error.message : null}
                     size       = "medium"
                     error      = {!!error}
                     type       = 'string'
-                    value      = {value}
                     label      = {"Product"}
                     variant    = "outlined"
                   />
