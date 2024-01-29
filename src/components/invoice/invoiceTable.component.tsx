@@ -22,23 +22,26 @@ import InvoiceCreate from '@/modals/invoice/create';
 import InvoiceEdit from '@/modals/invoice/edit';
 import ModalConfirmComponent from '../modalconfirm.component';
 import dayjs, { Dayjs } from 'dayjs';
+import InvoiceUpdatestatus from '@/modals/invoice/update_status';
 
 
 
 const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
-  const [openEditModal, setOpenEditModal]     = React.useState(false);
-  const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
-  const [loadingData, setLoadingData]         = React.useState(false);
-  const [textSearchTable, setTextSearchTable] = React.useState('');
-  const [startDateSearch, setStartDateSearch] = React.useState<Dayjs | null>(dayjs('2024-01-01'));
-  const [endDateSearch, setEndDateSearch]     = React.useState<Dayjs | null>(dayjs('2024-01-01').add(1,'year'));
-  const [editInvoiceID, setEditInvoiceID]     = React.useState('');
-  const [deleteInvoiceID, setDeleteInvoiceID] = React.useState('');
-  const [rowData, setRowData]                 = React.useState<any[]>([]);
-  const [sortData, setSortData]               = React.useState<{field: string, sort:string }[]>([]);
-  const [rowTotal, setRowTotal]               = React.useState(0);
-  const [pageData, setPageData]               = React.useState({
+  const [openEditModal, setOpenEditModal]             = React.useState(false);
+  const [openStatusModal, setOpenStatusModal]         = React.useState(false);
+  const [openDeleteModal, setOpenDeleteModal]         = React.useState(false);
+  const [loadingData, setLoadingData]                 = React.useState(false);
+  const [textSearchTable, setTextSearchTable]         = React.useState('');
+  const [startDateSearch, setStartDateSearch]         = React.useState<Dayjs | null>(dayjs('2024-01-01'));
+  const [endDateSearch, setEndDateSearch]             = React.useState<Dayjs | null>(dayjs('2024-01-01').add(1,'year'));
+  const [editInvoiceID, setEditInvoiceID]             = React.useState('');
+  const [editStatusInvoiceID, setEditStatusInvoiceID] = React.useState('');
+  const [deleteInvoiceID, setDeleteInvoiceID]         = React.useState('');
+  const [rowData, setRowData]                         = React.useState<any[]>([]);
+  const [sortData, setSortData]                       = React.useState<{field: string, sort:string }[]>([]);
+  const [rowTotal, setRowTotal]                       = React.useState(0);
+  const [pageData, setPageData]                       = React.useState({
     page    : 0,
     pageSize: 5,
   });
@@ -68,6 +71,16 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       date_to  : endDateSearch?.format("YYYY-MM-DD"),
     })
   }
+  const handleOpenStatusModal  = (invoice_id: string) => {
+    setOpenStatusModal(true);
+    setEditStatusInvoiceID(invoice_id)
+  }
+  const handleCloseStatusModal = () => {
+    setOpenStatusModal(false);
+    setEditStatusInvoiceID('')
+  }
+
+  
   const handleOpenEditModal  = (invoice_id: string) => {
     setEditInvoiceID(invoice_id);
     setOpenEditModal(true);
@@ -122,7 +135,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         key     = {"delete-"+params.id}
         icon    = {<AssignmentIcon />}
         label   = "Change Status"
-        onClick = {() => console.log("yihaaa")}
+        onClick = {() => handleOpenStatusModal(params.row.id)}
         showInMenu
       />,
       <GridActionsCellItem
@@ -257,6 +270,16 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
           />
         }
       </Paper>
+      
+      <ModalComponent
+        modalOpen    = {openStatusModal}
+        modalOnClose = {handleCloseStatusModal}
+        modalSize    = 'xs'
+        modalTitle   = 'Change Status'
+      >
+        <InvoiceUpdatestatus modalOnClose={handleCloseStatusModal} invoice_id={editStatusInvoiceID} getData={getDataInvoice}/>
+      </ModalComponent>
+
       <ModalComponent
         modalOpen    = {openEditModal}
         modalOnClose = {handleCloseEditModal}

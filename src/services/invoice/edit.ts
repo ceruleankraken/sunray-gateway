@@ -4,10 +4,11 @@ import { INVOICE_EDIT_PATH } from '@/configs/constants';
 export interface InvoiceEditFormPropsRequest {
   // partner_id  : string | undefined,
   // batchno     : string | undefined,
-  discount      : number,
-  ispercentage  : boolean,
-  batchno       : string,
-  partner_id    : string,
+  docaction   ?: string,
+  discount    : number,
+  ispercentage: boolean,
+  batchno     : string,
+  partner_id  : string,
 }
 
 type InvoiceEditProps = {
