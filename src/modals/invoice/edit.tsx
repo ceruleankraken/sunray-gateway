@@ -25,6 +25,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
   const [partnerOptions, setPartnerOptions]           = React.useState([])
   const [lineInvoice, setLineInvoice]                 = React.useState<any[]>([])
   const [grandTotal, setGrandTotal]                   = React.useState(0);
+  const [lineTotal, setLineTotal]                     = React.useState(0);
   const [deleteInvoiceLineID, setDeleteInvoiceLineID] = React.useState('');
   const [editInvoiceLineID, setEditInvoiceLineID]     = React.useState('');
   const [openDeleteModal, setOpenDeleteModal]         = React.useState(false);
@@ -77,6 +78,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
 
     // }))
     setGrandTotal(data.data.grand_total)
+    setLineTotal(data.data.total_line)
     setLineInvoice(rows);
   }
   
@@ -250,9 +252,37 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
       currency: 'IDR',
     }).format(grandTotal);
 
+    const lineTotalRupiah = new Intl.NumberFormat('id-ID', {
+      style   : 'currency',
+      currency: 'IDR',
+    }).format(lineTotal);
+
     return (
       <Box sx={{ p: 1, display: 'flex' }}>
-        Grand Total: {grandTotalRupiah}
+        <table>
+          <tr>
+            <td>
+              Line Total
+            </td>
+            <td>
+              :
+            </td>
+            <td>
+              {lineTotalRupiah}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Grand Total
+            </td>
+            <td>
+              :
+            </td>
+            <td>
+              {grandTotalRupiah}
+            </td>
+          </tr>
+        </table>
       </Box>
     );
   }

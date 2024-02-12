@@ -8,7 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from '@mui/icons-material/Search';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import { Box, IconButton, TextField, Skeleton, Paper, Accordion, AccordionSummary, AccordionDetails, Stack } from '@mui/material';
+import { Box, IconButton, TextField, Skeleton, Paper, Accordion, AccordionSummary, AccordionDetails, Stack, MenuItem } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -23,20 +23,20 @@ import InvoiceEdit from '@/modals/invoice/edit';
 import ModalConfirmComponent from '../modalconfirm.component';
 import dayjs, { Dayjs } from 'dayjs';
 import InvoiceUpdatestatus from '@/modals/invoice/update_status';
+import { useInvoiceEdit } from '@/hooks/invoice/use-edit';
+import { useInvoiceEditStatus } from '@/hooks/invoice/use-edit-status';
 
 
 
 const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
   const [openEditModal, setOpenEditModal]             = React.useState(false);
-  const [openStatusModal, setOpenStatusModal]         = React.useState(false);
   const [openDeleteModal, setOpenDeleteModal]         = React.useState(false);
   const [loadingData, setLoadingData]                 = React.useState(false);
   const [textSearchTable, setTextSearchTable]         = React.useState('');
-  const [startDateSearch, setStartDateSearch]         = React.useState<Dayjs | null>(dayjs('2024-01-01'));
-  const [endDateSearch, setEndDateSearch]             = React.useState<Dayjs | null>(dayjs('2024-01-01').add(1,'year'));
+  const [startDateSearch, setStartDateSearch]         = React.useState<Dayjs | null>(dayjs());
+  const [endDateSearch, setEndDateSearch]             = React.useState<Dayjs | null>(dayjs().add(1,'month'));
   const [editInvoiceID, setEditInvoiceID]             = React.useState('');
-  const [editStatusInvoiceID, setEditStatusInvoiceID] = React.useState('');
   const [deleteInvoiceID, setDeleteInvoiceID]         = React.useState('');
   const [rowData, setRowData]                         = React.useState<any[]>([]);
   const [sortData, setSortData]                       = React.useState<{field: string, sort:string }[]>([]);
@@ -55,12 +55,11 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     date_to  : endDateSearch?.format("YYYY-MM-DD"),
   });
   
-  const { refetch: doGetInvoice, data, isLoading: isLoadingInvoice } = useInvoiceGet(queryOptions);
+  const { refetch: doGetInvoice, data, isLoading: isLoadingInvoice }       = useInvoiceGet(queryOptions);
+  const { mutate: submitStatusInvoice, isLoading: isLoadingStatusInvoice } = useInvoiceEditStatus({getData: () => getDataInvoice()});
   
   
   const handleQuery  = () => {
-    console.log(startDateSearch?.format("YYYY-MM-DD"),
-    endDateSearch?.format("YYYY-MM-DD"));
     setQueryOptions({
       field    : sortData[0]?.field,
       sort     : sortData[0]?.sort,
@@ -71,14 +70,14 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       date_to  : endDateSearch?.format("YYYY-MM-DD"),
     })
   }
-  const handleOpenStatusModal  = (invoice_id: string) => {
-    setOpenStatusModal(true);
-    setEditStatusInvoiceID(invoice_id)
-  }
-  const handleCloseStatusModal = () => {
-    setOpenStatusModal(false);
-    setEditStatusInvoiceID('')
-  }
+  // const handleOpenStatusModal  = (invoice_id: string) => {
+  //   setOpenStatusModal(true);
+  //   setEditStatusInvoiceID(invoice_id)
+  // }
+  // const handleCloseStatusModal = () => {
+  //   setOpenStatusModal(false);
+  //   setEditStatusInvoiceID('')
+  // }
 
   
   const handleOpenEditModal  = (invoice_id: string) => {
@@ -110,7 +109,6 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         else {
           const startNo = (resp.data.meta.per_page * (resp.data.meta.current_page-1))
           const rows    = resp.data.data.map( (val: any,idx: number) => ({no: startNo+idx+1, ...val}) )
-          console.log(rows);
           setRowData(rows);
           setRowTotal(resp.data.meta.total_data)
         }
@@ -118,26 +116,65 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     )
   }
 
-  
+  const handleUpdateStatusInvoice = (row: any, event: any) => {
+
+    const createObj = {
+      batchno     : row.batchno,
+      discount    : parseFloat(row.discount),
+      ispercentage: row.ispercentage,
+      partner_id  : row.partner.id,
+      docaction   : event.target.value,
+    }
+    submitStatusInvoice({payload: createObj, invoice_id: row.id})
+  }
+
+  const statusOptions = [
+    { value: "IP", label: "In Progress" },
+    { value: "CO", label: "Complete" },
+    { value: "VO", label: "Void" },
+  ];
+
   const [headerData, setHeaderData]               = React.useState([
     { field: 'id', headerName: 'ID', type : 'string', flex : 0.3, filterble: false },
     { field: 'no', headerName: 'No', type: 'number', flex: 0.1, filterble : false, sortable: false},
-    { field: 'documentno', headerName: 'No Document', type: 'string', minWidth:100, flex: 0.75},
-    { field: 'batchno', headerName: 'No Batch', type: 'string', minWidth:100, flex: 0.5},
-    { field: 'partner', headerName: 'Partner', type: 'string', minWidth:100, flex: 0.25,
+    { field: 'documentno', headerName: 'No Document', type: 'string', minWidth:175, flex: 0.75},
+    { field: 'batchno', headerName: 'No Batch', type: 'string', minWidth:175, flex: 0.5},
+    { field: 'partner', headerName: 'Partner', type: 'string', minWidth:175, flex: 0.25,
       valueGetter: (params: GridRenderCellParams) => params.row.partner.name 
     },
-    { field: 'status', headerName: 'Status', type: 'string', minWidth:100, flex: 0.25},
+    { field: 'status', headerName: 'Status', type: 'string', minWidth:175, flex: 0.5,
+      renderCell: (params: any) => {
+        return (
+          <TextField
+            select
+            fullWidth
+            size     = 'small'
+            id       = "outlined-select-currency"
+            value    = {params.row.status}
+            // disabled = {params.row.status == 'CO'}
+            onChange = {(event) => handleUpdateStatusInvoice(params.row, event)}
+            InputProps={{
+              readOnly: (params.row.status == 'CO')
+            }}
+          >
+            {statusOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        )
+      }
+    },
     { field: 'action', type: 'actions', width:100, getActions: (params: GridRenderCellParams) => [
-      // eslint-disable-next-line react/jsx-key
       
-      <GridActionsCellItem
-        key     = {"delete-"+params.id}
-        icon    = {<AssignmentIcon />}
-        label   = "Change Status"
-        onClick = {() => handleOpenStatusModal(params.row.id)}
-        showInMenu
-      />,
+      // <GridActionsCellItem
+      //   key     = {"delete-"+params.id}
+      //   icon    = {<AssignmentIcon />}
+      //   label   = "Change Status"
+      //   onClick = {() => handleOpenStatusModal(params.row.id)}
+      //   showInMenu
+      // />,
       <GridActionsCellItem
         key     = {"edit-"+params.id}
         icon    = {<EditIcon />}
@@ -171,12 +208,12 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
   React.useEffect( () => {
     getDataInvoice()
-    console.log(queryOptions)
   },[queryOptions])
 
   return (
     <>
       <Accordion
+        defaultExpanded
         sx={{
           borderRadius: 1,
           marginTop   : 1,
@@ -270,7 +307,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
           />
         }
       </Paper>
-      
+{/*       
       <ModalComponent
         modalOpen    = {openStatusModal}
         modalOnClose = {handleCloseStatusModal}
@@ -278,7 +315,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         modalTitle   = 'Change Status'
       >
         <InvoiceUpdatestatus modalOnClose={handleCloseStatusModal} invoice_id={editStatusInvoiceID} getData={getDataInvoice}/>
-      </ModalComponent>
+      </ModalComponent> */}
 
       <ModalComponent
         modalOpen    = {openEditModal}
