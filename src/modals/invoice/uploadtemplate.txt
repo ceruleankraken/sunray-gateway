@@ -1,0 +1,52 @@
+<template>
+  <div class="q-pa-md">
+    <div class="q-pa-xl">
+      <div class="row q-mb-md">
+        <div class="row q-mb-md">
+          <q-icon
+            name="arrow_back"
+            size="md"
+            class="q-mr-md q-my-auto text-grey-6 cursor-pointer"
+            @click="() => (showCloseDialog = true)"
+          ></q-icon>
+          <div class="text-h5 text-center text-bold q-my-auto">
+            <slot name="title"></slot>
+          </div>
+        </div>
+        <q-space />
+      </div>
+
+      
+      <div class="row q-col-gutter-md q-mb-md">
+        <slot name="filter"></slot>
+      </div>
+
+      <div class="row q-gutter-md q-mb-md">
+        <slot name="content"></slot>
+      </div>
+    </div>
+  </div>
+
+  <leave-page-dialog v-model="showCloseDialog" @leave="goBack" />
+</template>
+
+<script lang="ts">
+import { defineComponent, ref } from "vue";
+import LeavePageDialog from "../dialog/confirmation/LeavePageDialog.vue";
+import { useRouter } from "vue-router";
+
+export default defineComponent({
+  name: "UploadPengajuanTemplate",
+  components: { LeavePageDialog },
+  setup() {
+    const showCloseDialog = ref<boolean>(false);
+    const router = useRouter();
+
+    const goBack = () => {
+      router.go(-1);
+    };
+
+    return { showCloseDialog, goBack };
+  },
+});
+</script>

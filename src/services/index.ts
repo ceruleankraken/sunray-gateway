@@ -18,10 +18,21 @@ import invoiceCreateServices from './invoice/create';
 import invoiceEditServices from './invoice/edit';
 import invoiceGetServices from './invoice/get';
 import invoiceGetOneServices from './invoice/get-one';
+import invoiceGetActiveServices from './invoice/get-active'
 import invoiceDeleteServices from './invoice/delete';
 import invoiceLineEditServices from './invoice/edit-line';
 import invoiceLineDeleteServices from './invoice/delete-line';
 import invoiceLineGetOneServices from './invoice/get-line';
+
+import paymentCreateServices from './payment/create';
+import paymentEditServices from './payment/edit';
+import paymentGetServices from './payment/get';
+import paymentGetOneServices from './payment/get-one';
+import paymentDeleteServices from './payment/delete';
+import paymentLineEditServices from './payment/edit-line';
+import paymentLineDeleteServices from './payment/delete-line';
+import paymentLineGetOneServices from './payment/get-line';
+
 
 const api = {
   ...loginServices,
@@ -42,10 +53,19 @@ const api = {
   ...invoiceEditServices,
   ...invoiceGetServices,
   ...invoiceGetOneServices,
+  ...invoiceGetActiveServices,
   ...invoiceDeleteServices,
   ...invoiceLineEditServices,
   ...invoiceLineDeleteServices,
   ...invoiceLineGetOneServices,
+  ...paymentCreateServices,
+  ...paymentEditServices,
+  ...paymentGetServices,
+  ...paymentGetOneServices,
+  ...paymentDeleteServices,
+  ...paymentLineEditServices,
+  ...paymentLineDeleteServices,
+  ...paymentLineGetOneServices,
   
 };
 

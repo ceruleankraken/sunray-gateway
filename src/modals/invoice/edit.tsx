@@ -565,7 +565,11 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
         modalId      = 'invoice-line-delete'
         modalOpen    = {openDeleteModal}
         modalOnClose = {handleCloseDeleteModal}
-        onDelete     = {handleDeleteInvoiceLine} 
+        onSubmit     = {handleDeleteInvoiceLine} 
+        modalTitle   = {"Delete Confirmation"}
+        modalText    = {"Do you want to delete this record?"}
+        buttonText   = {"Delete"}
+        buttonColor  = {"error"}
       />
     </>
   )

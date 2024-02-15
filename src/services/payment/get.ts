@@ -1,20 +1,19 @@
 import { http } from '@/services/axios';
-import { INVOICE_GET_PATH } from '@/configs/constants';
+import { INVOICE_GET_PATH, PAYMENT_GET_PATH } from '@/configs/constants';
 import { Pagination } from '@/types/pagination';
 
-type InvoiceResponse = {
+type PaymentResponse = {
   id          : string,
-  created_at  : string,
-  updated_at  : string
-  grand_total : number,
-  discount    : number,
+  documentno  : string,
   batchno     : string,
+  ispercentage: boolean
+  discount    : number,
+  total_line  : number,
+  grand_total : number,
   status      : string,
   docaction   : string,
-  outstanding : number,
-  documentno  : string,
-  ispercentage: boolean
-  pay_date    : string,
+  created_at  : string,
+  updated_at  : string,
   createdby   : {
     user_uuid: string,
     usename  : string,
@@ -29,16 +28,16 @@ type InvoiceResponse = {
   }
 };
 
-export type InvoiceGetResponse = {
+export type PaymentGetResponse = {
   status : number,
   message: string,
   meta   : any,
-  data   : InvoiceResponse[]
+  data   : PaymentResponse[]
 };
 
 const map = {
-  getDataFromResponse: (response?: InvoiceGetResponse) => {
-    const InvoiceData = response?.data.map( (val) => {
+  getDataFromResponse: (response?: PaymentGetResponse) => {
+    const PaymentData = response?.data.map( (val) => {
       return {
         // id        : val.id,
         // name      : val.name,
@@ -58,18 +57,18 @@ const map = {
         per_page    : response?.meta.per_page,
         total_data  : response?.meta.total_data,
       },
-      data: InvoiceData
+      data: PaymentData
     }
 
     return ResponseData;
   },
 };
 
-const getInvoice = async (sortObject: any) => {
+const getPayment = async (sortObject: any) => {
 
   // const { data } = partner_id ? await http.get(PARTNER_GET_PATH+`/${partner_id}`) : await http.get(PARTNER_GET_PATH);
   // let resp; 
-  const {data} = await http.get(INVOICE_GET_PATH,{
+  const {data} = await http.get(PAYMENT_GET_PATH,{
     params: {
       sort     : sortObject?.field,
       order    : sortObject?.sort,
@@ -84,8 +83,8 @@ const getInvoice = async (sortObject: any) => {
   // return map.getDataFromResponse(data);
 };
 
-const invoiceGetServices = {
-  getInvoice,
+const paymentGetServices = {
+  getPayment,
 };
 
-export default invoiceGetServices;
+export default paymentGetServices;

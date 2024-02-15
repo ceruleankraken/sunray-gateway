@@ -7,11 +7,24 @@ import InfoIcon from '@mui/icons-material/Info';
 interface ModalConfirmProps {
   modalOpen   : boolean,
   modalOnClose: () => void,
-  onDelete    : () => void,
+  onSubmit    : () => void,
   modalId     : string,
+  modalTitle  : string,
+  modalText   : string,
+  buttonText  : string,
+  buttonColor : "primary" | "secondary" | "success" | "error" | "info" | "warning",
 }
 
-const ModalConfirmComponent: React.FC<ModalConfirmProps> = ({modalOpen, modalOnClose, modalId, onDelete }: any) => {
+const ModalConfirmComponent: React.FC<ModalConfirmProps> = ({
+    modalOpen,
+    modalOnClose,
+    modalId,
+    onSubmit,
+    modalTitle,
+    modalText,
+    buttonText,
+    buttonColor,
+  }) => {
 
   return (
 
@@ -23,7 +36,7 @@ const ModalConfirmComponent: React.FC<ModalConfirmProps> = ({modalOpen, modalOnC
         aria-describedby = {modalId+"-content"}
       >
         <DialogTitle id={modalId}>
-          Delete Confirmation
+          {modalTitle}
         </DialogTitle>
         
         <IconButton
@@ -40,7 +53,7 @@ const ModalConfirmComponent: React.FC<ModalConfirmProps> = ({modalOpen, modalOnC
         </IconButton>
 
         <DialogContent dividers id={modalId+"-content"}>
-          Do you want to delete this record?
+          {modalText}
         </DialogContent>
 
         <DialogActions>
@@ -63,12 +76,12 @@ const ModalConfirmComponent: React.FC<ModalConfirmProps> = ({modalOpen, modalOnC
 
             <Button
               id      = 'button-delete'
-              onClick = {onDelete}
-              color   = 'error'
+              onClick = {onSubmit}
+              color   = {buttonColor}
               variant = 'contained'
               // buttonColor = {'error'}
             >
-              Delete
+              {buttonText}
             </Button>
 
 

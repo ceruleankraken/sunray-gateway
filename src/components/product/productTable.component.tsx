@@ -202,7 +202,11 @@ const ProductTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         modalId      = 'product-delete'
         modalOpen    = {openDeleteModal}
         modalOnClose = {handleCloseDeleteModal}
-        onDelete     = {handleDeletePartner} 
+        onSubmit     = {handleDeletePartner}
+        modalTitle   = {"Delete Confirmation"}
+        modalText    = {"Do you want to delete this record?"}
+        buttonText   = {"Delete"}
+        buttonColor  = {"error"} 
       />
     </>
   )

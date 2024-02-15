@@ -1,0 +1,429 @@
+<template>
+  <upload-pengajuan-template>
+    <template #title>Upload Hasil Pelatihan</template>
+
+    <template #filter>
+      <div class="row full-width">
+        <div class="col-2 text-subtitle1 text-weight-bold q-mr-md">NIP</div>
+        <q-select
+          class="col"
+          outlined
+          :disable="isLoading"
+          v-model="nipRef"
+          :options="optionsNIP"
+          use-input
+          bottom-slots
+          input-debounce="0"
+          clearable
+          @filter="filterNIPOptions"
+          :rules="[requiredRule]"
+        />
+      </div>
+
+      <div class="row full-width">
+        <div class="col-2 text-subtitle1 text-weight-bold q-mr-md">Hasil Pelatihan</div>
+        <!-- :disable="isLoading" -->
+        <q-file
+          class="col"
+          ref="trainingFileRef"
+          v-model="rowInput.file_input.file"
+          outlined
+          :max-files="1"
+          :rules="[
+          requiredRule,
+            (val: File) => fileNameRule(val, [/Training - [0-9]* - [A-z ]*/]),
+            (val: File) => fileTypeRule(val, ['application/pdf']),
+            (val: File) => fileSizeRule(val, 1048576),
+          ]"
+          hint="Format Nama File: Ijazah - NIP - first name.pdf (Max 1 MB)"
+          clearable
+        >
+          <template v-slot:prepend>
+            <q-btn
+              unelevated
+              color="grey-4"
+              class="text-grey-9"
+              @click="trainingFileRef.pickFiles()"
+            >
+              Choose File
+            </q-btn>
+          </template>
+        </q-file>
+      </div>
+
+      <div class="row full-width q-gutter-md justify-center content-center items-center">
+        
+        <!-- class="full-width" -->
+        <q-btn
+          style="width: 100px"
+          label="CLEAR"
+          :color="'grey'"
+          :onClick="fnClearPendaftar"
+        />
+
+        <q-btn
+          style="width: 100px"
+          label="ADD"
+          :color="'primary'"
+          :onClick="fnAddPendaftar"
+        />
+        <!-- :color="isFormValid() ? 'grey' : 'primary'" -->
+        <!-- :disable="isLoading" -->
+      </div>
+    </template>
+
+    <template #content>
+      <q-table
+        class="full-width"
+        :rows="rowsArray.data"
+        row-key="data_id"
+        :columns="columns"
+        :filter="filterTable"
+        v-model:selected="selectedTable"
+        :visible-columns="visibileColumns"
+      >
+        <!-- :visible-columns="visibileColumns" -->
+        <!-- v-if="isUserAuthorized('GET_ALL_CABANG')" -->
+        <template v-slot:header="props">
+          <q-tr :props="props">
+            <q-th
+              v-for="col in props.cols"
+              :key="col.name"
+              :props="props"
+              >
+              {{ col.label }}
+            </q-th>
+            <q-th auto-width />
+          </q-tr>
+        </template>
+
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td
+              v-for="col in props.cols"
+              :key="col.name"
+              :props="props"
+            >
+              {{ col.value }}
+            </q-td>
+            
+            <q-td auto-width>
+              <q-btn
+                size="md"
+                color="red"
+                round
+                flat
+                dense
+                @click="fnDeletePendaftar(props.row)"
+                icon="delete"
+              />
+              
+                <!-- :disable="isLoadingData" -->
+            </q-td>
+          </q-tr>
+        </template>
+        
+        <template v-slot:no-data>
+          <div class="full-width row flex-center">
+            <span> No Data Found </span>
+          </div>
+        </template>
+      </q-table>
+      <div class="row full-width justify-end">
+        <q-btn
+        :color  = "'green'"
+          class = "justify-end"
+          label = "Submit"
+          style = "width: 100px"
+        />
+          <!-- v-if  = "isUserAuthorized('SAVE_CABANG') && isUserAuthorized('UPDATE_CABANG')" -->
+        <!-- :color="isFormValid() ? 'grey' : 'primary'" -->
+          <!-- :disable="isLoading" -->
+      </div>
+    </template>
+  </upload-pengajuan-template>
+</template>
+
+<script lang="ts">
+import { QTableProps } from "quasar";
+import UploadPengajuanTemplate from "src/components/templates/UploadPengajuanTemplate.vue";
+import PopUpDialog from "src/components/dialog/PopUpDialog.vue";
+import ErrorDialog from "src/components/dialog/confirmation/ErrorDialog.vue";
+import LeavePageDialog from "src/components/dialog/confirmation/LeavePageDialog.vue";
+import SuccessDialog from "src/components/dialog/confirmation/SuccessDialog.vue";
+import RegistrationForm from "src/components/registration/RegistrationForm.vue";
+import { useRoleStore } from "src/stores/role-store";
+import { useIconStore } from "src/stores/icon-store";
+import { defineComponent, ref } from "vue";
+import { useRouter } from "vue-router";
+import {
+  requiredRule,
+  fileTypeRule,
+  fileSizeRule,
+  fileNameRule,
+} from "src/utils/rules-util";
+
+const columns: QTableProps["columns"] = [
+
+  { name: 'data_id', required: false, label: 'test', align: 'left', field: 'data_id`', sortable: true },
+  // { name: 'no', required: false, label: 'No', align: 'left', field: 'no', sortable: true },
+  { name: 'nip', required: true, align: 'left', label: 'NIP', field: 'nip', sortable: true },
+  { name: 'nama', required: true, align: 'left', label: 'Nama', field: 'nama', sortable: true },
+  { name: 'tipe_pendaftaran', required: true, align: 'left', label: 'Tipe Pendaftaran', field: 'tipe_pendaftaran', sortable: true },
+  { name: 'cabang', required: true, align: 'left', label: 'Cabang', field: 'cabang', sortable: true },
+  { name: 'jabatan', required: true, align: 'left', label: 'Jabatan', field: 'jabatan', sortable: true },
+  { name: 'file_name', required: true, align: 'left', label: 'File Name', field: 'file_name', sortable: true },
+]
+
+const visibileColumns = ['no', 'nip', 'nama', 'cabang', 'jabatan', 'tipe_pendaftaran', 'file_name']
+
+export interface UploadInput {
+  nip             : string,
+  nama            : string,
+  cabang          : string,
+  jabatan         : string,
+  tipe_pendaftaran: string,
+  file_input      : {
+    type: string | undefined,
+    file: File | undefined,
+  }
+}
+
+export interface FileUploadRequest {
+  name        : string;
+  type        : string;
+  content_type: string;
+  file_content: string;
+}
+
+export interface UploadRequest {
+  data: {
+    nip             : string,
+    nama            : string,
+    cabang          : string,
+    jabatan         : string,
+    tipe_pendaftaran: string,
+    file_upload     : FileUploadRequest
+  }[]
+}
+
+export interface TableUpload {
+  data: {
+    data_id         : string,
+    no              : string,
+    nip             : string,
+    nama            : string,
+    cabang          : string,
+    jabatan         : string,
+    tipe_pendaftaran: string,
+    file_upload     : FileUploadRequest
+  }[]
+}
+
+export const dfltUploadHasilLatihanForm = (): UploadInput => ({
+  nip             : '',
+  nama            : '',
+  cabang          : '',
+  jabatan         : '',
+  tipe_pendaftaran: '',
+  file_input      : {
+    type: '',
+    file: undefined,
+  }
+});
+
+// TODO: Implement isAuthorized method
+export default defineComponent({
+  name: "PelatihanUploadPage",
+  setup() {
+    // const ddlStore = useDdlStore();
+    // const { ddlToOptions, filterOptions, findDdlById } = ddlStore;
+    const iconStore = useIconStore();
+
+    const isLoading            = ref<boolean>(false);
+    const router               = useRouter();
+    const roleStore            = useRoleStore();
+    const { isUserAuthorized } = roleStore;
+    const showCloseDialog      = ref(false);
+    const findNIP              = ref('')
+    const nipRef               = ref('')
+    const trainingFileRef      = ref();
+    const rowInput             = ref<UploadInput>(dfltUploadHasilLatihanForm())
+    const rowsArray            = ref<TableUpload>({
+      data: []
+    });
+    
+    const optionsNIP = ref([
+      {
+        label: '12345 - ABC - WPPE',
+        // value: '12345 - ABC - WPPE',
+        value: {
+          nip             : '12345',
+          nama            : 'ABC',
+          tipe_pendaftaran: 'WPPE',
+        }
+      },
+      {
+        label: '67890 - DEF - WAPERD',
+        // value: '67890 - DEF - WAPERD',
+        value: {
+          nip             : '67890',
+          nama            : 'DEF',
+          tipe_pendaftaran: 'WAPERD',
+        }
+      },
+    ]);
+
+    const filterNIPOptions = (val: any, update: any) => {
+      if (val.length == 5 ) {
+        update(() => {
+          optionsNIP.value = [
+            {
+              label: '12345 - ABC - WPPE',
+              // value: '12345 - ABC - WPPE',
+              value: {
+                nip             : '12345',
+                nama            : 'ABC',
+                tipe_pendaftaran: 'WPPE',
+              }
+            },
+            {
+              label: '67890 - DEF - WAPERD',
+              // value: '67890 - DEF - WAPERD',
+              value: {
+                nip             : '67890',
+                nama            : 'DEF',
+                tipe_pendaftaran: 'WAPERD',
+              }
+            },
+          ];
+        });
+        return;
+      }
+      update(() => {
+        const needle = val.toLowerCase();
+        optionsNIP.value = optionsNIP.value.filter(
+          (v: any) => v.value.nip.toLowerCase().indexOf(needle) > -1
+        );
+      });
+    };
+    
+    const fileToBase64 = async (file: File | undefined) => {
+      if (file === undefined) {
+        return undefined;
+      }
+
+      var buffer = await file.arrayBuffer();
+      var binary = "";
+      var bytes  = new Uint8Array(buffer);
+      var len    = bytes.byteLength;
+      for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return window.btoa(binary);
+    };
+
+    const toRequestFile = async (
+      doc: {type: string | undefined, file: File | undefined}
+    ): Promise<FileUploadRequest> => ({
+      name        : doc.file?.name as string,
+      type        : doc.type as string,
+      content_type: doc.file?.type as string,
+      file_content: (await fileToBase64(doc.file)) as string,
+    });
+
+    const showSuccessDialog    = ref(false);
+    const showErrorDialog      = ref(false);
+    
+    const fnClearPendaftar = () => {
+      rowInput.value = {
+        nip             : '',
+        nama            : '',
+        cabang          : '',
+        jabatan         : '',
+        tipe_pendaftaran: '',
+        file_input      : {
+          type: '',
+          file: undefined,
+        }
+      }
+    }
+
+    const fnAddPendaftar = async () => {
+
+      let rowLength = rowsArray.value.data.length;
+
+      let tempRow = {
+        data_id         : (rowLength+1).toString(),
+        no              : (rowLength+1).toString(),
+        nip             : rowInput.value.nip,
+        nama            : rowInput.value.nama,
+        cabang          : rowInput.value.cabang,
+        jabatan         : rowInput.value.jabatan,
+        tipe_pendaftaran: rowInput.value.tipe_pendaftaran,
+        file_upload     : await toRequestFile(rowInput.value.file_input)
+      }
+
+      rowsArray.value.data.push(tempRow);
+      rowInput.value = {
+        nip             : '',
+        nama            : '',
+        cabang          : '',
+        jabatan         : '',
+        tipe_pendaftaran: '',
+        file_input      : {
+          type: '',
+          file: undefined,
+        }
+      }
+    }
+
+    const fnDeletePendaftar = (prop:any) => {
+      rowsArray.value.data = rowsArray.value.data.filter( (val) => val.no != prop.no)
+    }
+
+    const selectedTable    = ref([])
+    const filterTable      = ref('')
+
+    // const isFormValid = (): boolean => {
+    //   return form.value.tanggalRemedial !== null;
+    // };
+
+    return {
+     
+      isLoading,
+      fnAddPendaftar,
+      fnClearPendaftar,
+      fnDeletePendaftar,
+      optionsNIP,
+      nipRef,
+      filterNIPOptions,
+      trainingFileRef,
+      rowInput,
+      rowsArray,
+      iconStore,
+      requiredRule,
+      fileTypeRule,
+      fileSizeRule,
+      fileNameRule,
+      columns,
+      visibileColumns,
+      filterTable,
+      selectedTable,
+    };
+  },
+  components: { UploadPengajuanTemplate },
+});
+</script>
+
+<style>
+.q-field {
+  &.q-field--readonly {
+    .q-field__control {
+      &:before {
+        border-style: solid;
+      }
+    }
+  }
+}
+</style>

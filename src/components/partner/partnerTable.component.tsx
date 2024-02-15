@@ -213,7 +213,11 @@ const PartnerTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         modalId      = 'partner-delete'
         modalOpen    = {openDeleteModal}
         modalOnClose = {handleCloseDeleteModal}
-        onDelete     = {handleDeletePartner} 
+        onSubmit     = {handleDeletePartner} 
+        modalTitle   = {"Delete Confirmation"}
+        modalText    = {"Do you want to delete this record?"}
+        buttonText   = {"Delete"}
+        buttonColor  = {"error"}
       />
     </>
   )

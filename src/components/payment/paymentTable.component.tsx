@@ -25,10 +25,15 @@ import dayjs, { Dayjs } from 'dayjs';
 import InvoiceUpdatestatus from '@/modals/invoice/update_status';
 import { useInvoiceEdit } from '@/hooks/invoice/use-edit';
 import { useInvoiceEditStatus } from '@/hooks/invoice/use-edit-status';
+import { usePaymentGet } from '@/hooks/payment/use-get';
+import { usePaymentEditStatus } from '@/hooks/payment/use-edit-status';
+import { usePaymentDelete } from '@/hooks/payment/use-delete';
+import PaymentEdit from '@/modals/payment/edit';
+import PaymentCreate from '@/modals/payment/create';
 
 
 
-const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
+const PaymentTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
   const [openEditModal, setOpenEditModal]                 = React.useState(false);
   const [openDeleteModal, setOpenDeleteModal]             = React.useState(false);
@@ -37,9 +42,9 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   const [textSearchTable, setTextSearchTable]             = React.useState('');
   const [startDateSearch, setStartDateSearch]             = React.useState<Dayjs | null>(dayjs());
   const [endDateSearch, setEndDateSearch]                 = React.useState<Dayjs | null>(dayjs().add(1,'month'));
-  const [editInvoiceID, setEditInvoiceID]                 = React.useState('');
-  const [deleteInvoiceID, setDeleteInvoiceID]             = React.useState('');
-  const [updateInvoiceData, setUpdateInvoiceData]         = React.useState<{row: any, event: any}>({row: '', event: ''});
+  const [editPaymentID, setEditPaymentID]                 = React.useState('');
+  const [deletePaymentID, setDeletePaymentID]             = React.useState('');
+  const [updatePaymentData, setUpdatePaymentData]         = React.useState<{row: any, event: any}>({row: '', event: ''});
   const [rowData, setRowData]                             = React.useState<any[]>([]);
   const [sortData, setSortData]                           = React.useState<{field: string, sort:string }[]>([]);
   const [rowTotal, setRowTotal]                           = React.useState(0);
@@ -57,8 +62,8 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     date_to  : endDateSearch?.format("YYYY-MM-DD"),
   });
   
-  const { refetch: doGetInvoice, data, isLoading: isLoadingInvoice }       = useInvoiceGet(queryOptions);
-  const { mutate: submitStatusInvoice, isLoading: isLoadingStatusInvoice } = useInvoiceEditStatus({getData: () => getDataInvoice()});
+  const { refetch: doGetPayment, data, isLoading: isLoadingPayment }       = usePaymentGet(queryOptions);
+  const { mutate: submitStatusPayment, isLoading: isLoadingStatusPayment } = usePaymentEditStatus({getData: () => getDataPayment()});
   
   
   const handleQuery  = () => {
@@ -72,39 +77,30 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       date_to  : endDateSearch?.format("YYYY-MM-DD"),
     })
   }
-  // const handleOpenStatusModal  = (invoice_id: string) => {
-  //   setOpenStatusModal(true);
-  //   setEditStatusInvoiceID(invoice_id)
-  // }
-  // const handleCloseStatusModal = () => {
-  //   setOpenStatusModal(false);
-  //   setEditStatusInvoiceID('')
-  // }
-
   
-  const handleOpenEditModal  = (invoice_id: string) => {
-    setEditInvoiceID(invoice_id);
+  const handleOpenEditModal  = (payment_id: string) => {
+    setEditPaymentID(payment_id);
     setOpenEditModal(true);
   }
   const handleCloseEditModal = () => {
     setOpenEditModal(false);
-    setEditInvoiceID('');
+    setEditPaymentID('');
   }
 
   const handleCloseDeleteModal = () => setOpenDeleteModal(false);
-  const handleOpenDeleteModal  = (invoice_id: string) => {
-    setDeleteInvoiceID(invoice_id)
+  const handleOpenDeleteModal  = (payment_id: string) => {
+    setDeletePaymentID(payment_id)
     setOpenDeleteModal(true);
   }
   
-  const { mutate: submitDelete, isLoading: isLoadIngDelete }         = useInvoiceDelete({modalClose: handleCloseDeleteModal,getData: () => getDataInvoice()});
+  const { mutate: submitDelete, isLoading: isLoadIngDelete } = usePaymentDelete({modalClose: handleCloseDeleteModal,getData: () => getDataPayment()});
 
-  const handleDeleteInvoice = () => {
-    submitDelete({invoice_id: deleteInvoiceID})
+  const handleDeletePayment = () => {
+    submitDelete({payment_id: deletePaymentID})
   }
 
-  const getDataInvoice = () => {
-    doGetInvoice().then(
+  const getDataPayment = () => {
+    doGetPayment().then(
       (resp: any) => {
         if(resp.status == 'error') {
         }
@@ -118,21 +114,21 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     )
   }
 
-  const handleUpdateStatusInvoice = () => {
+  const handleUpdateStatusPayment = () => {
 
     const createObj = {
-      batchno     : updateInvoiceData.row.batchno,
-      discount    : parseFloat(updateInvoiceData.row.discount),
-      ispercentage: updateInvoiceData.row.ispercentage,
-      partner_id  : updateInvoiceData.row.partner.id,
-      docaction   : updateInvoiceData.event.target.value,
+      batchno     : updatePaymentData.row.batchno,
+      discount    : parseFloat(updatePaymentData.row.discount),
+      ispercentage: updatePaymentData.row.ispercentage,
+      partner_id  : updatePaymentData.row.partner.id,
+      docaction   : updatePaymentData.event.target.value,
     }
-    submitStatusInvoice({payload: createObj, invoice_id: updateInvoiceData.row.id})
+    submitStatusPayment({payload: createObj, payment_id: updatePaymentData.row.id})
   }
 
   const handleCloseUpdateStatusModal = () => setOpenUpdateStatusModal(false);
   const handleOpenUpdateStatusModal  = (row: any, event: any) => {
-    setUpdateInvoiceData({
+    setUpdatePaymentData({
       row  : row,
       event: event,
     })
@@ -146,7 +142,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     { value: "VO", label: "Void" },
   ];
 
-  const [headerData, setHeaderData]               = React.useState([
+  const [headerData, setHeaderData] = React.useState([
     { field: 'id', headerName: 'ID', type : 'string', flex : 0.3, filterble: false },
     { field: 'no', headerName: 'No', type: 'number', flex: 0.1, filterble : false, sortable: false},
     { field: 'documentno', headerName: 'No Document', type: 'string', minWidth:175, flex: 0.75},
@@ -203,12 +199,12 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
   
   React.useEffect(() => {
-    if (isLoadingInvoice) {
+    if (isLoadingPayment) {
       setLoadingData(true) 
     } else {
       setLoadingData(false)
     }
-  }, [isLoadingInvoice]);
+  }, [isLoadingPayment]);
 
   React.useEffect(() => {
     handleQuery();
@@ -216,7 +212,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
 
   React.useEffect( () => {
-    getDataInvoice()
+    getDataPayment()
   },[queryOptions])
 
   return (
@@ -292,7 +288,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         }}
       >
         {
-        isLoadingInvoice ?
+        isLoadingPayment ?
           <Skeleton >
             <div 
               style = {{
@@ -307,7 +303,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
             rowData        = {rowData}
             columnData     = {headerData}
             // handleQuery    = {(tableData: any) => handleQuery(tableData)}
-            loading        = {isLoadingInvoice}
+            loading        = {isLoadingPayment}
             pageInfo       = {pageData}
             handlePageInfo = {setPageData}
             rowTotal       = {rowTotal}
@@ -316,40 +312,29 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
           />
         }
       </Paper>
-{/*       
-      <ModalComponent
-        modalOpen    = {openStatusModal}
-        modalOnClose = {handleCloseStatusModal}
-        modalSize    = 'xs'
-        modalTitle   = 'Change Status'
-      >
-        <InvoiceUpdatestatus modalOnClose={handleCloseStatusModal} invoice_id={editStatusInvoiceID} getData={getDataInvoice}/>
-      </ModalComponent> */}
-
       <ModalComponent
         modalOpen    = {openEditModal}
         modalOnClose = {handleCloseEditModal}
         modalSize    = 'xl'
-        modalTitle   = 'Edit Invoice'
+        modalTitle   = 'Edit Payment'
       >
-        <InvoiceEdit modalOnClose={handleCloseEditModal} invoice_id={editInvoiceID} getData={getDataInvoice}/>
-        {/* <PartnerEdit modalOnClose={handleCloseEditModal} partner_id={editPartnerID} getData={getDataPartner}/> */}
+        <PaymentEdit modalOnClose={handleCloseEditModal} payment_id={editPaymentID} getData={getDataPayment}/>
       </ModalComponent>
 
       <ModalComponent
         modalOpen    = {openCreate}
         modalOnClose = {handleCloseCreate}
         modalSize    = 'xl'
-        modalTitle   = 'Create Invoice'
+        modalTitle   = 'Create Payment'
       >
-        <InvoiceCreate modalOnClose={handleCloseCreate} getData={getDataInvoice}/>
+        <PaymentCreate modalOnClose={handleCloseCreate} getData={getDataPayment}/>
       </ModalComponent>
 
       <ModalConfirmComponent
-        modalId      = 'invoice-delete'
+        modalId      = 'payment-delete'
         modalOpen    = {openDeleteModal}
         modalOnClose = {handleCloseDeleteModal}
-        onSubmit     = {handleDeleteInvoice}
+        onSubmit     = {handleDeletePayment}
         modalTitle   = {"Delete Confirmation"}
         modalText    = {"Do you want to delete this record?"}
         buttonText   = {"Delete"}
@@ -357,10 +342,10 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       />
 
       <ModalConfirmComponent
-        modalId      = 'invoice-update-status'
+        modalId      = 'payment-update-status'
         modalOpen    = {openUpdateStatusModal}
         modalOnClose = {handleCloseUpdateStatusModal}
-        onSubmit     = {handleUpdateStatusInvoice}
+        onSubmit     = {handleUpdateStatusPayment}
         modalTitle   = {"Change Status Confirmation"}
         modalText    = {"Do you want to update status this record?"}
         buttonText   = {"Update"}
@@ -372,4 +357,4 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   )
 }
 
-export default InvoiceTableComponent;
+export default PaymentTableComponent;
