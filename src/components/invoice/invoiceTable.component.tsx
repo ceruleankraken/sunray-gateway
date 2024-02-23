@@ -141,6 +141,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   }
 
   const statusOptions = [
+    { value: "DR", label: "Draft" },
     { value: "IP", label: "In Progress" },
     { value: "CO", label: "Complete" },
     { value: "VO", label: "Void" },

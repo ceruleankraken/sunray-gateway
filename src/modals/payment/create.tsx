@@ -20,13 +20,14 @@ import PaymentAddLine from './add_line';
 
 export default function PaymentCreate({modalOnClose, getData}:any) {
 
-  const [openAddLineModal, setOpenAddLineModal]                      = React.useState(false);
-  const [grandTotal, setGrandTotal]                                  = React.useState(0);
-  const handleOpenAddLineModal                                       = () => setOpenAddLineModal(true);
-  const handleCloseAddLineModal                                      = () => setOpenAddLineModal(false);
-  const [partnerOptions, setPartnerOptions]                          = React.useState([])
-  const [linePayment, setLinePayment]                                = React.useState<any[]>([])
-  const deleteLinePayment                                            = React.useCallback((index:number) => {
+  const [openAddLineModal, setOpenAddLineModal] = React.useState(false);
+  const [grandTotal, setGrandTotal]             = React.useState(0);
+  const [partnerID, setPartnerID]               = React.useState({label: '', value: ''});
+  const handleOpenAddLineModal                  = () => setOpenAddLineModal(true);
+  const handleCloseAddLineModal                 = () => setOpenAddLineModal(false);
+  const [partnerOptions, setPartnerOptions]     = React.useState([])
+  const [linePayment, setLinePayment]           = React.useState<any[]>([])
+  const deleteLinePayment                       = React.useCallback((index:number) => {
     setLinePayment( (prevList) => prevList.filter( (row:any) => row.line_id !== index))
   },[]);
   
@@ -39,7 +40,7 @@ export default function PaymentCreate({modalOnClose, getData}:any) {
       { field: 'no', headerName: 'No', type: 'number', width: 10, filterble : false, sortable: false,
       renderCell: (params) => params.api.getAllRowIds().indexOf(params.id)+1
       },
-      { field: 'batchno', headerName: 'No Batch', type : 'string', minWidth: 250, filterble: false },
+      { field: 'invoice_name', headerName: 'No Document', type : 'string', minWidth: 250, filterble: false },
       { field: 'price', headerName: 'Price', type : 'string', minWidth: 100, filterble: false },
       { field: 'amount', headerName: 'Amount', type : 'string', minWidth: 100, filterble: false },
       { field: 'total', headerName: 'Total', type : 'string', minWidth: 150, filterble: false },
@@ -170,7 +171,7 @@ export default function PaymentCreate({modalOnClose, getData}:any) {
                     fullWidth
                     id                   = "select-partner"
                     options              = {partnerOptions}  
-                    onChange             = {(e, data) => onChange(data)}
+                    onChange             = {(e, data) => {onChange(data); setPartnerID(data);}}
                     value                = {value}
                     sx                   = {{ mb: 2 }}
                     isOptionEqualToValue = {(option:any, value:any) => option.value === value.value}
@@ -226,9 +227,10 @@ export default function PaymentCreate({modalOnClose, getData}:any) {
               >
                 <Button
                   fullWidth
-                  variant = {'contained'}
-                  color   = {'secondary'}
-                  onClick = {handleOpenAddLineModal}
+                  variant  = {'contained'}
+                  color    = {'secondary'}
+                  onClick  = {handleOpenAddLineModal}
+                  disabled = {(partnerID.value == '')}
                 >
                   ADD LINE PAYMENT
                 </Button>
@@ -270,7 +272,7 @@ export default function PaymentCreate({modalOnClose, getData}:any) {
         modalSize    = 'sm'
         modalTitle   = 'Add Line Invoice'
       >
-        <PaymentAddLine modalOnClose={handleCloseAddLineModal} onSubmitAdd={submitAddLinePayment} />
+        <PaymentAddLine modalOnClose={handleCloseAddLineModal} onSubmitAdd={submitAddLinePayment} partnerID={partnerID.value} />
       </ModalComponent>
     </>
   )

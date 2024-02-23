@@ -4,11 +4,11 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { AlertError } from '@/utils/notification';
 import { useInvoiceGetActive } from '@/hooks/invoice/use-get-active';
 
-export default function PaymentAddLine({modalOnClose, onSubmitAdd}:any) {
+export default function PaymentAddLine({modalOnClose, onSubmitAdd, partnerID}:any) {
 
   const [checkValid, setCheckValid]                                  = React.useState(true)
   const [invoiceOptions, setInvoiceOptions]                          = React.useState([])
-  const { refetch: doGetInvoice, data, isLoading: isLoadingInvoice } = useInvoiceGetActive();
+  const { refetch: doGetInvoice, data, isLoading: isLoadingInvoice } = useInvoiceGetActive({partnerID: partnerID});
 
   const { 
     watch,
@@ -52,7 +52,8 @@ export default function PaymentAddLine({modalOnClose, onSubmitAdd}:any) {
         if(resp.status == 'error') {
         }
         else {
-          const rows    = resp.data.data.map( (val: any,idx: number) => ({value: val.id, label: (val.name).toUpperCase()}) )
+          // console.log(resp.data.data);
+          const rows    = resp.data.data.map( (val: any,idx: number) => ({value: val.id, label: (val.documentno).toUpperCase()}) )
           setInvoiceOptions(rows);
         }
       } 

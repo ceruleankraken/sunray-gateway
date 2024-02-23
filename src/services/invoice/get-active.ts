@@ -7,7 +7,9 @@ import { Pagination } from '@/types/pagination';
 
 type InvoiceResponse = {
   id         : string,
-  name       : string,
+  batchno    : string,
+  documentno : string,
+  outstanding: number,
 };
 
 export type InvoiceGetActiveResponse = {
@@ -23,7 +25,9 @@ const map = {
     const InvoiceData = response?.data.map( (val) => {
       return {
         id         : val.id,
-        name       : val.name,
+        batchno    : val.batchno,
+        documentno : val.documentno,
+        outstanding: val.outstanding,
       }
     })
 
@@ -36,13 +40,14 @@ const map = {
   },
 };
 
-const getInvoiceActive = async () => {
+const getInvoiceActive = async (partnerID: string) => {
 
   // const { data } = partner_id ? await http.get(PARTNER_GET_PATH+`/${partner_id}`) : await http.get(PARTNER_GET_PATH);
   // let resp; 
   const {data} = await http.get(INVOICE_GET_PATIAL_PATH,{
     params: {
-      q: ''
+      partner_id: partnerID,
+      q         : '',
 
     }
   });
