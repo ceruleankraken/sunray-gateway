@@ -17,7 +17,7 @@ export default function Payment() {
   const handleCloseCreateModal                = () => setOpenCreateModal(false);
   
   return (
-    <AppLayout title={"Invoice"}>
+    <AppLayout title={"Payment"}>
         <Paper 
           sx={{
             p            : 2,

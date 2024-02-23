@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import moment from 'moment'
 import styles from '@/styles/Home.module.css'
 
@@ -25,6 +25,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import InvoiceUpdatestatus from '@/modals/invoice/update_status';
 import { useInvoiceEdit } from '@/hooks/invoice/use-edit';
 import { useInvoiceEditStatus } from '@/hooks/invoice/use-edit-status';
+import { AlertError, AlertWarning } from '@/utils/notification';
 
 
 
@@ -35,8 +36,9 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   const [openUpdateStatusModal, setOpenUpdateStatusModal] = React.useState(false);
   const [loadingData, setLoadingData]                     = React.useState(false);
   const [textSearchTable, setTextSearchTable]             = React.useState('');
-  const [startDateSearch, setStartDateSearch]             = React.useState<Dayjs | null>(dayjs());
-  const [endDateSearch, setEndDateSearch]                 = React.useState<Dayjs | null>(dayjs().add(1,'month'));
+  const [startDateSearch, setStartDateSearch]             = React.useState<Dayjs | null>(dayjs().subtract(30,'days'));
+  const [endDateSearch, setEndDateSearch]                 = React.useState<Dayjs | null>(dayjs());
+  const [isValidSearch, setIsValidSearch]                 = React.useState(true);
   const [editInvoiceID, setEditInvoiceID]                 = React.useState('');
   const [deleteInvoiceID, setDeleteInvoiceID]             = React.useState('');
   const [updateInvoiceData, setUpdateInvoiceData]         = React.useState<{row: any, event: any}>({row: '', event: ''});
@@ -213,12 +215,33 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
   React.useEffect(() => {
     handleQuery();
-  }, [pageData, sortData, startDateSearch, endDateSearch]);
+  }, [pageData, sortData]);
 
 
   React.useEffect( () => {
     getDataInvoice()
   },[queryOptions])
+
+  const checkDateSearch = () => {
+    if(startDateSearch?.isAfter(endDateSearch)) {
+      setIsValidSearch(false);
+      return (AlertWarning('Tanggal awal lebih besar dari tanggal akhir!'))
+    }
+    else {
+      if ((endDateSearch?.diff(startDateSearch, 'day') || 0) > 30){
+        setIsValidSearch(false);
+        return (AlertWarning('Tanggal tidak boleh lebih dari 30 hari!'))
+      }
+      else{
+        setIsValidSearch(true);
+      }
+    }
+  }
+  
+  React.useEffect( () => {
+    checkDateSearch()
+  },[startDateSearch, endDateSearch])
+
 
   return (
     <>
@@ -271,12 +294,17 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
               }}
               onKeyUp     = {(event:any) => {
                 if (event.key === 'Enter' || event.target.value == '') {
-                  handleQuery();
+                  if(isValidSearch) {
+                    handleQuery();
+                  }
+                  else {
+                    AlertWarning('Tanggal tidak valid atau tidak boleh lebih dari 30 hari!')
+                  }
                 }
               }}
             />
             {/* <Button  variant="contained" color="primary" sx={{ width: '5%'}}> */}
-            <IconButton color='secondary' onClick={handleQuery} size="large">
+            <IconButton color='secondary' onClick={handleQuery} size="large" disabled={!isValidSearch}>
               <SearchIcon />
             </IconButton>
             {/* </Button> */}

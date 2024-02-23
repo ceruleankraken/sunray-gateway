@@ -1,13 +1,14 @@
 import React from 'react'
 import { TextField, Button, Stack, Switch, FormControlLabel, MenuItem, Autocomplete} from '@mui/material'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
-import { AlertError } from '@/utils/notification';
+import { AlertError, AlertWarning } from '@/utils/notification';
 import { useInvoiceGetActive } from '@/hooks/invoice/use-get-active';
 
 export default function PaymentAddLine({modalOnClose, onSubmitAdd, partnerID}:any) {
 
   const [checkValid, setCheckValid]                                  = React.useState(true)
   const [invoiceOptions, setInvoiceOptions]                          = React.useState([])
+  const [outstandingInvoice, setOutstandingInvoice]                  = React.useState(0);
   const { refetch: doGetInvoice, data, isLoading: isLoadingInvoice } = useInvoiceGetActive({partnerID: partnerID});
 
   const { 
@@ -53,7 +54,7 @@ export default function PaymentAddLine({modalOnClose, onSubmitAdd, partnerID}:an
         }
         else {
           // console.log(resp.data.data);
-          const rows    = resp.data.data.map( (val: any,idx: number) => ({value: val.id, label: (val.documentno).toUpperCase()}) )
+          const rows    = resp.data.data.map( (val: any,idx: number) => ({value: val.id, outstanding: val.outstanding ,label: (val.documentno).toUpperCase()}) )
           setInvoiceOptions(rows);
         }
       } 
@@ -92,8 +93,13 @@ export default function PaymentAddLine({modalOnClose, onSubmitAdd, partnerID}:an
         event.target.value = event.target.value.substring(1);
       }
 
-      onChange(event)
-      countTotal();
+      if(event.target.value > outstandingInvoice){
+        return AlertWarning('Melebihi invoice!')
+      }
+      else {
+        onChange(event)
+        countTotal();
+      }
     }
   }
 
@@ -164,7 +170,7 @@ export default function PaymentAddLine({modalOnClose, onSubmitAdd, partnerID}:an
                 value                = {value}
                 id                   = "select-invoice"
                 options              = {invoiceOptions}
-                onChange             = {(e, data) => onChange(data)}
+                onChange             = {(e, data) => {onChange(data); console.log(data); setOutstandingInvoice(data.outstanding); }}
                 sx                   = {{ mb: 2 }}
                 isOptionEqualToValue = {(option:any, value:any) => option.value === value.value}
                 getOptionLabel       = {(option:any) => option.label}
@@ -205,6 +211,7 @@ export default function PaymentAddLine({modalOnClose, onSubmitAdd, partnerID}:an
             }
           />
           
+          <Stack direction={"row"} gap={2}>
           <Controller
             name    = "price"
             control = {control}
@@ -232,6 +239,21 @@ export default function PaymentAddLine({modalOnClose, onSubmitAdd, partnerID}:an
               )
             }
           />
+
+
+          <TextField
+            size       = "medium"
+            type       = 'string'
+            value      = {outstandingInvoice}
+            label      = {"Outstanding"}
+            variant    = "outlined"
+            sx         = {{mb:2}}
+            InputProps = {{
+              readOnly: true,
+            }}
+            fullWidth
+          />
+          </Stack>
 
           <Stack direction={"row"} gap={2}>
             <Controller
