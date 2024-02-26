@@ -55,6 +55,7 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
       partner_id  : data.data.partner ? {value: data.data.partner.id, label: data.data.partner.name} : null,
     })
     
+    // console.log(data.data.line)
     const rows    = data.data.line.map( (val: any,idx: number) => ({line_id: idx, ...val}) )
     // data.data.line.map((val) => ({
 
@@ -104,7 +105,12 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
       { field: 'payment', headerName: 'Payment ID', type : 'string', minWidth: 250, filterble: false,
         valueGetter: (params: GridRenderCellParams) => params.row.payment.id 
       },
-      { field: 'batchno', headerName: 'No Batch', type : 'string', minWidth: 100, filterble: false },
+      { field: 'documentno', headerName: 'No Document', type : 'string', minWidth: 200, filterble: false,
+        valueGetter: (params: GridRenderCellParams) => params.row.invoice.documentno 
+      },
+      { field: 'batchno', headerName: 'No Batch', type : 'string', minWidth: 150, filterble: false,
+        valueGetter: (params: GridRenderCellParams) => params.row.invoice.batchno 
+      },
       { field: 'price', headerName: 'Price', type : 'string', minWidth: 100, filterble: false },
       { field: 'amount', headerName: 'Amount', type : 'string', minWidth: 100, filterble: false },
       { field: 'total', headerName: 'Total', type : 'string', minWidth: 150, filterble: false },
@@ -307,7 +313,7 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
                   columns               = {lineColumn}
                   scrollbarSize         = {5}
                   disableColumnMenu     = {true}
-                  columnVisibilityModel = {{ id: false, invoice: false, product_id: false }}
+                  columnVisibilityModel = {{ id: false, payment: false, }}
                   hideFooterPagination  = {true}
                   slots                 = {{
                     footer: FooterGrandTotal,

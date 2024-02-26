@@ -22,6 +22,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
 
   const [openAddLineModal, setOpenAddLineModal]                      = React.useState(false);
   const [grandTotal, setGrandTotal]                                  = React.useState(0);
+  const [lineTotal, setLineTotal]                                    = React.useState(0);
   const handleOpenAddLineModal                                       = () => setOpenAddLineModal(true);
   const handleCloseAddLineModal                                      = () => setOpenAddLineModal(false);
   const [partnerOptions, setPartnerOptions]                          = React.useState([])
@@ -96,10 +97,12 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
     // const result = lineInvoice.reduce( (total, line:any) => total + line.total)
     const discount     = parseFloat(getValues('discount') || '0')
     const ispercentage = getValues('ispercentage')
+    let   lineTotal   = 0;
 
     let total = 0;
     lineInvoice.forEach((value: any) => {
-      total = total + value.total
+      total     = total + value.total;
+      lineTotal = lineTotal + value.amount;
     })
     
     if(ispercentage == true){
@@ -110,6 +113,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
     }
 
     // setValue('grand_total',total)
+    setLineTotal(lineTotal)
     setGrandTotal(total)
   }
 
@@ -179,7 +183,6 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
 
   React.useEffect( () => {
     countGrandTotal();
-    console.log(lineInvoice);
   }, [lineInvoice])
 
   React.useEffect(() => {
@@ -193,9 +196,37 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
       currency: 'IDR',
     }).format(grandTotal);
 
+    const lineTotalRupiah = new Intl.NumberFormat('id-ID', {
+      style   : 'currency',
+      currency: 'IDR',
+    }).format(lineTotal);
+
     return (
       <Box sx={{ p: 1, display: 'flex' }}>
-        Grand Total: {grandTotalRupiah}
+        <table>
+          <tr>
+            <td>
+              Line Total
+            </td>
+            <td>
+              :
+            </td>
+            <td>
+              {lineTotalRupiah}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Grand Total
+            </td>
+            <td>
+              :
+            </td>
+            <td>
+              {grandTotalRupiah}
+            </td>
+          </tr>
+        </table>
       </Box>
     );
   }

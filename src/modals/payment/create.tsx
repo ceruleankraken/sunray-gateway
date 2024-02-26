@@ -22,6 +22,7 @@ export default function PaymentCreate({modalOnClose, getData}:any) {
 
   const [openAddLineModal, setOpenAddLineModal] = React.useState(false);
   const [grandTotal, setGrandTotal]             = React.useState(0);
+  const [lineTotal, setLineTotal]               = React.useState(0);
   const [partnerID, setPartnerID]               = React.useState({label: '', value: ''});
   const handleOpenAddLineModal                  = () => setOpenAddLineModal(true);
   const handleCloseAddLineModal                 = () => setOpenAddLineModal(false);
@@ -91,11 +92,15 @@ export default function PaymentCreate({modalOnClose, getData}:any) {
   const countGrandTotal = () => {
     // const result = lineInvoice.reduce( (total, line:any) => total + line.total)
 
-    let total = 0;
+    let total     = 0;
+    let lineTotal = 0;
+
     linePayment.forEach((value: any) => {
-      total = total + value.total
+      total     = total + value.total;
+      lineTotal = lineTotal + value.amount;
     })
     
+    setLineTotal(lineTotal)
     setGrandTotal(total)
   }
 
@@ -140,9 +145,37 @@ export default function PaymentCreate({modalOnClose, getData}:any) {
       currency: 'IDR',
     }).format(grandTotal);
 
+    const lineTotalRupiah = new Intl.NumberFormat('id-ID', {
+      style   : 'currency',
+      currency: 'IDR',
+    }).format(lineTotal);
+
     return (
       <Box sx={{ p: 1, display: 'flex' }}>
-        Grand Total: {grandTotalRupiah}
+        <table>
+          <tr>
+            <td>
+              Line Total
+            </td>
+            <td>
+              :
+            </td>
+            <td>
+              {lineTotalRupiah}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Grand Total
+            </td>
+            <td>
+              :
+            </td>
+            <td>
+              {grandTotalRupiah}
+            </td>
+          </tr>
+        </table>
       </Box>
     );
   }
