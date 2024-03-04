@@ -59,7 +59,7 @@ export default function InvoiceEditLine({modalOnClose, invoice_line_id, getData}
   const { refetch: doGetInvoiceLine, data: dataLine, isLoading: isLoadingGetInvoiceLine } = useInvoiceLineGetOne(invoice_line_id, (dataOriginal: any)=>loadData(dataOriginal));
 
 
-  const { mutate: submitEditInvoice, isLoading }= useInvoiceLineEdit({closeModal: ()=>modalOnClose(), invoice_line_id: invoice_line_id, getData: () => getData()});
+  const { mutate: submitEditInvoiceLine, isLoading }= useInvoiceLineEdit({closeModal: ()=>modalOnClose(), invoice_line_id: invoice_line_id, getData: () => getData()});
 
   const onSubmit: SubmitHandler<{}> = (data: any) => {
     // const selectedProduct: any = productOptions.filter( (product: any) => product.value == data.product_id);
@@ -67,7 +67,7 @@ export default function InvoiceEditLine({modalOnClose, invoice_line_id, getData}
     let newData            = {...data, product_name: data.product_id.label}
         newData.product_id = data.product_id.value
     console.log(newData);
-    submitEditInvoice(newData);
+    submitEditInvoiceLine(newData);
   }
 
   const getDataProduct = () => {

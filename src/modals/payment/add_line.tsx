@@ -170,7 +170,7 @@ export default function PaymentAddLine({modalOnClose, onSubmitAdd, partnerID}:an
                 value                = {value}
                 id                   = "select-invoice"
                 options              = {invoiceOptions}
-                onChange             = {(e, data) => {onChange(data); console.log(data); setOutstandingInvoice(data.outstanding); }}
+                onChange             = {(e, data) => {onChange(data); setOutstandingInvoice(data.outstanding); }}
                 sx                   = {{ mb: 2 }}
                 isOptionEqualToValue = {(option:any, value:any) => option.value === value.value}
                 getOptionLabel       = {(option:any) => option.label}
@@ -212,47 +212,47 @@ export default function PaymentAddLine({modalOnClose, onSubmitAdd, partnerID}:an
           />
           
           <Stack direction={"row"} gap={2}>
-          <Controller
-            name    = "price"
-            control = {control}
-            rules   = {{ required: {
-              value  : true,
-              message: "Price fields is required"
-            }}}
-            render  = { ({ 
-                field     : { onChange, value },
-                fieldState: { error },
-                formState,
-              }) => (
-              <TextField
-                helperText = {error ? error.message : null}
-                size       = "medium"
-                error      = {!!error}
-                onChange   = {e => onPriceChange(onChange, e)}
-                type       = 'string'
-                value      = {value}
-                label      = {"Price"}
-                variant    = "outlined"
-                sx         = {{mb:2}}
-                fullWidth
-              />
-              )
-            }
-          />
+            <Controller
+              name    = "price"
+              control = {control}
+              rules   = {{ required: {
+                value  : true,
+                message: "Price fields is required"
+              }}}
+              render  = { ({ 
+                  field     : { onChange, value },
+                  fieldState: { error },
+                  formState,
+                }) => (
+                <TextField
+                  helperText = {error ? error.message : null}
+                  size       = "medium"
+                  error      = {!!error}
+                  onChange   = {e => onPriceChange(onChange, e)}
+                  type       = 'string'
+                  value      = {value}
+                  label      = {"Price"}
+                  variant    = "outlined"
+                  sx         = {{mb:2}}
+                  fullWidth
+                />
+                )
+              }
+            />
 
 
-          <TextField
-            size       = "medium"
-            type       = 'string'
-            value      = {outstandingInvoice}
-            label      = {"Outstanding"}
-            variant    = "outlined"
-            sx         = {{mb:2}}
-            InputProps = {{
-              readOnly: true,
-            }}
-            fullWidth
-          />
+            <TextField
+              size       = "medium"
+              type       = 'string'
+              value      = {outstandingInvoice}
+              label      = {"Outstanding"}
+              variant    = "outlined"
+              sx         = {{mb:2}}
+              InputProps = {{
+                readOnly: true,
+              }}
+              fullWidth
+            />
           </Stack>
 
           <Stack direction={"row"} gap={2}>

@@ -17,6 +17,7 @@ import ModalComponent from '@/components/modal.component';
 import { usePartnerGetActive } from '@/hooks/partner/use-get-active';
 import { usePaymentCreate } from '@/hooks/payment/use-create';
 import PaymentAddLine from './add_line';
+import dayjs from 'dayjs';
 
 export default function PaymentCreate({modalOnClose, getData}:any) {
 
@@ -83,23 +84,35 @@ export default function PaymentCreate({modalOnClose, getData}:any) {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      partner_id: null,
-      batchno   : '',
+      partner_id  : null,
+      discount    : '0',
+      ispercentage: false,
+      pay_date    : '',
+      batchno     : '',
     }
   })
 
   
   const countGrandTotal = () => {
     // const result = lineInvoice.reduce( (total, line:any) => total + line.total)
+    const discount     = parseFloat(getValues('discount') || '0')
+    const ispercentage = getValues('ispercentage')
+    let   lineTotal   = 0;
 
-    let total     = 0;
-    let lineTotal = 0;
-
+    let total = 0;
     linePayment.forEach((value: any) => {
       total     = total + value.total;
       lineTotal = lineTotal + value.amount;
     })
     
+    if(ispercentage == true){
+      total = total - ( (discount/100)*total );
+    }
+    else{
+      total = total - discount;
+    }
+
+    // setValue('grand_total',total)
     setLineTotal(lineTotal)
     setGrandTotal(total)
   }
@@ -124,11 +137,50 @@ export default function PaymentCreate({modalOnClose, getData}:any) {
       header : {
         batchno     : data.batchno,
         partner_id  : data.partner_id.value,
+        pay_date    : dayjs(data.pay_date).format('DD-MM-YYYY'),
+        discount    : data.discount,
+        ispercentage: data.ispercentage,
       },
       line: linePayment,
     }
     submitCreatePayment(createObj)
   }
+
+  const onDiscountChange = (onChange: any, event: any) => {
+    const re = /^[0-9]*\.?[0-9]*$/;
+
+    // if value is not blank, then test the regex
+    if (event.target.value === '' || re.test(event.target.value)) {
+      if(getValues('ispercentage') == true){
+        if(event.target.value >= 100) {
+          onChange(event)
+          setValue('discount', '100')
+        } 
+        else{
+          // setValue('discount', event.target.value)
+          onChange(event)
+        }
+      }
+      else{
+        // setValue('discount', event.target.value)
+        onChange(event)
+      }
+      countGrandTotal()
+    }
+  }
+
+  const onPercentageChange = (onChange: any, event:any) => {
+    if(event.target.checked == true){
+      if( parseInt(getValues('discount') || '0') >= 100){
+        
+        setValue('discount', '100')
+      }
+    }
+    onChange(event)
+    countGrandTotal()
+    // setValue('ispercentage', event.target.checked);
+  }
+
 
   React.useEffect( () => {
     countGrandTotal();
@@ -252,6 +304,121 @@ export default function PaymentCreate({modalOnClose, getData}:any) {
                   )
                 }
               />
+
+              <Controller
+                name    = "pay_date"
+                control = {control}
+                rules   = {{ required: {
+                  value  : true,
+                  message: "Pay Date fields is required"
+                }}}
+                render  = { ({ 
+                    field     : { onChange, value },
+                    fieldState: { error },
+                    formState,
+                  }) => (
+                    <DatePicker
+                      label     = {"Pay Date"}
+                      value     = {value}
+                      format    = 'DD-MM-YYYY'
+                      onChange  = {onChange}
+                      sx        = {{mb:2}}
+                      slotProps = {{
+                        textField: {
+                          error     : !!error,
+                          helperText: error ? error.message: null,
+                        },
+                      }}
+                    />
+                  // <TextField
+                  //   // helperText = {error ? error.message : null}
+                  //   size       = "medium"
+                  //   error      = {!!error}
+                  //   onChange   = {onChange}
+                  //   type       = 'string'
+                  //   value      = {value}
+                  //   label      = {"Pay Date"}
+                  //   variant    = "outlined"
+                  //   sx         = {{mb:2}}
+                  //   fullWidth
+                  // />
+                  )
+                }
+              />
+              
+              <Stack direction={"row"} gap={2}>
+                <Controller
+                  name    = "discount"
+                  control = {control}
+                  rules   = {{ required: {
+                    value  : true,
+                    message: "Discount fields is required"
+                  }}}
+                  render  = { ({ 
+                      field     : { onChange, value },
+                      fieldState: { error },
+                      formState,
+                    }) => (
+                    <TextField
+                      helperText = {error ? error.message : null}
+                      size       = "medium"
+                      error      = {!!error}
+                      onChange   = {e => onDiscountChange(onChange, e)}
+                      type       = 'string'
+                      value      = {value}
+                      label      = {"Discount"}
+                      variant    = "outlined"
+                      sx         = {{mb:2, width: '50%'}}
+                      // inputProps={{
+                      //   // max      : '100',
+                      //   maxLength: '3'
+                      // }}
+                      // fullWidth
+                    />
+                    )
+                  }
+                />
+
+                <Controller
+                  name    = "ispercentage"
+                  control = {control}
+                  // rules   = {{ required: {
+                  //   value  : true,
+                  //   message: "Active fields is required"
+                  // }}}
+                  render  = { ({ 
+                      field     : { onChange, value },
+                      fieldState: { error },
+                      formState,
+                    }) => (
+                      <FormControlLabel
+                        label          = {value ? "Percent" : "Nominal"}
+                        value          = {"start"}
+                        labelPlacement = {"start"}
+                        onChange       = {onChange}
+                        control        = {
+                          <Switch
+                            checked    = {value}
+                            disabled   = {false}
+                            onChange   = {e => onPercentageChange(onChange, e)}
+                            inputProps = {{ 'aria-label': 'controlled' }}
+                            // sx         = {{mb:2}}
+                          />
+                        }
+                        sx={{
+                          display      : "flex",
+                          flexWrap     : 'wrap',
+                          flexDirection: "row",
+                          margin       : 0,
+                          mb           : 2,
+                          width        : '50%'
+                        }}
+                      />
+                    )
+                  }
+                />
+              </Stack>
+
 
               <Box
                 // display        = {'flex'}

@@ -153,6 +153,14 @@ const PaymentTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     { field: 'partner', headerName: 'Partner', type: 'string', minWidth:175, flex: 0.25,
       valueGetter: (params: GridRenderCellParams) => params.row.partner.name 
     },
+    
+    { field     : 'created_at',
+      headerName: 'Created At',
+      type      : 'string',
+      minWidth  : 100,
+      flex      : 1,
+      renderCell: (params:GridRenderCellParams) => moment(params.value).format("DD-MM-YYYY HH:mm:ss"),
+    },
     { field: 'status', headerName: 'Status', type: 'string', minWidth:175, flex: 0.5,
       renderCell: (params: any) => {
         return (

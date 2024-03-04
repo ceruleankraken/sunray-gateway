@@ -6,6 +6,9 @@ export interface HeaderPayment {
     // status      : string | undefined,
     batchno     : string,
     partner_id  : string,
+    discount    : string,
+    ispercentage: boolean,
+    pay_date    : string
 }
 export interface LinePayment {
     payment_id  : string,
@@ -37,6 +40,9 @@ const createPayment = async ({ payload }: PaymentCreateProps) => {
     header: {
       batchno     : payload.header.batchno,
       partner_id  : payload.header.partner_id,
+      discount    : parseFloat(payload.header.discount),
+      ispercentage: payload.header.ispercentage,
+      pay_date    : payload.header.pay_date,
     },
     line: newLine,
   });

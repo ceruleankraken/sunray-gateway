@@ -26,6 +26,7 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
   const [editPaymentLineID, setEditPaymentLineID]     = React.useState('');
   const [openDeleteModal, setOpenDeleteModal]         = React.useState(false);
   const [openEditModal, setOpenEditModal]             = React.useState(false);
+  const [partnerID, setPartnerID]                     = React.useState({label: '', value: ''});
 
   const { refetch: doGetPartner, data: dataPartner, isLoading: isLoadingPartner } = usePartnerGetActive();
   
@@ -63,6 +64,7 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
     setGrandTotal(data.data.grand_total)
     setLineTotal(data.data.total_line)
     setLinePayment(rows);
+    setPartnerID(data.data.partner.id);
   }
   
   
@@ -332,7 +334,7 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
         modalSize    = 'sm'
         modalTitle   = 'Edit Payment Line'
       >
-        <PaymentEditLine modalOnClose={handleCloseEditModal} invoice_line_id={editPaymentLineID} getData={doGetPayment}/>
+        <PaymentEditLine modalOnClose={handleCloseEditModal} payment_line_id={editPaymentLineID} getData={doGetPayment} partner_id={partnerID}/>
       </ModalComponent>
 
       <ModalConfirmComponent

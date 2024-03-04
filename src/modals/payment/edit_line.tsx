@@ -4,12 +4,17 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { useInvoiceLineEdit } from '@/hooks/invoice/use-edit-line';
 import { useInvoiceLineGetOne } from '@/hooks/invoice/use-get-line';
 import { useProductGetActive } from '@/hooks/product/use-get-active';
+import { useInvoiceGetActive } from '@/hooks/invoice/use-get-active';
+import { usePaymentLineEdit } from '@/hooks/payment/use-edit-line';
+import { AlertWarning } from '@/utils/notification';
+import { usePaymentLineGetOne } from '@/hooks/payment/use-get-line';
 
-export default function PaymentEditLine({modalOnClose, invoice_line_id, getData}:any) {
+export default function PaymentEditLine({modalOnClose, payment_line_id, getData, partner_id}:any) {
 
   const [checkValid, setCheckValid]                                  = React.useState(true)
-  const [productOptions, setProductOptions]                          = React.useState([])
-  const { refetch: doGetProduct, data, isLoading: isLoadingProduct } = useProductGetActive();
+  const [invoiceOptions, setInvoiceOptions]                          = React.useState([])
+  const [outstandingInvoice, setOutstandingInvoice]                  = React.useState(0);
+  const { refetch: doGetInvoice, data, isLoading: isLoadingInvoice } = useInvoiceGetActive({partnerID: partner_id});
 
   const { 
     watch,
@@ -21,9 +26,7 @@ export default function PaymentEditLine({modalOnClose, invoice_line_id, getData}
     handleSubmit,
     formState: { errors, isValid },
   } = useForm<{
-    invoice_id  : string,
-    product_id  : {} | null,
-    qty         : string,
+    invoice_id  : {value: string, outstanding: number, label: string} | null,
     price       : string,
     discount    : string,
     ispercentage: boolean,
@@ -31,9 +34,7 @@ export default function PaymentEditLine({modalOnClose, invoice_line_id, getData}
     total       : number,
   }>({
     defaultValues: {
-      invoice_id  : '',
-      product_id  : null,
-      qty         : '',
+      invoice_id  : null,
       price       : '',
       discount    : '0',
       ispercentage: true,
@@ -43,54 +44,52 @@ export default function PaymentEditLine({modalOnClose, invoice_line_id, getData}
   })
 
   const loadData = (data: any) => {
-    console.log(data)
+    // console.log(data)
     reset({
-      invoice_id  : data.data.invoice.id,
-      product_id  : data.data.product ? {value: data.data.product.id, label: data.data.product.name} : null,
-      qty         : data.data.qty.toString(),
+      // invoice_id  : data.data.invoice.id,
+      invoice_id  : data.data.invoice ? {value: data.data.invoice.id, outstanding: data.data.invoice.outstanding, label: data.data.invoice.documentno} : null,
       price       : data.data.price.toString(),
       discount    : data.data.discount.toString(),
       ispercentage: data.data.ispercentage,
       amount      : parseInt(data.data.amount),
-      total       : (data.data.qty*data.data.price)-(data.data.discount/100*(data.data.qty*data.data.price)),
+      total       : (data.data.price)-(data.data.discount/100*(data.data.price)),
     })
+    setOutstandingInvoice(data.data.invoice.outstanding)
   }
   
-  const { refetch: doGetInvoiceLine, data: dataLine, isLoading: isLoadingGetInvoiceLine } = useInvoiceLineGetOne(invoice_line_id, (dataOriginal: any)=>loadData(dataOriginal));
+  const { refetch: doGetPaymentLine, data: dataLine, isLoading: isLoadingGetPaymentLine } = usePaymentLineGetOne(payment_line_id, (dataOriginal: any)=>loadData(dataOriginal));
 
 
-  const { mutate: submitEditInvoice, isLoading }= useInvoiceLineEdit({closeModal: ()=>modalOnClose(), invoice_line_id: invoice_line_id, getData: () => getData()});
+  const { mutate: submitEditPaymentLine, isLoading }= usePaymentLineEdit({closeModal: ()=>modalOnClose(), payment_line_id: payment_line_id, getData: () => getData()});
 
   const onSubmit: SubmitHandler<{}> = (data: any) => {
     // const selectedProduct: any = productOptions.filter( (product: any) => product.value == data.product_id);
     
-    let newData            = {...data, product_name: data.product_id.label}
-        newData.product_id = data.product_id.value
-    console.log(newData);
-    submitEditInvoice(newData);
+    let newData            = {...data, invoice_name: data.invoice_id.label}
+        newData.invoice_id = data.invoice_id.value
+    submitEditPaymentLine(newData);
   }
 
-  const getDataProduct = () => {
-    doGetProduct().then(
+  const getDataInvoice = () => {
+    doGetInvoice().then(
       (resp: any) => {
         if(resp.status == 'error') {
         }
         else {
-          const rows    = resp.data.data.map( (val: any,idx: number) => ({value: val.id, label: (val.name).toUpperCase()}) )
-          setProductOptions(rows);
+          const rows    = resp.data.data.map( (val: any,idx: number) => ({value: val.id, outstanding: val.outstanding ,label: (val.documentno).toUpperCase()}) )
+          setInvoiceOptions(rows);
         }
       } 
     )
   }
 
   const countTotal = () => {
-    const qty          = parseInt(getValues('qty') || '0')
     const price        = parseInt(getValues('price') || '0')
     const discount     = parseFloat(getValues('discount') || '0')
     const ispercentage = getValues('ispercentage')
     // const amount       = parseInt(getValues('amount') || '0')
 
-    let hitung = qty*price;
+    let hitung = price;
     setValue('amount',hitung);
     let total  = 0;
     if(ispercentage == true){
@@ -108,19 +107,6 @@ export default function PaymentEditLine({modalOnClose, invoice_line_id, getData}
     setValue('total',total)
   }
 
-  const onQtyChange = (onChange: any, event: any) => {
-    const re = /^[0-9\b]+$/;
-
-    if (event.target.value === '' || re.test(event.target.value)) {
-      if (event.target.value.substring(0, 1) == '0'){
-        event.target.value = event.target.value.substring(1);
-      }
-      // setValue('qty', event.target.value)
-      onChange(event)
-      countTotal();
-    }
-  }
-  
   const onPriceChange = (onChange: any, event: any) => {
     const re = /^[0-9\b]+$/;
 
@@ -129,8 +115,13 @@ export default function PaymentEditLine({modalOnClose, invoice_line_id, getData}
         event.target.value = event.target.value.substring(1);
       }
 
-      onChange(event)
-      countTotal();
+      if(event.target.value > outstandingInvoice){
+        return AlertWarning('Melebihi invoice!')
+      }
+      else {
+        onChange(event)
+        countTotal();
+      }
     }
   }
 
@@ -174,8 +165,8 @@ export default function PaymentEditLine({modalOnClose, invoice_line_id, getData}
   }
   
   React.useEffect(() => {
-    doGetInvoiceLine();
-    getDataProduct();
+    doGetPaymentLine();
+    getDataInvoice();
   },[])
   
 
@@ -184,11 +175,11 @@ export default function PaymentEditLine({modalOnClose, invoice_line_id, getData}
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack direction={'column'}>
           <Controller
-            name    = "product_id"
+            name    = "invoice_id"
             control = {control}
             rules   = {{ required: {
               value  : true,
-              message: "Product fields is required"
+              message: "Invoice fields is required"
             },
             }}
             render  = { ({ 
@@ -199,10 +190,10 @@ export default function PaymentEditLine({modalOnClose, invoice_line_id, getData}
               <Autocomplete
                 disablePortal
                 fullWidth
-                id                   = "select-product"
-                options              = {productOptions}
+                id                   = "select-invoice"
+                options              = {invoiceOptions}
                 value                = {value}
-                onChange             = {(e, data) => onChange(data)}
+                onChange             = {(e, data) => {onChange(data); setOutstandingInvoice(data?.outstanding || 0); }}
                 sx                   = {{ mb: 2 }}
                 isOptionEqualToValue = {(option:any, value:any) => option.value === value.value}
                 getOptionLabel       = {(option:any) => option.label}
@@ -213,7 +204,7 @@ export default function PaymentEditLine({modalOnClose, invoice_line_id, getData}
                     size       = "medium"
                     error      = {!!error}
                     type       = 'string'
-                    label      = {"Product"}
+                    label      = {"Invoice"}
                     variant    = "outlined"
                   />
                 }
@@ -222,62 +213,48 @@ export default function PaymentEditLine({modalOnClose, invoice_line_id, getData}
             }
           />
 
-          <Controller
-            name    = "qty"
-            control = {control}
-            rules   = {{ required: {
-              value  : true,
-              message: "Qty fields is required"
-            }}}
-            render  = { ({ 
-                field     : { onChange, value },
-                fieldState: { error },
-                formState,
-              }) => (
-              <TextField
-                helperText = {error ? error.message : null}
-                size       = "medium"
-                error      = {!!error}
-                onChange   = {e => onQtyChange(onChange, e)}
-                type       = 'string'
-                value      = {value}
-                label      = {"Qty"}
-                variant    = "outlined"
-                sx         = {{mb:2}}
-                fullWidth
-              />
-              )
-            }
-          />
+          <Stack direction={"row"} gap={2}>
+            <Controller
+              name    = "price"
+              control = {control}
+              rules   = {{ required: {
+                value  : true,
+                message: "Price fields is required"
+              }}}
+              render  = { ({ 
+                  field     : { onChange, value },
+                  fieldState: { error },
+                  formState,
+                }) => (
+                <TextField
+                  helperText = {error ? error.message : null}
+                  size       = "medium"
+                  error      = {!!error}
+                  onChange   = {e => onPriceChange(onChange, e)}
+                  type       = 'string'
+                  value      = {value}
+                  label      = {"Price"}
+                  variant    = "outlined"
+                  sx         = {{mb:2}}
+                  fullWidth
+                />
+                )
+              }
+            />
 
-          <Controller
-            name    = "price"
-            control = {control}
-            rules   = {{ required: {
-              value  : true,
-              message: "Price fields is required"
-            }}}
-            render  = { ({ 
-                field     : { onChange, value },
-                fieldState: { error },
-                formState,
-              }) => (
-              <TextField
-                helperText = {error ? error.message : null}
-                size       = "medium"
-                error      = {!!error}
-                onChange   = {e => onPriceChange(onChange, e)}
-                type       = 'string'
-                value      = {value}
-                label      = {"Price"}
-                variant    = "outlined"
-                sx         = {{mb:2}}
-                fullWidth
-              />
-              )
-            }
-          />
-
+            <TextField
+              size       = "medium"
+              type       = 'string'
+              value      = {outstandingInvoice}
+              label      = {"Outstanding"}
+              variant    = "outlined"
+              sx         = {{mb:2}}
+              InputProps = {{
+                readOnly: true,
+              }}
+              fullWidth
+            />
+          </Stack>
           <Stack direction={"row"} gap={2}>
             <Controller
               name    = "discount"
