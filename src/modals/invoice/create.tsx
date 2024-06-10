@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextField, Button, Stack, Switch, FormControl, FormLabel, FormGroup, FormHelperText, FormControlLabel, MenuItem, Box, Autocomplete} from '@mui/material'
+import { TextField, Button, Stack, Switch, FormControl, FormLabel, FormGroup, FormHelperText, FormControlLabel, MenuItem, Box, Autocomplete, IconButton} from '@mui/material'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { usePartnerCreate } from '@/hooks/partner/use-create'
 import { PartnerCreateFormPropsRequest } from '@/services/partner/create';
@@ -17,6 +17,7 @@ import ModalComponent from '@/components/modal.component';
 import InvoiceAddLine from './add_line';
 import dayjs from 'dayjs';
 import { usePartnerGetActive } from '@/hooks/partner/use-get-active';
+import { FileUploadOutlined } from '@mui/icons-material';
 
 export default function InvoiceCreate({modalOnClose, getData}:any) {
 
@@ -88,6 +89,8 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
       ispercentage: false,
       partner_id  : null,
       pay_date    : '',
+      file        : '',
+      file_name   : '',
       // grand_total : 0,
     }
   })
@@ -142,6 +145,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
         pay_date    : dayjs(data.pay_date).format('DD-MM-YYYY'),
       },
       line: lineInvoice,
+      file: data.file,
     }
     submitCreateInvoice(createObj)
   }
@@ -179,6 +183,15 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
     onChange(event)
     countGrandTotal()
     // setValue('ispercentage', event.target.checked);
+  }
+
+  
+  const onFileChange = (onChange: any, event:any) => {
+    const fileValue = event.target.value;
+    var   fileCheck = typeof  fileValue == 'string' ? fileValue.match(/[^\/\\]+$/) : fileValue;
+    var   fileName  = fileCheck         != null && fileCheck[0]
+    onChange(event)
+    setValue('file_name',fileName);
   }
 
   React.useEffect( () => {
@@ -438,6 +451,53 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
                   }
                 />
               </Stack>
+
+              <Controller
+                name    = "file"
+                control = {control}
+                rules   = {{ required: {
+                  value  : true,
+                  message: "File fields is required"
+                }}}
+                render  = { ({ 
+                    field     : { onChange, value },
+                    fieldState: { error },
+                    formState,
+                  }) => (
+                  <TextField
+                    helperText = {error ? error.message : null}
+                    size       = "medium"
+                    error      = {!!error}
+                    // onChange   = {e => onDiscountChange(onChange, e)}
+                    type       = 'string'
+                    value      = {value}
+                    label      = {"File"}
+                    variant    = "outlined"
+                    sx         = {{mb:2, width: '50%'}}
+                    InputProps = {{
+                      endAdornment: (
+                        <IconButton component="label">
+                          <FileUploadOutlined />
+                          <input
+                            hidden
+                            value    = {value}
+                            style    = {{display:"none"}}
+                            type     = "file"
+                            onChange = {e => onFileChange(onChange, e)}
+                            name     = "File Upload"
+                          />
+                        </IconButton>
+                      ),
+                    }}
+                    // inputProps={{
+                    //   // max      : '100',
+                    //   maxLength: '3'
+                    // }}
+                    // fullWidth
+                  />
+                  )
+                }
+              />
 
               <Box
                 // display        = {'flex'}

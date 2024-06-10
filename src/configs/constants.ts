@@ -29,7 +29,7 @@ export const PRODUCT_GET_PATIAL_PATH = '/product/patial/';
 export const PRODUCT_EDIT_PATH       = '/product/';
 export const PRODUCT_DELETE_PATH     = '/product/';
 
-export const INVOICE_CREATE_PATH      = '/invoice/v2';
+export const INVOICE_CREATE_PATH      = '/invoice/v3';
 export const INVOICE_GET_PATH         = '/invoices/';
 export const INVOICE_GET_ONE_PATH     = '/invoice/';
 export const INVOICE_GET_PATIAL_PATH  = '/invoice/patial/';

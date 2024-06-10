@@ -20,8 +20,10 @@ export interface LineInvoice {
 }
 
 export interface InvoiceCreateFormPropsRequest {
-  header: HeaderInvoice
-  line  : LineInvoice[]
+  header: HeaderInvoice,
+  line  : LineInvoice[],
+  file  : File,
+
 }
 
 type InvoiceCreateProps = {
@@ -29,6 +31,8 @@ type InvoiceCreateProps = {
 };
 
 const createInvoice = async ({ payload }: InvoiceCreateProps) => {
+
+  var formData = new FormData()
 
   const newLine = payload.line.map( (val) => ({
     product_id  : val.product_id,
@@ -38,7 +42,8 @@ const createInvoice = async ({ payload }: InvoiceCreateProps) => {
     discount    : parseFloat(val.discount),
     ispercentage: val.ispercentage,
   }))
-  const { data } = await http.post(INVOICE_CREATE_PATH, {
+
+  const textData = {
     header: {
       batchno     : payload.header.batchno,
       discount    : parseFloat(payload.header.discount),
@@ -47,6 +52,15 @@ const createInvoice = async ({ payload }: InvoiceCreateProps) => {
       pay_date    : payload.header.pay_date,
     },
     line: newLine,
+  }
+
+  formData.append("data", JSON.stringify(textData));
+  formData.append("image", payload.file);
+
+  const { data } = await http.post(INVOICE_CREATE_PATH, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   });
   return data
 };
