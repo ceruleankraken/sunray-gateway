@@ -79,17 +79,27 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
     control,
     register,
     setValue,
+    setError,
+    clearErrors,
     getValues,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
+  } = useForm<{
+    discount    : string,
+    batchno     : string,
+    ispercentage: boolean,
+    partner_id  : {label:string, value:string} | null,
+    pay_date    : string | null,
+    file        : File | null,
+    file_name   : string,
+  }>({
+    defaultValues:{
       discount    : '0',
       batchno     : '',
       ispercentage: false,
       partner_id  : null,
       pay_date    : '',
-      file        : '',
+      file        : null,
       file_name   : '',
       // grand_total : 0,
     }
@@ -187,11 +197,27 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
 
   
   const onFileChange = (onChange: any, event:any) => {
-    const fileValue = event.target.value;
-    var   fileCheck = typeof  fileValue == 'string' ? fileValue.match(/[^\/\\]+$/) : fileValue;
-    var   fileName  = fileCheck         != null && fileCheck[0]
-    onChange(event)
-    setValue('file_name',fileName);
+    clearErrors('file');
+    const fileValue = event.target.files[0];
+    const fileName  = fileValue?.name;
+    const fileSize  = fileValue?.size;
+    const fileType  = fileValue?.type;
+
+    if (['image/jpeg', 'image/png', 'image/jpg'].includes(fileType)){
+      
+      if (fileSize < 1048576) {
+        onChange(fileValue)
+        // setValue('file_name',fileName);
+      }
+      else {
+        setValue('file', null)
+        setError('file', { type:'validate', message: "File size more than 1MB"});
+      }
+    }
+    else {
+      setValue('file', null)
+      setError('file', { type:'validate', message: "Invalid file type"});
+    }
   }
 
   React.useEffect( () => {
@@ -217,28 +243,30 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
     return (
       <Box sx={{ p: 1, display: 'flex' }}>
         <table>
-          <tr>
-            <td>
-              Line Total
-            </td>
-            <td>
-              :
-            </td>
-            <td>
-              {lineTotalRupiah}
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Grand Total
-            </td>
-            <td>
-              :
-            </td>
-            <td>
-              {grandTotalRupiah}
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>
+                Line Total
+              </td>
+              <td>
+                :
+              </td>
+              <td>
+                {lineTotalRupiah}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Grand Total
+              </td>
+              <td>
+                :
+              </td>
+              <td>
+                {grandTotalRupiah}
+              </td>
+            </tr>
+          </tbody>
         </table>
       </Box>
     );
@@ -253,10 +281,11 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
               <Controller
                 name    = "partner_id"
                 control = {control}
-                rules   = {{ required: {
-                  value  : true,
-                  message: "Partner fields is required"
-                },
+                rules   = {{ 
+                  required: {
+                    value  : true,
+                    message: "Partner fields is required"
+                  },
                 }}
                 render  = { ({ 
                     field     : { onChange, value },
@@ -276,7 +305,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
                     renderInput          = { (params: any) => 
                       <TextField 
                         {...params}
-                        helperText = {error ? error.message : null}
+                        helperText = {error ? error.message : " "}
                         size       = "medium"
                         error      = {!!error}
                         type       = 'string'
@@ -286,7 +315,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
                     }
                   />
                   // <TextField
-                  //   helperText = {error ? error.message : null}
+                  //   helperText = {error ? error.message : " "}
                   //   size       = "medium"
                   //   error      = {!!error}
                   //   onChange   = {onChange}
@@ -323,7 +352,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
                     formState,
                   }) => (
                   <TextField
-                    helperText = {error ? error.message : null}
+                    helperText = {error ? error.message : " "}
                     size       = "medium"
                     error      = {!!error}
                     onChange   = {onChange}
@@ -359,12 +388,12 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
                       slotProps = {{
                         textField: {
                           error     : !!error,
-                          helperText: error ? error.message: null,
+                          helperText: error ? error.message: " ",
                         },
                       }}
                     />
                   // <TextField
-                  //   // helperText = {error ? error.message : null}
+                  //   // helperText = {error ? error.message : " "}
                   //   size       = "medium"
                   //   error      = {!!error}
                   //   onChange   = {onChange}
@@ -393,7 +422,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
                       formState,
                     }) => (
                     <TextField
-                      helperText = {error ? error.message : null}
+                      helperText = {error ? error.message : " "}
                       size       = "medium"
                       error      = {!!error}
                       onChange   = {e => onDiscountChange(onChange, e)}
@@ -455,36 +484,45 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
               <Controller
                 name    = "file"
                 control = {control}
-                rules   = {{ required: {
-                  value  : true,
-                  message: "File fields is required"
-                }}}
+                rules   = {{ 
+                  required: {
+                    value  : true,
+                    message: "File fields is required"
+                  },
+                  validate: {
+                    fileType: (val: any) => ['image/jpeg', 'image/png', 'image/jpg'].includes(val.type) || 'Invalid file type',
+                    fileSize: (val: any) => val.size < 1048576 || 'File size more than 1MB',
+                  }
+                }}
                 render  = { ({ 
                     field     : { onChange, value },
                     fieldState: { error },
                     formState,
                   }) => (
                   <TextField
-                    helperText = {error ? error.message : null}
+                    fullWidth 
+                    helperText = {error ? error.message : "File Type: JPG/JPEG/PNG (Max 1MB)"}
                     size       = "medium"
                     error      = {!!error}
                     // onChange   = {e => onDiscountChange(onChange, e)}
                     type       = 'string'
-                    value      = {value}
+                    value      = {value?.name || ''}
                     label      = {"File"}
                     variant    = "outlined"
-                    sx         = {{mb:2, width: '50%'}}
+                    sx         = {{mb:2}}
                     InputProps = {{
+                      readOnly    : true,
                       endAdornment: (
                         <IconButton component="label">
                           <FileUploadOutlined />
                           <input
                             hidden
-                            value    = {value}
+                            // value    = {value}
                             style    = {{display:"none"}}
                             type     = "file"
                             onChange = {e => onFileChange(onChange, e)}
                             name     = "File Upload"
+                            accept   = 'image/*'
                           />
                         </IconButton>
                       ),
@@ -493,7 +531,6 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
                     //   // max      : '100',
                     //   maxLength: '3'
                     // }}
-                    // fullWidth
                   />
                   )
                 }
@@ -523,7 +560,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
                     formState,
                   }) => (
                   <TextField
-                    helperText = {error ? error.message : null}
+                    helperText = {error ? error.message : " "}
                     size       = "medium"
                     error      = {!!error}
                     // onChange   = {onChange}
