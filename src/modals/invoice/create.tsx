@@ -92,6 +92,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
     pay_date    : string | null,
     file        : File | null,
     file_name   : string,
+    url_file    : string,
   }>({
     defaultValues:{
       discount    : '0',
@@ -101,6 +102,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
       pay_date    : '',
       file        : null,
       file_name   : '',
+      url_file    : '',
       // grand_total : 0,
     }
   })

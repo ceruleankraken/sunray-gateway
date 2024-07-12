@@ -59,6 +59,12 @@ type InvoiceResponse = {
       id  : string,
       name: string,
     }
+  },
+  file: {
+    file64  : string,
+    File    : File | null,
+    filename: string,
+    url_file: string,
   }
 };
 

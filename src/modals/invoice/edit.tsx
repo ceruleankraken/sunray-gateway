@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextField, Button, Stack, Switch, FormControlLabel, MenuItem, Box, Autocomplete} from '@mui/material'
+import { TextField, Button, Stack, Switch, FormControlLabel, MenuItem, Box, Autocomplete, IconButton, CardMedia} from '@mui/material'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -16,6 +16,7 @@ import ModalConfirmComponent from '@/components/modalconfirm.component';
 import ModalComponent from '@/components/modal.component';
 import InvoiceEditLine from './edit_line';
 import { usePartnerGetActive } from '@/hooks/partner/use-get-active';
+import { FileUploadOutlined } from '@mui/icons-material';
 
 export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
 
@@ -30,6 +31,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
   const [editInvoiceLineID, setEditInvoiceLineID]     = React.useState('');
   const [openDeleteModal, setOpenDeleteModal]         = React.useState(false);
   const [openEditModal, setOpenEditModal]             = React.useState(false);
+  const [openImageModal, setOpenImageModal]           = React.useState(false);
 
   const { refetch: doGetPartner, data: dataPartner, isLoading: isLoadingPartner } = usePartnerGetActive();
   
@@ -39,6 +41,8 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
     register,
     reset,
     setValue,
+    setError,
+    clearErrors,
     getValues,
     handleSubmit,
     formState: { errors },
@@ -49,6 +53,9 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
     partner_id  : {} | null,
     pay_date    : string,
     docaction   : string,
+    file        : File | null,
+    file_name   : string,
+    url_file    : string,
     // grand_total : number,
   }>({
     defaultValues: {
@@ -58,6 +65,9 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
       partner_id  : null,
       pay_date    : '',
       docaction   : '',
+      file        : null,
+      file_name   : '',
+      url_file    : '',
       // grand_total : 0,
     }
   })
@@ -68,8 +78,11 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
       discount    : data.data.discount,
       batchno     : data.data.batchno,
       ispercentage: data.data.ispercentage,
-      partner_id  : data.data.partner ? {value: data.data.partner.id, label: data.data.partner.name} : null,
+      partner_id  : data.data.partner ? {value: data.data.partner.id, label: data.data.partner.name}: null,
       pay_date    : dayjs(data.data.pay_date).format('DD-MM-YYYY').toString(),
+      file        : data.data.file.File,
+      file_name   : data.data.file.filename,
+      url_file    : data.data.file.url_file,
       // grand_total : data.data.grand_total,
     })
     
@@ -232,6 +245,39 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
     onChange(event)
     countGrandTotal()
     // setValue('ispercentage', event.target.checked);
+  }
+
+  
+  const onFileChange = (onChange: any, event:any) => {
+    clearErrors('file');
+    const fileValue = event.target.files[0];
+    const fileName  = fileValue?.name;
+    const fileSize  = fileValue?.size;
+    const fileType  = fileValue?.type;
+
+    if (['image/jpeg', 'image/png', 'image/jpg'].includes(fileType)){
+      
+      if (fileSize < 1048576) {
+        onChange(fileValue)
+        // setValue('file_name',fileName);
+      }
+      else {
+        setValue('file', null)
+        setError('file', { type:'validate', message: "File size more than 1MB"});
+      }
+    }
+    else {
+      setValue('file', null)
+      setError('file', { type:'validate', message: "Invalid file type"});
+    }
+  }
+
+  const handleOpenImageModal = () => {
+    setOpenImageModal(true);
+  };
+
+  const handleCloseImageModal = () => {
+    setOpenImageModal(false);
   }
 
   React.useEffect( () => {
@@ -496,30 +542,61 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
                 />
               </Stack>
               
-              {/* <Controller
-                name    = "grand_total"
+              <Controller
+                name    = "file"
                 control = {control}
+                rules   = {{ 
+                  required: {
+                    value  : true,
+                    message: "File fields is required"
+                  },
+                  validate: {
+                    fileType: (val: any) => ['image/jpeg', 'image/png', 'image/jpg'].includes(val.type) || 'Invalid file type',
+                    fileSize: (val: any) => val.size < 1048576 || 'File size more than 1MB',
+                  }
+                }}
                 render  = { ({ 
                     field     : { onChange, value },
                     fieldState: { error },
                     formState,
                   }) => (
                   <TextField
-                    helperText = {error ? error.message : null}
+                    fullWidth 
+                    helperText = {error ? error.message : "File Type: JPG/JPEG/PNG (Max 1MB)"}
                     size       = "medium"
                     error      = {!!error}
-                    // onChange   = {onChange}
-                    type       = 'number'
-                    disabled   = {true}
-                    value      = {value}
-                    label      = {"Grand Total"}
+                    onClick    = {handleOpenImageModal}
+                    // onChange   = {e => onDiscountChange(onChange, e)}
+                    type       = 'string'
+                    value      = {value?.name || ''}
+                    label      = {"File"}
                     variant    = "outlined"
                     sx         = {{mb:2}}
-                    fullWidth
+                    InputProps = {{
+                      readOnly    : true,
+                      endAdornment: (
+                        <IconButton component="label">
+                          <FileUploadOutlined />
+                          <input
+                            hidden
+                            // value    = {value}
+                            style    = {{display:"none"}}
+                            type     = "file"
+                            onChange = {e => onFileChange(onChange, e)}
+                            name     = "File Upload"
+                            accept   = 'image/*'
+                          />
+                        </IconButton>
+                      ),
+                    }}
+                    // inputProps={{
+                    //   // max      : '100',
+                    //   maxLength: '3'
+                    // }}
                   />
                   )
                 }
-              /> */}
+              />
 
               <Button type={'submit'} variant={'contained'} color={'primary'}>
                 Submit
@@ -571,6 +648,20 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
         buttonText   = {"Delete"}
         buttonColor  = {"error"}
       />
+
+      <ModalComponent
+        modalOpen    = {openImageModal}
+        modalOnClose = {handleCloseImageModal}
+        modalSize    = 'sm'
+        modalTitle   = 'Invoice Image'
+      >
+        <CardMedia
+          component = "img"
+          height    = "auto"
+          image     = {getValues('url_file')}
+          alt       = "Invoice Image"
+        />
+      </ModalComponent>
     </>
   )
 }
