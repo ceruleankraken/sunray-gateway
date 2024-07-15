@@ -487,10 +487,10 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
                 name    = "file"
                 control = {control}
                 rules   = {{ 
-                  required: {
-                    value  : true,
-                    message: "File fields is required"
-                  },
+                  // required: {
+                  //   value  : true,
+                  //   message: "File fields is required"
+                  // },
                   validate: {
                     fileType: (val: any) => ['image/jpeg', 'image/png', 'image/jpg'].includes(val.type) || 'Invalid file type',
                     fileSize: (val: any) => val.size < 1048576 || 'File size more than 1MB',
