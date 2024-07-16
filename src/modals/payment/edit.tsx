@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextField, Button, Stack, Switch, FormControlLabel, MenuItem, Box, Autocomplete} from '@mui/material'
+import { TextField, Button, Stack, Switch, FormControlLabel, MenuItem, Box, Autocomplete, IconButton, CardMedia} from '@mui/material'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -15,6 +15,8 @@ import { usePaymentLineDelete } from '@/hooks/payment/use-delete-line';
 import { usePaymentEdit } from '@/hooks/payment/use-edit';
 import { usePaymentGetOne } from '@/hooks/payment/use-get-one';
 import PaymentEditLine from './edit_line';
+import { http } from '@/services/axios';
+import { Delete, FileUploadOutlined } from '@mui/icons-material';
 
 export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
 
@@ -27,6 +29,10 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
   const [openDeleteModal, setOpenDeleteModal]         = React.useState(false);
   const [openEditModal, setOpenEditModal]             = React.useState(false);
   const [partnerID, setPartnerID]                     = React.useState({label: '', value: ''});
+  const [openDeleteImageModal, setOpenDeleteImageModal] = React.useState(false);
+  const [openImageModal, setOpenImageModal]             = React.useState(false);
+  const [isImageValid, setIsImageValid]                 = React.useState(false);
+  const [imageSrc, setImageSrc]                         = React.useState<any>(null);
 
   const { refetch: doGetPartner, data: dataPartner, isLoading: isLoadingPartner } = usePartnerGetActive();
   
@@ -35,6 +41,8 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
     control,
     register,
     reset,
+    clearErrors,
+    setError,
     setValue,
     getValues,
     handleSubmit,
@@ -42,20 +50,51 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
   } = useForm<{
     batchno     : string,
     partner_id  : {} | null,
+    file        : File | null,
+    file_name   : string,
+    url_file    : string,
   }>({
     defaultValues: {
       batchno     : '',
       partner_id  : null,
+      file        : null,
+      file_name   : '',
+      url_file    : '',
     }
   })
 
-  const loadData = (data: any) => {
+  const loadData = async (data: any) => {
     // console.log(data);
     reset({
       batchno     : data.data.batchno,
       partner_id  : data.data.partner ? {value: data.data.partner.id, label: data.data.partner.name} : null,
+      file        : data.data.file[0].File,
+      file_name   : data.data.file[0].filename,
+      url_file    : data.data.file[0].url_file,
     })
     
+    const urlFile = data.data.file[0].url_file;
+    if(urlFile != '' || null) {
+      const response = await http.get('http://'+urlFile, {
+        responseType: 'blob'
+      });
+
+      const objectURL = URL.createObjectURL(response.data);
+      setImageSrc(objectURL);
+
+      // Create a File object from the Blob
+      const filename = urlFile.substring(urlFile.lastIndexOf('-') + 1);
+      const fileType = response.data.type;
+      const fileData = new File([response.data], filename, { type: fileType });
+      setValue('file',fileData)
+      setIsImageValid(true);
+    }
+    else {
+      setImageSrc('');
+      setIsImageValid(false);
+    }
+
+
     // console.log(data.data.line)
     const rows    = data.data.line.map( (val: any,idx: number) => ({line_id: idx, ...val}) )
     // data.data.line.map((val) => ({
@@ -79,6 +118,19 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
     setDeletePaymentLineID(payment_line_id)
     setOpenDeleteModal(true);
   }
+
+  const handleCloseDeleteImageModal = () => setOpenDeleteImageModal(false);
+  const handleOpenDeleteImageModal  = () => {
+    setOpenDeleteImageModal(true);
+  }
+
+  const handleDeleteImageInvoice = () => {
+    setValue('file', null)
+    setImageSrc('')
+    setIsImageValid(false)
+    setOpenDeleteImageModal(false);
+  }
+
   const { mutate: submitDeleteLine, isLoading: isLoadIngDeleteLine } = usePaymentLineDelete({ modalClose: handleCloseDeleteModal ,updateTable: () => doGetPayment() });
   
   const handleDeletePaymentLine = () => {
@@ -166,10 +218,61 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
 
     const createObj = {
       batchno     : data.batchno,
+      discount    : data.discount,
+      ispercentage: data.ispercentage,
       partner_id  : data.partner_id.value,
+      docaction   : data.docaction.value,
+      file        : data.file,
     }
     submitEditPayment(createObj)
   }
+
+  const onFileChange = (onChange: any, event:any) => {
+    clearErrors('file');
+    const fileValue = event.target.files[0];
+    const fileName  = fileValue?.name;
+    const fileSize  = fileValue?.size;
+    const fileType  = fileValue?.type;
+  
+    if (event.target.files.length != 0) {
+      if (['image/jpeg', 'image/png', 'image/jpg'].includes(fileType)){
+        
+        if (fileSize < 1048576) {
+          onChange(fileValue)
+          const objectURL = URL.createObjectURL(fileValue);
+          setImageSrc(objectURL);
+          setIsImageValid(true);
+          // setValue('file_name',fileName);
+        }
+        else {
+          setError('file', { type:'validate', message: "File size more than 1MB"});
+          setValue('file', null)
+          setImageSrc('')
+          setIsImageValid(false)
+        }
+      }
+      else {
+        setError('file', { type:'validate', message: "Invalid file type"});
+        setValue('file', null)
+        setImageSrc('')
+        setIsImageValid(false)
+      }
+    }
+    else {
+      setValue('file', null)
+      setImageSrc('')
+      setIsImageValid(false)
+    }
+  }
+
+  const handleOpenImageModal = () => {
+    setOpenImageModal(true);
+  };
+
+  const handleCloseImageModal = () => {
+    setOpenImageModal(false);
+  }
+  
 
   React.useEffect( () => {
     countGrandTotal();
@@ -298,6 +401,74 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
                 }
               />
 
+              <Controller
+                name    = "file"
+                control = {control}
+                rules   = {{ 
+                  // required: {
+                  //   value  : true,
+                  //   message: "File fields is required"
+                  // },
+                  validate: {
+                    fileType: (val: any) => ['image/jpeg', 'image/png', 'image/jpg'].includes(val.type) || 'Invalid file type',
+                    fileSize: (val: any) => val.size < 1048576 || 'File size more than 1MB',
+                  }
+                }}
+                render  = { ({ 
+                    field     : { onChange, value },
+                    fieldState: { error },
+                    formState,
+                  }) => (
+                  <TextField
+                    fullWidth 
+                    helperText = {error ? error.message : "File Type: JPG/JPEG/PNG (Max 1MB)"}
+                    size       = "medium"
+                    error      = {!!error}
+                    // onChange   = {e => onDiscountChange(onChange, e)}
+                    type       = 'string'
+                    value      = {value?.name || ''}
+                    label      = {"File"}
+                    variant    = "outlined"
+                    sx         = {{mb:2}}
+                    InputProps = {{
+                      readOnly    : true,
+                      endAdornment: (
+                        <>
+                          <IconButton 
+                            component = "label"
+                            color     = 'error'
+                            disabled = {!isImageValid}
+                            onClick   = {handleOpenDeleteImageModal}
+                          >
+                            <Delete />
+                          </IconButton>
+                          <IconButton 
+                            component="label"
+                            disabled={isImageValid}
+                          >
+                            <FileUploadOutlined />
+                            <input
+                              hidden
+                              // value    = {value}
+                              style    = {{display:"none"}}
+                              type     = "file"
+                              onChange = {e => onFileChange(onChange, e)}
+                              name     = "File Upload"
+                              accept   = 'image/*'
+                            />
+                          </IconButton>
+                        </>
+                      ),
+                    }}
+                    // inputProps={{
+                    //   // max      : '100',
+                    //   maxLength: '3'
+                    // }}
+                  />
+                  )
+                }
+              />
+
               <Button type={'submit'} variant={'contained'} color={'primary'}>
                 Submit
               </Button>
@@ -347,6 +518,20 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
         buttonText   = {"Delete"}
         buttonColor  = {"error"}
       />
+
+      <ModalComponent
+        modalOpen    = {openImageModal}
+        modalOnClose = {handleCloseImageModal}
+        modalSize    = 'sm'
+        modalTitle   = 'Invoice Image'
+      >
+        <CardMedia
+          component = "img"
+          height    = "auto"
+          image     = {imageSrc}
+          alt       = "Invoice Image"
+        />
+      </ModalComponent>
     </>
   )
 }

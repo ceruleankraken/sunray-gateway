@@ -19,8 +19,9 @@ export interface LinePayment {
 }
 
 export interface PaymentCreateFormPropsRequest {
-  header: HeaderPayment
-  line  : LinePayment[]
+  header: HeaderPayment,
+  line  : LinePayment[],
+  file  : File,
 }
 
 type PaymentCreateProps = {
@@ -29,6 +30,18 @@ type PaymentCreateProps = {
 
 const createPayment = async ({ payload }: PaymentCreateProps) => {
 
+  // const { data } = await http.post(PAYMENT_CREATE_PATH, {
+  //   header: {
+  //     batchno     : payload.header.batchno,
+  //     partner_id  : payload.header.partner_id,
+  //     discount    : parseFloat(payload.header.discount),
+  //     ispercentage: payload.header.ispercentage,
+  //     pay_date    : payload.header.pay_date,
+  //   },
+  //   line: newLine,
+  // });
+  var formData = new FormData()
+
   const newLine = payload.line.map( (val) => ({
     payment_id  : val.payment_id,
     invoice_id  : val.invoice_id,
@@ -36,7 +49,8 @@ const createPayment = async ({ payload }: PaymentCreateProps) => {
     discount    : parseFloat(val.discount),
     ispercentage: val.ispercentage,
   }))
-  const { data } = await http.post(PAYMENT_CREATE_PATH, {
+
+  const textData = {
     header: {
       batchno     : payload.header.batchno,
       partner_id  : payload.header.partner_id,
@@ -45,6 +59,15 @@ const createPayment = async ({ payload }: PaymentCreateProps) => {
       pay_date    : payload.header.pay_date,
     },
     line: newLine,
+  };
+
+  formData.append("data", JSON.stringify(textData));
+  formData.append("files", payload.file);
+
+  const { data } = await http.post(PAYMENT_CREATE_PATH, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   });
   return data
 };

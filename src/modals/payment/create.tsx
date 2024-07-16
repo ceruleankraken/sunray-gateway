@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextField, Button, Stack, Switch, FormControl, FormLabel, FormGroup, FormHelperText, FormControlLabel, MenuItem, Box, Autocomplete} from '@mui/material'
+import { TextField, Button, Stack, Switch, FormControl, FormLabel, FormGroup, FormHelperText, FormControlLabel, MenuItem, Box, Autocomplete, IconButton} from '@mui/material'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { usePartnerCreate } from '@/hooks/partner/use-create'
 import { PartnerCreateFormPropsRequest } from '@/services/partner/create';
@@ -18,6 +18,7 @@ import { usePartnerGetActive } from '@/hooks/partner/use-get-active';
 import { usePaymentCreate } from '@/hooks/payment/use-create';
 import PaymentAddLine from './add_line';
 import dayjs from 'dayjs';
+import { FileUploadOutlined } from '@mui/icons-material';
 
 export default function PaymentCreate({modalOnClose, getData}:any) {
 
@@ -79,16 +80,26 @@ export default function PaymentCreate({modalOnClose, getData}:any) {
     control,
     register,
     setValue,
+    setError,
+    clearErrors,
     getValues,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<{
+    partner_id  : {label:string, value:string} | null,
+    discount    : string,
+    ispercentage: boolean,
+    pay_date    : string | null,
+    batchno     : string,
+    file        : File | null,
+  }>({
     defaultValues: {
       partner_id  : null,
       discount    : '0',
       ispercentage: false,
       pay_date    : '',
       batchno     : '',
+      file        : null,
     }
   })
 
@@ -142,6 +153,7 @@ export default function PaymentCreate({modalOnClose, getData}:any) {
         ispercentage: data.ispercentage,
       },
       line: linePayment,
+      file: data.file,
     }
     submitCreatePayment(createObj)
   }
@@ -181,6 +193,29 @@ export default function PaymentCreate({modalOnClose, getData}:any) {
     // setValue('ispercentage', event.target.checked);
   }
 
+  const onFileChange = (onChange: any, event:any) => {
+    clearErrors('file');
+    const fileValue = event.target.files[0];
+    const fileName  = fileValue?.name;
+    const fileSize  = fileValue?.size;
+    const fileType  = fileValue?.type;
+
+    if (['image/jpeg', 'image/png', 'image/jpg'].includes(fileType)){
+      
+      if (fileSize < 1048576) {
+        onChange(fileValue)
+        // setValue('file_name',fileName);
+      }
+      else {
+        setValue('file', null)
+        setError('file', { type:'validate', message: "File size more than 1MB"});
+      }
+    }
+    else {
+      setValue('file', null)
+      setError('file', { type:'validate', message: "Invalid file type"});
+    }
+  }
 
   React.useEffect( () => {
     countGrandTotal();
@@ -256,7 +291,10 @@ export default function PaymentCreate({modalOnClose, getData}:any) {
                     fullWidth
                     id                   = "select-partner"
                     options              = {partnerOptions}  
-                    onChange             = {(e, data) => {onChange(data); setPartnerID(data);}}
+                    onChange             = {(e, data) => {
+                      onChange(data); 
+                      data == null || setPartnerID(data);
+                    }}
                     value                = {value}
                     sx                   = {{ mb: 2 }}
                     isOptionEqualToValue = {(option:any, value:any) => option.value === value.value}
@@ -418,6 +456,61 @@ export default function PaymentCreate({modalOnClose, getData}:any) {
                   }
                 />
               </Stack>
+
+              <Controller
+                name    = "file"
+                control = {control}
+                rules   = {{ 
+                  // required: {
+                  //   value  : true,
+                  //   message: "File fields is required"
+                  // },
+                  validate: {
+                    fileType: (val: any) => ['image/jpeg', 'image/png', 'image/jpg'].includes(val.type) || 'Invalid file type',
+                    fileSize: (val: any) => val.size < 1048576 || 'File size more than 1MB',
+                  }
+                }}
+                render  = { ({ 
+                    field     : { onChange, value },
+                    fieldState: { error },
+                    formState,
+                  }) => (
+                  <TextField
+                    fullWidth 
+                    helperText = {error ? error.message : "File Type: JPG/JPEG/PNG (Max 1MB)"}
+                    size       = "medium"
+                    error      = {!!error}
+                    // onChange   = {e => onDiscountChange(onChange, e)}
+                    type       = 'string'
+                    value      = {value?.name || ''}
+                    label      = {"File"}
+                    variant    = "outlined"
+                    sx         = {{mb:2}}
+                    InputProps = {{
+                      readOnly    : true,
+                      endAdornment: (
+                        <IconButton component="label">
+                          <FileUploadOutlined />
+                          <input
+                            hidden
+                            // value    = {value}
+                            style    = {{display:"none"}}
+                            type     = "file"
+                            onChange = {e => onFileChange(onChange, e)}
+                            name     = "File Upload"
+                            accept   = 'image/*'
+                          />
+                        </IconButton>
+                      ),
+                    }}
+                    // inputProps={{
+                    //   // max      : '100',
+                    //   maxLength: '3'
+                    // }}
+                  />
+                  )
+                }
+              />
 
 
               <Box

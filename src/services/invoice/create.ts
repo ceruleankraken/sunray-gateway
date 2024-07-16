@@ -23,7 +23,6 @@ export interface InvoiceCreateFormPropsRequest {
   header: HeaderInvoice,
   line  : LineInvoice[],
   file  : File,
-
 }
 
 type InvoiceCreateProps = {

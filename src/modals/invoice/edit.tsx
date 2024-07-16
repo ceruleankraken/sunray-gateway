@@ -244,10 +244,11 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
 
     const createObj = {
       batchno     : data.batchno,
-      discount    : parseFloat(data.discount),
+      discount    : data.discount,
       ispercentage: data.ispercentage,
       partner_id  : data.partner_id.value,
       docaction   : data.docaction.value,
+      file        : data.file,
     }
     submitEditInvoice(createObj)
   }
@@ -740,6 +741,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
                   )
                 }
               />
+              
               <Box
                 marginBottom  = {2}
               >
