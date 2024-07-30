@@ -60,6 +60,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
     file        : File | null,
     file_name   : string,
     url_file    : string,
+    image_action: string,
     // grand_total : number,
   }>({
     defaultValues: {
@@ -72,6 +73,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
       file        : null,
       file_name   : '',
       url_file    : '',
+      image_action: '',
       // grand_total : 0,
     }
   })
@@ -88,6 +90,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
       file        : data.data.file[0].File,
       file_name   : data.data.file[0].filename,
       url_file    : data.data.file[0].url_file,
+      image_action: "nochange",
       // grand_total : data.data.grand_total,
     })
 
@@ -141,6 +144,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
 
   const handleDeleteImageInvoice = () => {
     setValue('file', null)
+    setValue('image_action', "delete")
     setImageSrc('')
     setIsImageValid(false)
     setOpenDeleteImageModal(false);
@@ -249,6 +253,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
       partner_id  : data.partner_id.value,
       docaction   : data.docaction.value,
       file        : data.file,
+      image_action: data.image_action,
     }
     submitEditInvoice(createObj)
   }
@@ -302,6 +307,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
         if (fileSize < 1048576) {
           onChange(fileValue)
           const objectURL = URL.createObjectURL(fileValue);
+          setValue('image_action', "update")
           setImageSrc(objectURL);
           setIsImageValid(true);
           // setValue('file_name',fileName);
@@ -309,6 +315,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
         else {
           setError('file', { type:'validate', message: "File size more than 1MB"});
           setValue('file', null)
+          setValue('image_action', "delete")
           setImageSrc('')
           setIsImageValid(false)
         }
@@ -316,12 +323,14 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
       else {
         setError('file', { type:'validate', message: "Invalid file type"});
         setValue('file', null)
+        setValue('image_action', "delete")
         setImageSrc('')
         setIsImageValid(false)
       }
     }
     else {
       setValue('file', null)
+      setValue('image_action', "delete")
       setImageSrc('')
       setIsImageValid(false)
     }

@@ -29,7 +29,7 @@ export default function Payment() {
           <Box mb={1}>
             <Stack direction={"row"} display={"flex"} alignItems={"center"}>
               <Box flexGrow={1}>
-                <Typography variant="h4" color="black" fontWeight={700} height={30} lineHeight={1.5} fontSize={'1.25rem'}>Invoice</Typography>
+                <Typography variant="h4" color="black" fontWeight={700} height={30} lineHeight={1.5} fontSize={'1.25rem'}>Payment</Typography>
                 <BreadcrumbsComponent />
               </Box>
               <Box>

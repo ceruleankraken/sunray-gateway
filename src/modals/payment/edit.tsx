@@ -53,6 +53,7 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
     file        : File | null,
     file_name   : string,
     url_file    : string,
+    image_action: string,
   }>({
     defaultValues: {
       batchno     : '',
@@ -60,6 +61,7 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
       file        : null,
       file_name   : '',
       url_file    : '',
+      image_action: '',
     }
   })
 
@@ -71,6 +73,7 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
       file        : data.data.file[0].File,
       file_name   : data.data.file[0].filename,
       url_file    : data.data.file[0].url_file,
+      image_action: "nochange",
     })
     
     const urlFile = data.data.file[0].url_file;
@@ -124,8 +127,9 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
     setOpenDeleteImageModal(true);
   }
 
-  const handleDeleteImageInvoice = () => {
+  const handleDeleteImagePayment = () => {
     setValue('file', null)
+    setValue('image_action', "delete")
     setImageSrc('')
     setIsImageValid(false)
     setOpenDeleteImageModal(false);
@@ -223,6 +227,7 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
       partner_id  : data.partner_id.value,
       docaction   : data.docaction.value,
       file        : data.file,
+      image_action: data.image_action,
     }
     submitEditPayment(createObj)
   }
@@ -240,6 +245,7 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
         if (fileSize < 1048576) {
           onChange(fileValue)
           const objectURL = URL.createObjectURL(fileValue);
+          setValue('image_action', "update")
           setImageSrc(objectURL);
           setIsImageValid(true);
           // setValue('file_name',fileName);
@@ -247,6 +253,7 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
         else {
           setError('file', { type:'validate', message: "File size more than 1MB"});
           setValue('file', null)
+          setValue('image_action', "delete")
           setImageSrc('')
           setIsImageValid(false)
         }
@@ -254,12 +261,14 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
       else {
         setError('file', { type:'validate', message: "Invalid file type"});
         setValue('file', null)
+        setValue('image_action', "delete")
         setImageSrc('')
         setIsImageValid(false)
       }
     }
     else {
       setValue('file', null)
+      setValue('image_action', "delete")
       setImageSrc('')
       setIsImageValid(false)
     }
@@ -515,6 +524,17 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
         onSubmit     = {handleDeletePaymentLine} 
         modalTitle   = {"Delete Confirmation"}
         modalText    = {"Do you want to delete this record?"}
+        buttonText   = {"Delete"}
+        buttonColor  = {"error"}
+      />
+
+<ModalConfirmComponent
+        modalId      = 'payment-image-delete'
+        modalOpen    = {openDeleteImageModal}
+        modalOnClose = {handleCloseDeleteImageModal}
+        onSubmit     = {handleDeleteImagePayment}
+        modalTitle   = {"Delete Confirmation"}
+        modalText    = {"Do you want to delete this image?"}
         buttonText   = {"Delete"}
         buttonColor  = {"error"}
       />

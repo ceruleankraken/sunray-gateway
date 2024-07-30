@@ -10,6 +10,7 @@ export interface PaymentEditFormPropsRequest {
   partner_id  : string,
   docaction   : string,
   file        : File,
+  image_action: string,
 }
 
 type PaymentEditProps = {
@@ -32,6 +33,7 @@ const editPayment = async ({payload}: PaymentEditProps, payment_id: string) => {
 
   formData.append("data", JSON.stringify(textData));
   formData.append("files", payload.file);
+  formData.append("image_action", payload.image_action)
 
   
   const { data } = await http.post(PAYMENT_EDIT_PATH+payment_id, formData, {

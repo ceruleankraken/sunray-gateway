@@ -11,6 +11,7 @@ export interface InvoiceEditFormPropsRequest {
   partner_id  : string,
   docaction   : string,
   file        : File,
+  image_action: string,
 }
 
 type InvoiceEditProps = {
@@ -34,6 +35,7 @@ const editInvoice = async ({payload}: InvoiceEditProps, invoice_id: string) => {
 
   formData.append("data", JSON.stringify(textData));
   formData.append("files", payload.file);
+  formData.append("image_action", payload.image_action)
 
   
   const { data } = await http.post(INVOICE_EDIT_PATH+invoice_id, formData, {
