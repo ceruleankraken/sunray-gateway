@@ -12,7 +12,7 @@ export default function BottomBarComponent() {
       <Typography variant="body2" color="text.secondary" align="center">
         {'Copyright © '}
         <MuiLink color="secondary" href="/">
-          MyFaktur.ID
+          myFaktur.ID
         </MuiLink>{' '}
         {new Date().getFullYear()}.
       </Typography>

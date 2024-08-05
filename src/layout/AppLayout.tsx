@@ -37,7 +37,7 @@ const AppLayout = ({ title, children }: AppProps) => {
   return (
     <>
       <Head>
-        <title> {title} | MyFaktur.ID </title>
+        <title> {title} | myFaktur.ID </title>
       </Head>
 
       {!!accessToken && (
