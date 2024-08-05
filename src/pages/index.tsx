@@ -16,7 +16,7 @@ export default function Home() {
           p            : 2,
           display      : 'flex',
           flexDirection: 'column',
-          height       : 400,
+          // height       : 400,
         }}
       >
         <Box mb={3}>
@@ -26,6 +26,16 @@ export default function Home() {
               <BreadcrumbsComponent />
             </Box>
           </Stack>
+        </Box>
+        <Box display="flex" justifyContent={'center'} alignContent={'center'} alignItems={'center'}>
+          <Image
+            src    = {'/newlogoofix.png'}
+            width  = {0}
+            height = {0}
+            sizes  = "100vw"
+            style  = {{ width: '100%', height: 'auto', maxWidth: '500px' }}
+            alt    = "Logo myFaktur.ID"
+          />
         </Box>
       </Paper>
     </AppLayout>

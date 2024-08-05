@@ -17,6 +17,7 @@ import { usePaymentGetOne } from '@/hooks/payment/use-get-one';
 import PaymentEditLine from './edit_line';
 import { http } from '@/services/axios';
 import { Delete, FileUploadOutlined } from '@mui/icons-material';
+import Image from 'next/image';
 
 export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
 
@@ -545,11 +546,20 @@ export default function PaymentEdit({modalOnClose, payment_id, getData}:any) {
         modalSize    = 'sm'
         modalTitle   = 'Invoice Image'
       >
-        <CardMedia
+        {/* <CardMedia
           component = "img"
           height    = "auto"
           image     = {imageSrc}
           alt       = "Invoice Image"
+        /> */}
+
+        <Image
+          src    = {imageSrc}
+          width  = {0}
+          height = {0}
+          sizes  = "100vw"
+          style  = {{ width: '100%', height: 'auto' }}
+          alt    = "Payment Image"
         />
       </ModalComponent>
     </>

@@ -18,6 +18,7 @@ import InvoiceEditLine from './edit_line';
 import { usePartnerGetActive } from '@/hooks/partner/use-get-active';
 import { FileUploadOutlined, Delete } from '@mui/icons-material';
 import { axios, http } from '@/services/axios';
+import Image from 'next/image';
 
 export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
 
@@ -833,11 +834,20 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
         modalSize    = 'sm'
         modalTitle   = 'Invoice Image'
       >
-        <CardMedia
+        {/* <CardMedia
           component = "img"
           height    = "auto"
           image     = {imageSrc}
           alt       = "Invoice Image"
+        /> */}
+
+        <Image
+          src    = {imageSrc}
+          width  = {0}
+          height = {0}
+          sizes  = "100vw"
+          style  = {{ width: '100%', height: 'auto' }}
+          alt    = "Invoice Image"
         />
       </ModalComponent>
     </>
