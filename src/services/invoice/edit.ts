@@ -38,7 +38,7 @@ const editInvoice = async ({payload}: InvoiceEditProps, invoice_id: string) => {
   formData.append("image_action", payload.image_action)
 
   
-  const { data } = await http.post(INVOICE_EDIT_PATH+invoice_id, formData, {
+  const { data } = await http.put(INVOICE_EDIT_PATH+invoice_id, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
