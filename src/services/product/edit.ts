@@ -14,7 +14,13 @@ type ProductEditProps = {
 
 const editProduct = async ({payload}: ProductEditProps, partner_id: string) => {
 
-  const { data } = await http.put(PRODUCT_EDIT_PATH+partner_id, payload);
+  const { data } = await http.put(PRODUCT_EDIT_PATH+partner_id, payload,
+    {
+      headers: {
+        'Content-Type' : 'application/json',
+      }
+    }
+  );
   return data
 };
 

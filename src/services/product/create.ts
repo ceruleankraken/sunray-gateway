@@ -14,7 +14,13 @@ type ProductCreateProps = {
 
 const createProduct = async ({ payload }: ProductCreateProps) => {
 
-  const { data } = await http.post(PRODUCT_CREATE_PATH, payload);
+  const { data } = await http.post(PRODUCT_CREATE_PATH, payload,
+    {
+      headers: {
+        'Content-Type' : 'application/json',
+      }
+    }
+  );
   return data
 };
 

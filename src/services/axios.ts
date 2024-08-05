@@ -11,7 +11,7 @@ export const http: AxiosInstance = axios.create({
   withCredentials: true,
   headers        : {
     // 'Authorization': localStorage.getItem('access_token') ? "JWT " + localStorage.getItem('access_token'): null,
-    'Content-Type' : 'application/json',
+    // 'Content-Type' : 'application/json',
     'accept'       : 'application/json'
   }
 });

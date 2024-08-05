@@ -35,11 +35,13 @@ const map = {
 };
 
 const getRegister = async ({ payload }: RegisterProps) => {
-  console.log("==========API===============");
-  console.log(payload);
-  console.log(REGISTER_PATH);
-  const { data } = await http.post(REGISTER_PATH, payload);
-  console.log(data);
+  const { data } = await http.post(REGISTER_PATH, payload,
+    {
+      headers: {
+        'Content-Type' : 'application/json',
+      }
+    }
+  );
   return map.getDataFromRemote(data);
 };
 

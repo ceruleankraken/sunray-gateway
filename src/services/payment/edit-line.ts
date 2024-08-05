@@ -19,7 +19,13 @@ const editPaymentLine = async ({payload}: PaymentLineEditProps, payment_line_id:
       price       : parseInt(payload.price),
       discount    : parseFloat(payload.discount),
       ispercentage: payload.ispercentage,
-    });
+    },
+    {
+      headers: {
+        'Content-Type' : 'application/json',
+      }
+    }
+  );
   return data
 };
 

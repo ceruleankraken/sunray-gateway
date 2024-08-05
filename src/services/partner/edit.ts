@@ -16,8 +16,13 @@ type PartnerEditProps = {
 };
 
 const editPartner = async ({payload}: PartnerEditProps, partner_id: string) => {
-  const { data } = await http.put(PARTNER_EDIT_PATH+partner_id, payload);
-  console.log(data);
+  const { data } = await http.put(PARTNER_EDIT_PATH+partner_id, payload,
+    {
+      headers: {
+        'Content-Type' : 'application/json',
+      }
+    }
+  );
   return data
 };
 

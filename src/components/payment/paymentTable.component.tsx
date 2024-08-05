@@ -119,10 +119,6 @@ const PaymentTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   const handleUpdateStatusPayment = () => {
 
     const createObj = {
-      batchno     : updatePaymentData.row.batchno,
-      discount    : parseFloat(updatePaymentData.row.discount),
-      ispercentage: updatePaymentData.row.ispercentage,
-      partner_id  : updatePaymentData.row.partner.id,
       docaction   : updatePaymentData.event.target.value,
     }
     submitStatusPayment({payload: createObj, payment_id: updatePaymentData.row.id})

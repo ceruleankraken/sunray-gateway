@@ -41,11 +41,13 @@ const map = {
 };
 
 const getLogin = async ({ payload }: LoginProps) => {
-  console.log("==========API===============");
-  console.log(payload);
-  console.log(LOGIN_PATH);
-  const { data } = await http.post(LOGIN_PATH, payload);
-  console.log(data);
+  const { data } = await http.post(LOGIN_PATH, payload, 
+    {
+      headers: {
+        'Content-Type' : 'application/json',
+      }
+    }
+  );
   return map.getAuthFromRemote(data);
 };
 

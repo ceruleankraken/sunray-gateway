@@ -15,7 +15,13 @@ type PartnerCreateProps = {
 };
 
 const createPartner = async ({ payload }: PartnerCreateProps) => {
-  const { data } = await http.post(PARTNER_CREATE_PATH, payload);
+  const { data } = await http.post(PARTNER_CREATE_PATH, payload,
+    {
+      headers: {
+        'Content-Type' : 'application/json',
+      }
+    }
+  );
   return data
 };
 

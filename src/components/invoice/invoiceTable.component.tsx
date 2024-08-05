@@ -123,11 +123,8 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   const handleUpdateStatusInvoice = () => {
 
     const createObj = {
-      batchno     : updateInvoiceData.row.batchno,
-      discount    : parseFloat(updateInvoiceData.row.discount),
-      ispercentage: updateInvoiceData.row.ispercentage,
-      partner_id  : updateInvoiceData.row.partner.id,
       docaction   : updateInvoiceData.event.target.value,
+      
     }
     submitStatusInvoice({payload: createObj, invoice_id: updateInvoiceData.row.id})
   }
@@ -166,7 +163,6 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
             size     = 'small'
             id       = "outlined-select-currency"
             value    = {params.row.status}
-            // disabled = {params.row.status == 'CO'}
             onChange = {(event) => handleOpenUpdateStatusModal(params.row, event)}
           >
             {statusOptions.map((option) => (
@@ -188,10 +184,11 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
       //   showInMenu
       // />,
       <GridActionsCellItem
-        key     = {"edit-"+params.id}
-        icon    = {<EditIcon />}
-        label   = "Edit"
-        onClick = {() => handleOpenEditModal(params.row.id)}
+        key      = {"edit-"+params.id}
+        disabled = {params.row.status != 'DR'}
+        icon     = {<EditIcon />}
+        label    = "Edit"
+        onClick  = {() => handleOpenEditModal(params.row.id)}
         showInMenu
       />,
       <GridActionsCellItem

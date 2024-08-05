@@ -32,6 +32,8 @@ import paymentDeleteServices from './payment/delete';
 import paymentLineEditServices from './payment/edit-line';
 import paymentLineDeleteServices from './payment/delete-line';
 import paymentLineGetOneServices from './payment/get-line';
+import invoiceEditStatusServices from './invoice/edit-status';
+import paymentEditStatusServices from './payment/edit-status';
 
 
 const api = {
@@ -51,6 +53,7 @@ const api = {
   ...productDeleteServices,
   ...invoiceCreateServices,
   ...invoiceEditServices,
+  ...invoiceEditStatusServices,
   ...invoiceGetServices,
   ...invoiceGetOneServices,
   ...invoiceGetActiveServices,
@@ -60,6 +63,7 @@ const api = {
   ...invoiceLineGetOneServices,
   ...paymentCreateServices,
   ...paymentEditServices,
+  ...paymentEditStatusServices,
   ...paymentGetServices,
   ...paymentGetOneServices,
   ...paymentDeleteServices,

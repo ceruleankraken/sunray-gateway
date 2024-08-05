@@ -4,9 +4,10 @@ import { useRouter } from 'next/router';
 import api from '@/services';
 import { AlertError, AlertSuccess } from '@/utils/notification';
 import { InvoiceEditFormPropsRequest } from '@/services/invoice/edit';
+import { InvoiceEditStatusPropsRequest } from '@/services/invoice/edit-status';
 
 interface InvoiceEditStatusProps {
-  payload   : InvoiceEditFormPropsRequest,
+  payload   : InvoiceEditStatusPropsRequest,
   invoice_id: string,
 }
 
@@ -17,7 +18,7 @@ export const useInvoiceEditStatus = ({getData}: any) => {
 
   return useMutation({
     mutationKey: ['invoice-edit-status'],
-    mutationFn: ({payload, invoice_id}: InvoiceEditStatusProps) => api.editInvoice({payload}, invoice_id),
+    mutationFn: ({payload, invoice_id}: InvoiceEditStatusProps) => api.editStatusInvoice({payload}, invoice_id),
     onSuccess: (data) => {
       AlertSuccess("Data updated successfully");
       getData();
