@@ -29,7 +29,7 @@ export default function Home() {
         </Box>
         <Box display="flex" justifyContent={'center'} alignContent={'center'} alignItems={'center'}>
           <Image
-            src    = {'/newlogoofix.png'}
+            src    = {'/logo.png'}
             width  = {0}
             height = {0}
             sizes  = "100vw"
