@@ -12,10 +12,11 @@ type UserState = {
 
 const initialState: UserState = {
   user: {
-    username  : '',
-    full_name : '',
-    created_at: '',
-    isactive  : true,
+    username      : '',
+    full_name     : '',
+    created_at    : '',
+    isactive      : true,
+    OrganizationId: '',
   },
   accessToken: '',
   refreshToken: '',

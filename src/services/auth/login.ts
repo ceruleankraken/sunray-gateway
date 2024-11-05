@@ -12,6 +12,8 @@ type UserResponse = {
   user_session: {
     access_token : string,
     refresh_token: string,
+    org_id       : string,
+    org_uuid     : string,
   }
 };
 
@@ -31,10 +33,13 @@ const map = {
         full_name : response?.data.user_information.full_name,
         created_at: response?.data.user_information.created_at,
         isactive  : response?.data.user_information.isactive,
+        organizationId: response?.data.user_information.OrganizationId,
       },
       user_session: {
-        access_token: response?.data.user_session.access_token,
+        access_token : response?.data.user_session.access_token,
         refresh_token: response?.data.user_session.refresh_token,
+        org_id       : response?.data.user_session.org_id,
+        org_uuid     : response?.data.user_session.org_uuid,
       }
     };
   },

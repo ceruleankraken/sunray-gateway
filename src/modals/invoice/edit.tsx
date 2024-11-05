@@ -81,6 +81,7 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
 
   const loadData = async (data: any) => {
     
+    const fileImage = data.data.file;
     reset({
       discount    : data.data.discount,
       batchno     : data.data.batchno,
@@ -88,15 +89,15 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
       partner_id  : data.data.partner ? {value: data.data.partner.id, label: data.data.partner.name}: null,
       pay_date    : dayjs(data.data.pay_date).format('DD-MM-YYYY').toString(),
       docaction   : statusOptions.find( (val) => val.value == data.data.docaction) || null,
-      file        : data.data.file[0].File,
-      file_name   : data.data.file[0].filename,
-      url_file    : data.data.file[0].url_file,
+      file        : fileImage.length > 0 ? fileImage[0].File : null,
+      file_name   : fileImage.length > 0 ? fileImage[0].filename : null,
+      url_file    : fileImage.length > 0 ? fileImage[0].url_file : null,
       image_action: "nochange",
       // grand_total : data.data.grand_total,
     })
 
-    const urlFile = data.data.file[0].url_file;
-    if(urlFile != '' || null) {
+    const urlFile = fileImage.length > 0 ? fileImage[0].url_file : null;
+    if(urlFile != '' && urlFile != null) {
       const response = await http.get('http://'+urlFile, {
         responseType: 'blob'
       });
@@ -693,8 +694,24 @@ export default function InvoiceEdit({modalOnClose, invoice_id, getData}:any) {
                   //   message: "File fields is required"
                   // },
                   validate: {
-                    fileType: (val: any) => ['image/jpeg', 'image/png', 'image/jpg'].includes(val.type) || 'Invalid file type',
-                    fileSize: (val: any) => val.size < 1048576 || 'File size more than 1MB',
+                    validateFile: (val) => {
+                      // If the field is empty, it's valid
+                      if (!val) return true;
+      
+                      // Validate file type
+                      const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                      if (!validTypes.includes(val.type)) {
+                        return 'File type must be JPEG, JPG, or PNG';
+                      }
+      
+                      // Validate file size (max 1MB)
+                      const fileSize = val.size;
+                      if (fileSize > 1 * 1024 * 1024) {
+                        return 'File size must be less than 1MB';
+                      }
+      
+                      return true; // If all checks pass
+                    },
                   }
                 }}
                 render  = { ({ 

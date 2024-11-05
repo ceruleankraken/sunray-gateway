@@ -16,27 +16,29 @@ export const publicSans = Public_Sans({
   fallback: ['sans-serif'],
 });
 
-const mainBase      = '#556cd6'
-const secondaryBase = '#19857b'
+// const mainBase      = '#556cd6'
+const mainBase      = '#18206F'
+// const secondaryBase = '#19857b'
+const secondaryBase = '#BD1E1E'
 // Create a theme instance.
 const theme = createTheme({
   palette: {
     primary: {
-      main        : alpha(mainBase, 0.7),
+      main        : alpha(mainBase, 0.9),
       light       : alpha(mainBase, 0.5),
-      dark        : alpha(mainBase, 0.9),
+      dark        : alpha(mainBase, 0.7),
       contrastText: getContrastRatio(alpha(mainBase, 0.7), '#fff') > 3 ? '#fff': '#111',
     },
     secondary: {
-      main        : alpha(secondaryBase, 0.7),
+      main        : alpha(secondaryBase, 0.9),
       light       : alpha(secondaryBase, 0.5),
-      dark        : alpha(secondaryBase, 0.9),
+      dark        : alpha(secondaryBase, 0.7),
       contrastText: getContrastRatio(alpha(secondaryBase, 0.7), '#fff') > 3 ? '#fff': '#111',
     },
     error: {
-      main        : alpha(red.A400, 0.7),
+      main        : alpha(red.A400, 0.9),
       light       : alpha(red.A400, 0.5),
-      dark        : alpha(red.A400, 0.9),
+      dark        : alpha(red.A400, 0.7),
       contrastText: getContrastRatio(alpha(red.A400, 0.7), '#fff') > 3 ? '#fff': '#111',
     },
   },

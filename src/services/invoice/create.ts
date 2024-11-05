@@ -22,7 +22,7 @@ export interface LineInvoice {
 export interface InvoiceCreateFormPropsRequest {
   header: HeaderInvoice,
   line  : LineInvoice[],
-  file  : File,
+  file  : File | null,
 }
 
 type InvoiceCreateProps = {
@@ -54,7 +54,7 @@ const createInvoice = async ({ payload }: InvoiceCreateProps) => {
   }
 
   formData.append("data", JSON.stringify(textData));
-  formData.append("files", payload.file);
+  formData.append("files", payload.file || "");
 
   const { data } = await http.post(INVOICE_CREATE_PATH, formData, {
     headers: {

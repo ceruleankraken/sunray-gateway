@@ -10,7 +10,7 @@ export interface InvoiceEditFormPropsRequest {
   ispercentage: boolean,
   partner_id  : string,
   docaction   : string,
-  file        : File,
+  file        : File | null,
   image_action: string,
 }
 
@@ -34,7 +34,7 @@ const editInvoice = async ({payload}: InvoiceEditProps, invoice_id: string) => {
   }
 
   formData.append("data", JSON.stringify(textData));
-  formData.append("files", payload.file);
+  formData.append("files", payload.file || "");
   formData.append("image_action", payload.image_action)
 
   

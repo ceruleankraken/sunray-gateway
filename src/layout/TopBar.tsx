@@ -8,6 +8,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Badge from '@mui/material/Badge';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { Box } from "@mui/material";
 
 const drawerWidth: number = 240;
 
@@ -66,16 +67,28 @@ const TopBarComponent = ( {opened, handleToggle, onLogout, ...props}: any) => {
         >
           Dashboard
         </Typography> */}
-        <IconButton 
-          color   = "inherit"
-          onClick = {onLogout}
-          sx={{
+        <Box
+          sx = {{
+            display       : 'flex',
             flexGrow      : 1,
-            justifyContent: "flex-end"
+            flexDirection : 'row-reverse',
+            // justifyContent: 'flex-end'
           }}
+          // flexGrow      = {1}
+          // flexDirection = {'row-reverse'}
+          // justifyContent={"flex-end"}
         >
-          <LogoutIcon />
-        </IconButton>
+          <IconButton 
+            color   = "inherit"
+            onClick = {onLogout}
+            // sx={{
+            //   // flexGrow      : 1,
+            //   // justifyContent: "flex-end"
+            // }}
+          >
+            <LogoutIcon />
+          </IconButton>
+        </Box>
       </Toolbar>
     </TopBar>
   );

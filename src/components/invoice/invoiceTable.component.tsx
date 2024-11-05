@@ -26,6 +26,7 @@ import InvoiceUpdatestatus from '@/modals/invoice/update_status';
 import { useInvoiceEdit } from '@/hooks/invoice/use-edit';
 import { useInvoiceEditStatus } from '@/hooks/invoice/use-edit-status';
 import { AlertError, AlertWarning } from '@/utils/notification';
+import { initPageData, initSortData } from '@/utils/pagination';
 
 
 
@@ -45,10 +46,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   const [rowData, setRowData]                             = React.useState<any[]>([]);
   const [sortData, setSortData]                           = React.useState<{field: string, sort:string }[]>([]);
   const [rowTotal, setRowTotal]                           = React.useState(0);
-  const [pageData, setPageData]                           = React.useState({
-    page    : 0,
-    pageSize: 5,
-  });
+  const [pageData, setPageData]                           = React.useState(initPageData());
   const [queryOptions, setQueryOptions]   = React.useState({
     field    : 'id',
     sort     : 'asc',
@@ -60,7 +58,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   });
   
   const { refetch: doGetInvoice, data, isLoading: isLoadingInvoice }       = useInvoiceGet(queryOptions);
-  const { mutate: submitStatusInvoice, isLoading: isLoadingStatusInvoice } = useInvoiceEditStatus({getData: () => getDataInvoice()});
+  const { mutate: submitStatusInvoice, isLoading: isLoadingStatusInvoice, isSuccess } = useInvoiceEditStatus({closeModal: ()=>handleCloseUpdateStatusModal(), getData: () => getDataInvoice()});
   
   
   const handleQuery  = () => {
@@ -105,6 +103,12 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     submitDelete({invoice_id: deleteInvoiceID})
   }
 
+  const resetPagination = () => {
+    console.log("hello")
+    setPageData(initPageData());
+    setSortData([]);
+  }
+
   const getDataInvoice = () => {
     doGetInvoice().then(
       (resp: any) => {
@@ -123,10 +127,13 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   const handleUpdateStatusInvoice = () => {
 
     const createObj = {
-      docaction   : updateInvoiceData.event.target.value,
+      payloads: {
+        docaction   : updateInvoiceData.event.target.value,
+      },
+      invoice_id: updateInvoiceData.row.id,
       
     }
-    submitStatusInvoice({payload: createObj, invoice_id: updateInvoiceData.row.id})
+    submitStatusInvoice(createObj)
   }
 
   const handleCloseUpdateStatusModal = () => setOpenUpdateStatusModal(false);
@@ -213,6 +220,13 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   React.useEffect(() => {
     handleQuery();
   }, [pageData, sortData]);
+
+  React.useEffect(() => {
+    if(isSuccess == true) {
+      resetPagination();
+      handleCloseDeleteModal();
+    }
+  }, [isSuccess]);
 
 
   React.useEffect( () => {
