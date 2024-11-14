@@ -9,7 +9,7 @@ export interface PaymentEditFormPropsRequest {
   ispercentage: boolean,
   partner_id  : string,
   docaction   : string,
-  file        : File,
+  file        : File | null,
   image_action: string,
 }
 
@@ -32,7 +32,7 @@ const editPayment = async ({payload}: PaymentEditProps, payment_id: string) => {
   }
 
   formData.append("data", JSON.stringify(textData));
-  formData.append("files", payload.file);
+  formData.append("files", payload.file || "");
   formData.append("image_action", payload.image_action)
 
   

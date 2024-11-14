@@ -1,13 +1,10 @@
 
 import React, { useEffect } from 'react';
-import moment from 'moment'
-import styles from '@/styles/Home.module.css'
 
 import { GridActionsCellItem, GridRenderCellParams } from '@mui/x-data-grid'
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from '@mui/icons-material/Search';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 import { Box, IconButton, TextField, Skeleton, Paper, Accordion, AccordionSummary, AccordionDetails, Stack, MenuItem } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -22,8 +19,6 @@ import InvoiceCreate from '@/modals/invoice/create';
 import InvoiceEdit from '@/modals/invoice/edit';
 import ModalConfirmComponent from '../modalconfirm.component';
 import dayjs, { Dayjs } from 'dayjs';
-import InvoiceUpdatestatus from '@/modals/invoice/update_status';
-import { useInvoiceEdit } from '@/hooks/invoice/use-edit';
 import { useInvoiceEditStatus } from '@/hooks/invoice/use-edit-status';
 import { AlertError, AlertWarning } from '@/utils/notification';
 import { initPageData, initSortData } from '@/utils/pagination';
@@ -104,7 +99,6 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   }
 
   const resetPagination = () => {
-    console.log("hello")
     setPageData(initPageData());
     setSortData([]);
   }
@@ -405,7 +399,7 @@ const InvoiceTableComponent = ({ openCreate, handleCloseCreate }: any) => {
         modalText    = {"Do you want to update status this record?"}
         buttonText   = {"Update"}
         buttonColor  = {"primary"}
-      />\
+      />
 
 
     </>

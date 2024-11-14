@@ -466,8 +466,27 @@ export default function PaymentCreate({modalOnClose, getData}:any) {
                   //   message: "File fields is required"
                   // },
                   validate: {
-                    fileType: (val: any) => ['image/jpeg', 'image/png', 'image/jpg'].includes(val.type) || 'Invalid file type',
-                    fileSize: (val: any) => val.size < 1048576 || 'File size more than 1MB',
+                    // fileType: (val: any) => val != null && (['image/jpeg', 'image/png', 'image/jpg'].includes(val.type) || 'Invalid file type'),
+                    // fileSize: (val: any) => val != null && (val.size < 1048576 || 'File size more than 1MB'),
+
+                    validateFile: (val) => {
+                      // If the field is empty, it's valid
+                      if (!val) return true;
+      
+                      // Validate file type
+                      const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                      if (!validTypes.includes(val.type)) {
+                        return 'File type must be JPEG, JPG, or PNG';
+                      }
+      
+                      // Validate file size (max 1MB)
+                      const fileSize = val.size;
+                      if (fileSize > 1 * 1024 * 1024) {
+                        return 'File size must be less than 1MB';
+                      }
+      
+                      return true; // If all checks pass
+                    },
                   }
                 }}
                 render  = { ({ 

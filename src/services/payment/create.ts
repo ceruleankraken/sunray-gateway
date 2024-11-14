@@ -21,7 +21,7 @@ export interface LinePayment {
 export interface PaymentCreateFormPropsRequest {
   header: HeaderPayment,
   line  : LinePayment[],
-  file  : File,
+  file  : File | null,
 }
 
 type PaymentCreateProps = {
@@ -62,7 +62,7 @@ const createPayment = async ({ payload }: PaymentCreateProps) => {
   };
 
   formData.append("data", JSON.stringify(textData));
-  formData.append("files", payload.file);
+  formData.append("files", payload.file || "");
 
   const { data } = await http.post(PAYMENT_CREATE_PATH, formData, {
     headers: {

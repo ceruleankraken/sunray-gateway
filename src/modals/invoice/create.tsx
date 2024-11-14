@@ -83,7 +83,7 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
     clearErrors,
     getValues,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<{
     discount    : string,
     batchno     : string,
@@ -155,7 +155,6 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
       line: lineInvoice,
       file: data.file,
     }
-    console.log(createObj)
     submitCreateInvoice(createObj)
   }
 
@@ -274,7 +273,6 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'en-gb'}>  
-        <form onSubmit={handleSubmit(onSubmit)}>
           <Stack direction={"row"} gap={2}>
             <Stack direction={'column'} width="30%">
               <Controller
@@ -594,7 +592,12 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
                 }
               /> */}
 
-              <Button type={'submit'} variant={'contained'} color={'primary'}>
+              <Button 
+                onClick = {handleSubmit(onSubmit)}
+                variant = {'contained'}
+                color   = {'primary'}
+                disabled = {!isValid || lineInvoice.length <= 0}
+              >
                 Submit
               </Button>
             </Stack>
@@ -624,7 +627,6 @@ export default function InvoiceCreate({modalOnClose, getData}:any) {
             </Stack>
 
           </Stack>
-        </form>
       </LocalizationProvider>
 
       <ModalComponent

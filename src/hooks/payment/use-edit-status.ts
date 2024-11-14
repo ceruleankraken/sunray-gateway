@@ -7,18 +7,18 @@ import { PaymentEditFormPropsRequest } from '@/services/payment/edit';
 import { PaymentEditStatusPropsRequest } from '@/services/payment/edit-status';
 
 interface PaymentEditStatusProps {
-  payload   : PaymentEditStatusPropsRequest,
-  payment_id: string,
+  closeModal: ()=>void,
+  getData   : ()=>void,
 }
 
 
-export const usePaymentEditStatus = ({getData}: any) => {
+export const usePaymentEditStatus = ({getData, closeModal}: PaymentEditStatusProps) => {
   const dispatch = useDispatch();
   const router   = useRouter();
 
   return useMutation({
     mutationKey: ['payment-edit-status'],
-    mutationFn: ({payload, payment_id}: PaymentEditStatusProps) => api.editStatusPayment({payload}, payment_id),
+    mutationFn: (payload: PaymentEditStatusPropsRequest) => api.editStatusPayment({payload}),
     onSuccess: (data) => {
       AlertSuccess("Data updated successfully");
       getData();

@@ -7,7 +7,6 @@ import { GridActionsCellItem, GridRenderCellParams } from '@mui/x-data-grid'
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from '@mui/icons-material/Search';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 import { Box, IconButton, TextField, Skeleton, Paper, Accordion, AccordionSummary, AccordionDetails, Stack, MenuItem } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -16,21 +15,15 @@ import 'dayjs/locale/en-gb';
 
 import TableComponent from '@/components/table.component'
 import ModalComponent from '@/components/modal.component'
-import { useInvoiceGet } from '@/hooks/invoice/use-get';
-import { useInvoiceDelete } from '@/hooks/invoice/use-delete';
-import InvoiceCreate from '@/modals/invoice/create';
-import InvoiceEdit from '@/modals/invoice/edit';
 import ModalConfirmComponent from '../modalconfirm.component';
 import dayjs, { Dayjs } from 'dayjs';
-import InvoiceUpdatestatus from '@/modals/invoice/update_status';
-import { useInvoiceEdit } from '@/hooks/invoice/use-edit';
-import { useInvoiceEditStatus } from '@/hooks/invoice/use-edit-status';
 import { usePaymentGet } from '@/hooks/payment/use-get';
 import { usePaymentEditStatus } from '@/hooks/payment/use-edit-status';
 import { usePaymentDelete } from '@/hooks/payment/use-delete';
 import PaymentEdit from '@/modals/payment/edit';
 import PaymentCreate from '@/modals/payment/create';
 import { AlertWarning } from '@/utils/notification';
+import { initPageData, initSortData } from '@/utils/pagination';
 
 
 
@@ -50,10 +43,7 @@ const PaymentTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   const [rowData, setRowData]                             = React.useState<any[]>([]);
   const [sortData, setSortData]                           = React.useState<{field: string, sort:string }[]>([]);
   const [rowTotal, setRowTotal]                           = React.useState(0);
-  const [pageData, setPageData]                           = React.useState({
-    page    : 0,
-    pageSize: 5,
-  });
+  const [pageData, setPageData]                           = React.useState(initPageData());
   const [queryOptions, setQueryOptions]   = React.useState({
     field    : 'id',
     sort     : 'asc',
@@ -64,8 +54,8 @@ const PaymentTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     date_to  : endDateSearch?.format("YYYY-MM-DD"),
   });
   
-  const { refetch: doGetPayment, data, isLoading: isLoadingPayment }       = usePaymentGet(queryOptions);
-  const { mutate: submitStatusPayment, isLoading: isLoadingStatusPayment } = usePaymentEditStatus({getData: () => getDataPayment()});
+  const { refetch: doGetPayment, data, isLoading: isLoadingPayment }                  = usePaymentGet(queryOptions);
+  const { mutate: submitStatusPayment, isLoading: isLoadingStatusPayment, isSuccess } = usePaymentEditStatus({closeModal: ()=>handleCloseUpdateStatusModal(), getData: () => getDataPayment()});
   
   
   const handleQuery  = () => {
@@ -101,6 +91,11 @@ const PaymentTableComponent = ({ openCreate, handleCloseCreate }: any) => {
     submitDelete({payment_id: deletePaymentID})
   }
 
+  const resetPagination = () => {
+    setPageData(initPageData());
+    setSortData([]);
+  }
+
   const getDataPayment = () => {
     doGetPayment().then(
       (resp: any) => {
@@ -119,9 +114,12 @@ const PaymentTableComponent = ({ openCreate, handleCloseCreate }: any) => {
   const handleUpdateStatusPayment = () => {
 
     const createObj = {
-      docaction   : updatePaymentData.event.target.value,
+      payloads: {
+        docaction : updatePaymentData.event.target.value,
+      },
+      payment_id: updatePaymentData.row.id
     }
-    submitStatusPayment({payload: createObj, payment_id: updatePaymentData.row.id})
+    submitStatusPayment(createObj)
   }
 
   const handleCloseUpdateStatusModal = () => setOpenUpdateStatusModal(false);
@@ -215,7 +213,15 @@ const PaymentTableComponent = ({ openCreate, handleCloseCreate }: any) => {
 
   React.useEffect(() => {
     handleQuery();
-  }, [pageData, sortData,]);
+  }, [pageData, sortData]);
+
+  React.useEffect(() => {
+    if(isSuccess == true) {
+      resetPagination();
+      handleCloseDeleteModal();
+    }
+  }, [isSuccess]);
+
 
 
   React.useEffect( () => {

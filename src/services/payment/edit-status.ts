@@ -2,16 +2,19 @@ import { http } from '@/services/axios';
 import { PAYMENT_EDIT_STATUS_PATH } from '@/configs/constants';
 
 export interface PaymentEditStatusPropsRequest {
-  docaction   : string,
+  payloads: {
+    docaction   : string,
+  },
+  payment_id: string,
 }
 
 type PaymentEditStatusProps = {
   payload: PaymentEditStatusPropsRequest;
 };
 
-const editStatusPayment = async ({payload}: PaymentEditStatusProps, payment_id: string) => {
+const editStatusPayment = async ({payload: { payloads, payment_id }}: PaymentEditStatusProps) => {
   
-  const { data } = await http.put(PAYMENT_EDIT_STATUS_PATH+payment_id, payload,
+  const { data } = await http.put(PAYMENT_EDIT_STATUS_PATH+payment_id, payloads,
     {
       headers: {
         'Content-Type' : 'application/json',

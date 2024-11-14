@@ -118,7 +118,7 @@ const TableComponent: React.FC<{
         slots={{
           noRowsOverlay: CustomNoRowsOverlay,
         }}
-        sx                      = {{ overflowX: 'scroll' }}
+        // sx                      = {{ overflowX: 'scroll' }}
         columnVisibilityModel   = {columnHide}
         rows                    = {rowData}
         columns                 = {columnData}

@@ -6,7 +6,7 @@ import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { AppBarProps, Box, DrawerProps, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import { AppBarProps, Box, DrawerProps, ListItemButton, ListItemIcon, ListItemText, Typography, Link as MUILink } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PeopleIcon from '@mui/icons-material/People';
@@ -87,10 +87,28 @@ const SideBarComponent = ( {opened, handleToggle, pathActive, ...props}: any ) =
             const active = menu.path ? (pathActive === menu.path) : false;
 
             return (
-              <Link 
-                key  = {menu.title}
-                href = {menu.path}
+              <MUILink
                 passHref
+                shallow = {true}
+                key     = {menu.title}
+                href    = {menu.path}
+
+                component = {Link}
+                // height    = {24}
+                underline = "hover"
+                variant   = 'h1'
+                sx        = {{
+                  textDecoration: 'none',
+                  display       : 'flex',
+                  alignItems    : 'center',
+                  lineHeight    : 1.5,
+                  fontSize      : '0.875rem',
+                  py            : 0.5,
+                  // "&:hover"     : {
+                  //   color         : theme.palette.primary.main,
+                  //   textDecoration: "none"
+                  // }
+                }}
               >
                 <ListItemButton
                   selected={active}
@@ -98,9 +116,20 @@ const SideBarComponent = ( {opened, handleToggle, pathActive, ...props}: any ) =
                   <ListItemIcon>
                     {menu.icon}
                   </ListItemIcon>
-                  <ListItemText primary={menu.title} />
+                  <ListItemText>
+                    <Typography 
+                      color = {"secondary"}
+                      sx    = {{
+                        lineHeight    : 1.5,
+                        // fontSize      : '0.875rem',
+                        fontWeight    : 700,
+                      }}  
+                    > 
+                      {menu.title}
+                    </Typography>
+                  </ListItemText>
                 </ListItemButton>
-              </Link>
+              </MUILink>
             );
           })
         }
